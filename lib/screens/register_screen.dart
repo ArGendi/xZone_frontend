@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
-import 'package:xzone/screens/register_screen.dart';
+import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/widgets/custom_textfield.dart';
 
-class LoginScreen extends StatefulWidget {
-  static final String id = 'login';
+class RegisterScreen extends StatefulWidget {
+  static final String id = 'register';
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   String _email;
   String _password;
+  String _fullName;
 
+  _setFullName(String fullName){
+    _fullName = fullName;
+  }
   _setEmail(String email){
     _email = email;
   }
@@ -25,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
     if(isValid){
+      print(_fullName);
       print(_email);
       print(_password);
     }
@@ -51,25 +56,18 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    "Welcome back",
+                    "Let's get started,",
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
-                  ),
-                  Text(
-                    "You have been missed!",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
-                  ),
-                  Text(
-                    "Login now",
-                    style: TextStyle(
-                        fontSize: 22,
                         color: Colors.white,
-                        fontFamily: 'Montserrat-Medium'
+                        fontSize: 22,
+                    ),
+                  ),
+                  Text(
+                    "Create Account",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontFamily: "Montserrat-Medium"
                     ),
                   ),
                   SizedBox(height: 40,),
@@ -78,6 +76,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
+                        CustomTextField(
+                          text: "Full Name",
+                          obscureText: false,
+                          textInputType: TextInputType.text,
+                          setValue: _setFullName,
+                          validation: (value){
+                            if(value.isEmpty) return 'Enter an full name';
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10,),
                         CustomTextField(
                           text: "Email",
                           obscureText: false,
@@ -103,15 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 5,),
-                        GestureDetector(
-                          child: Text(
-                            "forget password",
-                            style: TextStyle(
-                              color: buttonColor,
-                            ),
-                          ),
-                        ),
                         SizedBox(height: 30,),
                         GestureDetector(
                           onTap: _trySubmit,
@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              "Login",
+                              "Register",
                               style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -138,17 +138,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              "Don't have an account?",
+                              "Already have one?",
                               style: TextStyle(
                                 color: Colors.white,
                               ),
                             ),
                             GestureDetector(
                               onTap: (){
-                                Navigator.pop(context);
+                                Navigator.pushNamed(context, LoginScreen.id);
                               },
                               child: Text(
-                                " Register now",
+                                " Login now",
                                 style: TextStyle(
                                   color: buttonColor,
                                 ),

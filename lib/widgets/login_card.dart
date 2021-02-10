@@ -3,7 +3,7 @@ import 'package:xzone/constants.dart';
 
 class LoginCard extends StatelessWidget {
   final String text;
-  final Icon icon;
+  final Widget icon;
   final Color color;
   final Color textColor;
   final Function onClick;
@@ -18,7 +18,7 @@ class LoginCard extends StatelessWidget {
         elevation: 0,
         color: color,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 25),
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           child: Row(
             children: <Widget>[
               icon,

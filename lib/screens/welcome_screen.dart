@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/screens/login_screen.dart';
+import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/widgets/login_card.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -23,28 +24,26 @@ class WelcomeScreen extends StatelessWidget {
                       Text(
                         'Welcome to ',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 26,
                           color: whiteColor,
                         ),
                       ),
                       Text(
                         'xZone',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 26,
                           fontFamily: 'Montserrat-Medium',
                           color: whiteColor,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 15,),
-                  Image.asset(
-                    "assets/images/welcome2.png",
-                    width: 350 ,
-                    //height: 300,
-                    //fit: BoxFit.cover,
-                  ),
                   SizedBox(height: 20,),
+                  Image.asset(
+                    "assets/images/wel2.png",
+                    width: 450 ,
+                  ),
+                  SizedBox(height: 60,),
                   LoginCard(
                     text: 'Continue with email',
                     textColor: whiteColor,
@@ -54,19 +53,25 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     color: buttonColor,
                     onClick: (){
-                      Navigator.pushNamed(context, LoginScreen.id);
+                      Navigator.pushNamed(context, RegisterScreen.id);
                     },
                   ),
                   LoginCard(
                     text: 'Continue with google',
                     textColor: backgroundColor,
-                    icon: Icon(Icons.add),
+                    icon: Image.asset(
+                      "assets/images/google_logo.png",
+                      width: 22,
+                    ),
                     color: whiteColor,
                   ),
                   LoginCard(
                     text: 'Continue with facebook',
                     textColor: backgroundColor,
-                    icon: Icon(Icons.add),
+                    icon: Image.asset(
+                      "assets/images/facebook_logo.png",
+                      width: 22,
+                    ),
                     color: whiteColor,
                   )
                 ],
