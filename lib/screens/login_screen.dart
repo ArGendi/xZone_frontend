@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 60,
                             decoration: BoxDecoration(
                               color: buttonColor,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(borderRadiusValue),
                             ),
                             child: Text(
                               "Login",

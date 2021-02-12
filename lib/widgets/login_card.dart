@@ -17,6 +17,9 @@ class LoginCard extends StatelessWidget {
       child: Card(
         elevation: 0,
         color: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadiusValue),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           child: Row(

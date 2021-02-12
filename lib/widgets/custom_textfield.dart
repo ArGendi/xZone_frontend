@@ -30,7 +30,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       decoration: InputDecoration(
           suffixIcon: widget.obscureText ? IconButton(
             icon: Icon(!_visibility ? Icons.visibility_off : Icons.visibility),
-            color: Color(0xff3b3941),
+            color: greyColor,
             onPressed: () {
               setState(() {
                 _visibility = !_visibility;
@@ -43,28 +43,28 @@ class _CustomTextFieldState extends State<CustomTextField> {
           fillColor: backgroundColor,
           contentPadding: EdgeInsets.all(20),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(borderRadiusValue),
             borderSide: BorderSide(
               color: greyColor,
               width: 2.0,
             ),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(borderRadiusValue),
             borderSide: BorderSide(
               color: greyColor,
               width: 2.0,
             ),
           ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(borderRadiusValue),
           borderSide: BorderSide(
             color: Colors.red,
             width: 2.0,
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(borderRadiusValue),
           borderSide: BorderSide(
             color: Colors.red,
             width: 2.0,

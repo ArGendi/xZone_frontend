@@ -4,3 +4,5 @@ final backgroundColor = Color(0xFF191720);
 final buttonColor = Color(0xffffd36a);
 final greyColor = Color(0xff3b3941);
 final whiteColor = Colors.white;
+
+const borderRadiusValue = 12.0;
