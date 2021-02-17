@@ -1,7 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/models/task.dart';
+import 'package:xzone/providers/today_tasks_provider.dart';
+import 'package:xzone/widgets/add_task.dart';
 import 'package:xzone/widgets/task_card.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class TodayTasks extends StatefulWidget {
   static final String id = 'today tasks';
@@ -20,53 +25,9 @@ class _TodayTasksState extends State<TodayTasks> {
           borderRadius: BorderRadius.circular(borderRadiusValue),
         ),
         context: context,
-        builder: (context) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: Card(
-              color: backgroundColor,
-              elevation: 0,
-              child: Stack(
-                children: <Widget>[
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      TextField(
-                        cursorColor: Colors.white,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(20),
-                          fillColor: backgroundColor,
-                          hintText: 'e.g. Go to gym',
-                          hintStyle: TextStyle(
-                            color: whiteColor,
-                          ),
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                        ),
-                      ),
-                      Container(
-                        height: 50,
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    right: 10,
-                    bottom: 10,
-                    child: IconButton(
-                      iconSize: 28,
-                      onPressed: (){},
-                      icon: Icon(
-                        Icons.add_circle,
-                        color: buttonColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+        builder: (context){
+          return AddTask(
+            ctx: context,
           );
         });
   }
@@ -128,12 +89,41 @@ class _TodayTasksState extends State<TodayTasks> {
                       height: 20,
                     ),
                     Expanded(
-                      child: ListView(
-                        children: <Widget>[
-                          TaskCard(
-                            text: 'Go to gym',
-                          ),
-                        ],
+                      child: LayoutBuilder(
+                        builder: (BuildContext context, BoxConstraints constraints) {
+                          List<Task> items = Provider.of<TasksProvider>(context).items;
+                          if(items.length == 0){
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: SingleChildScrollView(
+                                child: Center(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Image.asset(
+                                        'assets/images/emptyTasks.png',
+                                        width: 300,
+                                      ),
+                                      Text(
+                                        'Empty Tasks',
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontFamily: 'Montserrat-Medium',
+                                          color: whiteColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          else return ListView.builder(
+                            itemCount: items.length,
+                            itemBuilder: (context, index){
+                              return TaskCard(task: items[index],);
+                            },
+                          );
+                        },
                       ),
                     )
                   ],
