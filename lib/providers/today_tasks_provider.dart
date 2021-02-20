@@ -5,9 +5,6 @@ class TasksProvider extends ChangeNotifier{
   Task _activeTask = Task();
   List<Task> _items = List<Task>();
 
-  TasksProvider(){
-    _activeTask.name = '';
-  }
   List get items {
     return _items;
   }
@@ -24,6 +21,38 @@ class TasksProvider extends ChangeNotifier{
   }
   void setActiveTaskName(String name){
     _activeTask.name = name;
+    notifyListeners();
+  }
+  void setActiveTaskDate(DateTime date){
+    _activeTask.date = date;
+    notifyListeners();
+  }
+  void setActiveTaskRemainder(DateTime date){
+    _activeTask.remainder = date;
+    notifyListeners();
+  }
+  void setActiveTaskPriority(int priority){
+    _activeTask.priority = priority;
+    notifyListeners();
+  }
+  void setActiveTaskCompleteDate(DateTime date){
+    _activeTask.completeDate = date;
+    notifyListeners();
+  }
+  void setActiveTaskId(int id){
+    _activeTask.id = id;
+    notifyListeners();
+  }
+  void setActiveTaskUserId(int id){
+    _activeTask.userId = id;
+    notifyListeners();
+  }
+  void initializeActiveTask(){
+    _activeTask = new Task();
+    notifyListeners();
+  }
+  void assignActiveTask(Task task){
+    _activeTask = task;
     notifyListeners();
   }
 

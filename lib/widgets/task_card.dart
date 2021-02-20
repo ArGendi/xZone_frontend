@@ -23,7 +23,7 @@ class _TaskCardState extends State<TaskCard> {
     Provider.of<TasksProvider>(context, listen: false).removeTask(widget.task);
   }
   _editTask(Task task){
-    Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(widget.task.name);
+    Provider.of<TasksProvider>(context, listen: false).assignActiveTask(widget.task);
     Provider.of<TasksProvider>(context, listen: false).removeTask(widget.task);
     showModalBottomSheet(
         isScrollControlled: true,
@@ -33,9 +33,7 @@ class _TaskCardState extends State<TaskCard> {
         ),
         context: context,
         builder: (context) {
-          return AddTask(
-            ctx: context,
-          );
+          return AddTask();
     });
   }
 

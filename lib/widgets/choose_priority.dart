@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:xzone/providers/today_tasks_provider.dart';
+import 'package:xzone/widgets/priority.dart';
 import '../constants.dart';
+import 'package:provider/provider.dart';
 
 class ChoosePriority extends StatelessWidget {
-  final Function(int p) onclick;
-
-  const ChoosePriority({Key key, this.onclick}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -19,59 +18,35 @@ class ChoosePriority extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              InkWell(
-                onTap: (){
-                  onclick(1);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    'Priority 1 \t (Highest)',
-                    style: TextStyle(
-                      color: whiteColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+              Priority(
+                text: 'Priority 1 \t (Highest)',
+                number: 1,
+                icon: Icons.flag,
+                flagColor: priority1Color,
               ),
-              InkWell(
-                onTap: (){ onclick(2); },
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    'Priority 2',
-                    style: TextStyle(
-                      color: whiteColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+              Priority(
+                text: 'Priority 2',
+                number: 2,
+                icon: Icons.flag,
+                flagColor: priority2Color,
               ),
-              InkWell(
-                onTap: (){ onclick(3); },
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    'Priority 3',
-                    style: TextStyle(
-                      color: whiteColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+              Priority(
+                text: 'Priority 3',
+                number: 3,
+                icon: Icons.flag,
+                flagColor: lowPriority,
               ),
-              InkWell(
-                onTap: (){ onclick(4); },
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    'Priority 4',
-                    style: TextStyle(
-                      color: whiteColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+              Priority(
+                text: 'Priority 4',
+                number: 4,
+                icon: Icons.outlined_flag,
+                flagColor: lowPriority,
+              ),
+              Priority(
+                text: 'No Priority',
+                number: 0,
+                icon: Icons.clear,
+                flagColor: whiteColor,
               ),
             ],
           ),

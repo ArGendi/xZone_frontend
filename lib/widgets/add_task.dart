@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/today_tasks_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:xzone/widgets/choose_date.dart';
 import 'package:xzone/widgets/choose_priority.dart';
 import '../constants.dart';
+import 'package:intl/intl.dart';
 
 class AddTask extends StatefulWidget {
-  final BuildContext ctx;
-
-  const AddTask({Key key, this.ctx}) : super(key: key);
 
   @override
   _AddTaskState createState() => _AddTaskState();
@@ -30,13 +29,50 @@ class _AddTaskState extends State<AddTask> {
           return ChoosePriority();
         });
   }
-
+  setDateBottomSheet(){
+    showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadiusValue),
+        ),
+        context: context,
+        builder: (context){
+          return ChooseDate();
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
+    IconData flag = Icons.outlined_flag;
+    Color flagColor = buttonColor;
     Task activeTask = Provider.of<TasksProvider>(context).activeTask;
+    var now = DateTime.now();
+    String selectedDate;
+
     if(firstTime) textfieldController.text = activeTask.name;
     textfieldController.selection = TextSelection.fromPosition(TextPosition(offset: textfieldController.text.length));
+
+    //Priority
+    if(activeTask.priority == 1){
+      flag = Icons.flag;
+      flagColor = priority1Color;
+    }
+    else if(activeTask.priority == 2) {
+      flag = Icons.flag;
+      flagColor = priority2Color;
+    }
+    else if(activeTask.priority == 3) {
+      flag = Icons.flag;
+      flagColor = lowPriority;
+    }
+    else if(activeTask.priority == 4)
+      flagColor = lowPriority;
+
+    //Date
+    if(activeTask.date.day == now.day) selectedDate = 'Today';
+    else if(activeTask.date.day == now.day + 1) selectedDate = 'Tomorrow';
+    else selectedDate = DateFormat('d MMM').format(activeTask.date);
 
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -79,15 +115,31 @@ class _AddTaskState extends State<AddTask> {
                     IconButton(
                       onPressed: setPriorityBottomSheet,
                       icon: Icon(
-                        Icons.flag,
-                        color: buttonColor,
+                        flag,
+                        color: flagColor,
                       ),
                     ),
-                    IconButton(
-                      onPressed: (){},
-                      icon: Icon(
-                        Icons.calendar_today,
-                        color: buttonColor,
+                    SizedBox(width: 5,),
+                    InkWell(
+                      onTap: setDateBottomSheet,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.calendar_today,
+                              color: buttonColor,
+                            ),
+                            SizedBox(width: 8,),
+                            Text(
+                              selectedDate,
+                              style: TextStyle(
+                                color: buttonColor,
+                                fontFamily: 'Montserrat-Medium',
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -101,12 +153,12 @@ class _AddTaskState extends State<AddTask> {
                 iconSize: 30,
                 onPressed: (){
                   if(activeTask.name.length > 1) {
-                    Task newTask = Task();
-                    newTask.name = activeTask.name[0].toUpperCase() + activeTask.name.substring(1, activeTask.name.length);
-                    Provider.of<TasksProvider>(widget.ctx, listen: false)
-                        .addTask(newTask);
+                    String temp = activeTask.name[0].toUpperCase() + activeTask.name.substring(1, activeTask.name.length);
+                    Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(temp);
                     Provider.of<TasksProvider>(context, listen: false)
-                        .setActiveTaskName('');
+                        .addTask(activeTask);
+                    Provider.of<TasksProvider>(context, listen: false)
+                        .initializeActiveTask();
                     textfieldController.clear();
                   }
                 },

@@ -8,4 +8,9 @@ class Task{
   DateTime completeDate;
   int priority;
 
+  Task(){
+    name = '';
+    priority = 0;
+    date = DateTime.now();
+  }
 }
