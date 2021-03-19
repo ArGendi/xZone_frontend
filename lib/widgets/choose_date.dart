@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:xzone/providers/today_tasks_provider.dart';
+import 'package:xzone/widgets/custom_calendar.dart';
 import '../constants.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,7 @@ class _ChooseDateState extends State<ChooseDate> {
         ),
         context: context,
         builder: (context){
-          return null;
+          return CustomCalender();
         });
   }
 

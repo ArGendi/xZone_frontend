@@ -32,10 +32,6 @@ class _TodayTasksState extends State<TodayTasks> {
 
   @override
   Widget build(BuildContext context) {
-//    var now = DateTime.now();
-//    var activeTaskDate = Provider.of<TasksProvider>(context).activeTask.date;
-//    if(activeTaskDate == null)
-//      Provider.of<TasksProvider>(context).setActiveTaskDate(now);
     return Scaffold(
       body: Stack(
         children: <Widget>[

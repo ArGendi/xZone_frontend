@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
             color: backgroundColor,
           )
         ),
-        initialRoute: TodayTasks.id,
+        initialRoute: WelcomeScreen.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
           WelcomeScreen.id: (context) => WelcomeScreen(),
