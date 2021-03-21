@@ -10,7 +10,7 @@ class Task{
 
   Task(){
     name = '';
-    priority = 0;
+    priority = 100;
     date = DateTime.now();
   }
 }

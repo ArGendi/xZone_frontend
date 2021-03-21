@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:xzone/providers/today_tasks_provider.dart';
+import 'package:xzone/providers/tasks_provider.dart';
 import '../constants.dart';
 
 class Priority extends StatelessWidget {

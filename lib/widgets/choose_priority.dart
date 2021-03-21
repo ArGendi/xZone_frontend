@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xzone/providers/today_tasks_provider.dart';
+import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/widgets/priority.dart';
 import '../constants.dart';
 import 'package:provider/provider.dart';
@@ -44,7 +44,7 @@ class ChoosePriority extends StatelessWidget {
               ),
               Priority(
                 text: 'No Priority',
-                number: 0,
+                number: 100,
                 icon: Icons.clear,
                 flagColor: whiteColor,
               ),

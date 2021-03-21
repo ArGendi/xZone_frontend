@@ -2,19 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/models/task.dart';
-import 'package:xzone/providers/today_tasks_provider.dart';
+import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/widgets/add_task.dart';
+import 'package:xzone/widgets/choose_sort_type.dart';
 import 'package:xzone/widgets/task_card.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class TodayTasks extends StatefulWidget {
+class Tasks extends StatefulWidget {
   static final String id = 'today tasks';
   @override
-  _TodayTasksState createState() => _TodayTasksState();
+  _TasksState createState() => _TasksState();
 }
 
-class _TodayTasksState extends State<TodayTasks> {
+class _TasksState extends State<Tasks> {
   String date = DateFormat('EEEE, d MMM').format(DateTime.now());
 
   addTaskBottomSheet() {
@@ -27,6 +28,18 @@ class _TodayTasksState extends State<TodayTasks> {
         context: context,
         builder: (context){
           return AddTask();
+        });
+  }
+  sortTasksBottomSheet() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadiusValue),
+        ),
+        context: context,
+        builder: (context){
+          return ChooseSortType();
         });
   }
 
@@ -57,7 +70,7 @@ class _TodayTasksState extends State<TodayTasks> {
                           color: buttonColor,
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: sortTasksBottomSheet,
                           icon: Icon(Icons.sort),
                           color: buttonColor,
                         ),
@@ -70,7 +83,7 @@ class _TodayTasksState extends State<TodayTasks> {
                         style: TextStyle(
                             fontSize: 32,
                             color: whiteColor,
-                            fontFamily: 'Montserrat-Medium'),
+                        ),
                       ),
                     ),
                     Padding(
@@ -80,6 +93,7 @@ class _TodayTasksState extends State<TodayTasks> {
                         style: TextStyle(
                           fontSize: 18,
                           color: whiteColor,
+                          fontFamily: 'Montserrat-Light'
                         ),
                       ),
                     ),
@@ -90,7 +104,10 @@ class _TodayTasksState extends State<TodayTasks> {
                       child: LayoutBuilder(
                         builder: (BuildContext context, BoxConstraints constraints) {
                           List<Task> items = Provider.of<TasksProvider>(context).items;
-                          if(items.length == 0){
+                          List<Task> filteredItems = items.where(
+                                  (element) => element.date.day == DateTime.now().day
+                          ).toList();
+                          if(filteredItems.length == 0){
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 20),
                               child: SingleChildScrollView(
@@ -105,7 +122,6 @@ class _TodayTasksState extends State<TodayTasks> {
                                         'Empty Tasks',
                                         style: TextStyle(
                                           fontSize: 22,
-                                          fontFamily: 'Montserrat-Medium',
                                           color: whiteColor,
                                         ),
                                       ),
@@ -116,9 +132,9 @@ class _TodayTasksState extends State<TodayTasks> {
                             );
                           }
                           else return ListView.builder(
-                            itemCount: items.length,
+                            itemCount: filteredItems.length,
                             itemBuilder: (context, index){
-                              return TaskCard(task: items[index],);
+                              return TaskCard(task: filteredItems[index],);
                             },
                           );
                         },

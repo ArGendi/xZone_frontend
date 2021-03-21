@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:xzone/providers/today_tasks_provider.dart';
+import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/widgets/custom_calendar.dart';
 import '../constants.dart';
 import 'package:provider/provider.dart';

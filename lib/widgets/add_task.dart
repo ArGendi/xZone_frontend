@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:xzone/models/task.dart';
-import 'package:xzone/providers/today_tasks_provider.dart';
+import 'package:xzone/providers/tasks_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/widgets/choose_date.dart';
 import 'package:xzone/widgets/choose_priority.dart';
+import 'package:xzone/widgets/choose_time.dart';
 import '../constants.dart';
 import 'package:intl/intl.dart';
 
@@ -39,6 +40,18 @@ class _AddTaskState extends State<AddTask> {
         context: context,
         builder: (context){
           return ChooseDate();
+        });
+  }
+  setRemainderBottomSheet(){
+    showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadiusValue),
+        ),
+        context: context,
+        builder: (context){
+          return ChooseTime();
         });
   }
 
@@ -90,7 +103,6 @@ class _AddTaskState extends State<AddTask> {
                   controller: textfieldController,
                   style: TextStyle(
                     color: Colors.white,
-                    fontFamily: 'Montserrat-Medium',
                   ),
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(20),
@@ -98,7 +110,6 @@ class _AddTaskState extends State<AddTask> {
                     hintText: 'e.g. Drink water',
                     hintStyle: TextStyle(
                         color: greyColor,
-                        fontFamily: 'Montserrat-Medium'
                     ),
                     focusedBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
@@ -135,12 +146,19 @@ class _AddTaskState extends State<AddTask> {
                               selectedDate,
                               style: TextStyle(
                                 color: buttonColor,
-                                fontFamily: 'Montserrat-Medium',
                               ),
                             ),
                           ],
                         ),
                       ),
+                    ),
+                    SizedBox(width: 5,),
+                    IconButton(
+                        icon: Icon(
+                          Icons.add_alert,
+                          color: buttonColor,
+                        ),
+                        onPressed: setRemainderBottomSheet,
                     ),
                   ],
                 ),

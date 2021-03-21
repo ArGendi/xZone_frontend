@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/screens/register_screen.dart';
-import 'package:xzone/screens/todays_tasks.dart';
+import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/widgets/custom_textfield.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if(isValid){
       print(_email);
       print(_password);
-      Navigator.pushNamed(context, TodayTasks.id);
+      Navigator.pushNamed(context, Tasks.id);
     }
     else print("Problem");
   }
