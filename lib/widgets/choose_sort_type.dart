@@ -32,13 +32,15 @@ class _ChooseSortTypeState extends State<ChooseSortType> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               SortType(
-                text: 'by Date',
+                text: 'by Due Date',
                 sortBy: sortByDate,
+                icon: Icons.date_range,
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 5,),
               SortType(
                 text: 'by Priority',
                 sortBy: sortByPriority,
+                icon: Icons.flag,
               ),
             ],
           ),

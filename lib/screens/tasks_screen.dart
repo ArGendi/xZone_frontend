@@ -105,7 +105,7 @@ class _TasksState extends State<Tasks> {
                         builder: (BuildContext context, BoxConstraints constraints) {
                           List<Task> items = Provider.of<TasksProvider>(context).items;
                           List<Task> filteredItems = items.where(
-                                  (element) => element.date.day == DateTime.now().day
+                                  (element) => element.dueDate.day == DateTime.now().day
                           ).toList();
                           if(filteredItems.length == 0){
                             return Padding(

@@ -7,6 +7,7 @@ import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/screens/welcome_screen.dart';
+import 'package:xzone/widgets/add_task.dart';
 
 void main() {
   runApp(MyApp());
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
           WelcomeScreen.id: (context) => WelcomeScreen(),
           RegisterScreen.id: (context) => RegisterScreen(),
           Tasks.id: (context) => Tasks(),
+          AddTask.id: (context) => AddTask(),
         },
       ),
     );

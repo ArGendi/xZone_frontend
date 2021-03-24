@@ -4,7 +4,7 @@ import 'package:xzone/models/task.dart';
 class TasksProvider extends ChangeNotifier{
   Task _activeTask = Task();
   List<Task> _items = List<Task>();
-  String _sortType = 'by Date';
+  String _sortType = 'by Due Date';
 
   List get items {
     return _items;
@@ -27,12 +27,18 @@ class TasksProvider extends ChangeNotifier{
     _activeTask.name = name;
     notifyListeners();
   }
-  void setActiveTaskDate(DateTime date){
-    _activeTask.date = date;
+  void setActiveTaskDueDate(DateTime date){
+    DateTime now = DateTime.now();
+    if(date.day < now.day)
+      _activeTask.dueDate = now;
+    else _activeTask.dueDate = date;
     notifyListeners();
   }
   void setActiveTaskRemainder(DateTime date){
-    _activeTask.remainder = date;
+    DateTime now = DateTime.now();
+    if(date.difference(now).isNegative)
+      _activeTask.remainder = now;
+    else _activeTask.remainder = date;
     notifyListeners();
   }
   void setActiveTaskPriority(int priority){
@@ -60,7 +66,7 @@ class TasksProvider extends ChangeNotifier{
     notifyListeners();
   }
   void sortByDate(){
-    _items.sort((a, b) => a.date.compareTo(b.date));
+    _items.sort((a, b) => a.dueDate.compareTo(b.dueDate));
     notifyListeners();
   }
   void sortByPriority(){

@@ -7,8 +7,9 @@ class SortType extends StatelessWidget {
   static const double fontSize = 16;
   final String text;
   final Function sortBy;
+  final IconData icon;
 
-  const SortType({Key key, this.text, this.sortBy}) : super(key: key);
+  const SortType({Key key, this.text, this.sortBy, this.icon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,11 @@ class SortType extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
+            Icon(
+              icon,
+              color: whiteColor,
+            ),
+            SizedBox(width: 15,),
             Text(
               text,
               style: TextStyle(

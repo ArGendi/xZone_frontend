@@ -3,7 +3,7 @@ class Task{
   int userId;
   int parentId;
   String name;
-  DateTime date;
+  DateTime dueDate;
   DateTime remainder;
   DateTime completeDate;
   int priority;
@@ -11,6 +11,7 @@ class Task{
   Task(){
     name = '';
     priority = 100;
-    date = DateTime.now();
+    dueDate = DateTime.now();
+    remainder = DateTime.now();
   }
 }

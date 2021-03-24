@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/widgets/calender_bottom_sheet.dart';
 import 'package:xzone/widgets/custom_calendar.dart';
 import '../constants.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ class ChooseDate extends StatefulWidget {
 }
 
 class _ChooseDateState extends State<ChooseDate> {
+
   calendarBottomSheet(){
     showModalBottomSheet(
         isScrollControlled: true,
@@ -20,7 +22,16 @@ class _ChooseDateState extends State<ChooseDate> {
         ),
         context: context,
         builder: (context){
-          return CustomCalender();
+          return CalenderBottomSheet(
+            btnText: 'Done',
+            onClick: (){
+              Navigator.pop(context);
+            },
+            initialSelectedDay: Provider.of<TasksProvider>(context).activeTask.dueDate,
+            onDaySelected: (date, event, _){
+              Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(date);
+            },
+          );
         });
   }
 
@@ -45,7 +56,7 @@ class _ChooseDateState extends State<ChooseDate> {
             children: <Widget>[
               InkWell(
                 onTap: (){
-                  Provider.of<TasksProvider>(context, listen: false).setActiveTaskDate(now);
+                  Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(now);
                   Navigator.pop(context);
                 },
                 child: Padding(
@@ -81,7 +92,7 @@ class _ChooseDateState extends State<ChooseDate> {
               ),
               InkWell(
                 onTap: (){
-                  Provider.of<TasksProvider>(context, listen: false).setActiveTaskDate(tomFullDate);
+                  Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(tomFullDate);
                   Navigator.pop(context);
                 },
                 child: Padding(
@@ -118,7 +129,7 @@ class _ChooseDateState extends State<ChooseDate> {
               InkWell(
                 onTap: (){
                   print(nextWeekFullDate);
-                  Provider.of<TasksProvider>(context, listen: false).setActiveTaskDate(nextWeekFullDate);
+                  Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(nextWeekFullDate);
                   Navigator.pop(context);
                 },
                 child: Padding(
@@ -153,7 +164,10 @@ class _ChooseDateState extends State<ChooseDate> {
                 ),
               ),
               InkWell(
-                onTap: calendarBottomSheet,
+                onTap: (){
+                  Navigator.pop(context);
+                  calendarBottomSheet();
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Row(

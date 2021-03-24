@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:xzone/widgets/calender_bottom_sheet.dart';
 import 'package:xzone/widgets/choose_date.dart';
 import 'package:xzone/widgets/choose_priority.dart';
 import 'package:xzone/widgets/choose_time.dart';
+import 'package:xzone/widgets/custom_calendar.dart';
 import '../constants.dart';
 import 'package:intl/intl.dart';
 
 class AddTask extends StatefulWidget {
+  static final String id = 'add task';
 
   @override
   _AddTaskState createState() => _AddTaskState();
@@ -18,6 +21,18 @@ class _AddTaskState extends State<AddTask> {
   bool firstTime = true;
   var textfieldController = TextEditingController();
 
+  setTimeBottomSheet(){
+    showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadiusValue),
+        ),
+        context: context,
+        builder: (context){
+          return ChooseTime();
+        });
+  }
   setPriorityBottomSheet(){
     showModalBottomSheet(
         isScrollControlled: true,
@@ -51,7 +66,19 @@ class _AddTaskState extends State<AddTask> {
         ),
         context: context,
         builder: (context){
-          return ChooseTime();
+          DateTime remainder = Provider.of<TasksProvider>(context).activeTask.remainder;
+          return CalenderBottomSheet(
+            btnText: 'Next',
+            onClick: (){
+              Navigator.pop(context);
+              setTimeBottomSheet();
+            },
+            initialSelectedDay: Provider.of<TasksProvider>(context).activeTask.remainder,
+            onDaySelected: (date, event, _){
+              if(date != remainder)
+                Provider.of<TasksProvider>(context, listen: false).setActiveTaskRemainder(date);
+            },
+          );
         });
   }
 
@@ -83,9 +110,9 @@ class _AddTaskState extends State<AddTask> {
       flagColor = lowPriority;
 
     //Date
-    if(activeTask.date.day == now.day) selectedDate = 'Today';
-    else if(activeTask.date.day == now.day + 1) selectedDate = 'Tomorrow';
-    else selectedDate = DateFormat('d MMM').format(activeTask.date);
+    if(activeTask.dueDate.day == now.day) selectedDate = 'Today';
+    else if(activeTask.dueDate.day == now.day + 1) selectedDate = 'Tomorrow';
+    else selectedDate = DateFormat('d MMM').format(activeTask.dueDate);
 
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -153,12 +180,27 @@ class _AddTaskState extends State<AddTask> {
                       ),
                     ),
                     SizedBox(width: 5,),
-                    IconButton(
-                        icon: Icon(
-                          Icons.add_alert,
-                          color: buttonColor,
+                    InkWell(
+                      onTap: setRemainderBottomSheet,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_alarm_sharp,
+                              color: buttonColor,
+                            ),
+                            SizedBox(width: 5,),
+                            Text(
+                              activeTask.remainder.difference(now).isNegative ||
+                                  activeTask.remainder == now? '' : 'ON',
+                              style: TextStyle(
+                                color: buttonColor,
+                              ),
+                            ),
+                          ],
                         ),
-                        onPressed: setRemainderBottomSheet,
+                      ),
                     ),
                   ],
                 ),
@@ -168,7 +210,7 @@ class _AddTaskState extends State<AddTask> {
               right: 10,
               bottom: 10,
               child: IconButton(
-                iconSize: 30,
+                iconSize: 28,
                 onPressed: (){
                   if(activeTask.name.length > 1) {
                     String temp = activeTask.name[0].toUpperCase() + activeTask.name.substring(1, activeTask.name.length);
