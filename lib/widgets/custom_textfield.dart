@@ -71,7 +71,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         ),
       ),
-      onChanged: (value){
+      onSaved: (value){
         widget.setValue(value);
       },
       validator: (value){

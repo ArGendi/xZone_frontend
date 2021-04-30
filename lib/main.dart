@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/screens/days_list.dart';
 import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
@@ -37,13 +38,14 @@ class _MyAppState extends State<MyApp> {
             color: backgroundColor,
           )
         ),
-        initialRoute: Tasks.id,
+        initialRoute: DaysList.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
           WelcomeScreen.id: (context) => WelcomeScreen(),
           RegisterScreen.id: (context) => RegisterScreen(),
           Tasks.id: (context) => Tasks(),
           AddTask.id: (context) => AddTask(),
+          DaysList.id: (context) => DaysList(),
         },
       ),
     );

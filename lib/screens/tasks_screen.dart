@@ -11,12 +11,14 @@ import 'package:provider/provider.dart';
 
 class Tasks extends StatefulWidget {
   static final String id = 'today tasks';
+
   @override
   _TasksState createState() => _TasksState();
 }
 
 class _TasksState extends State<Tasks> {
-  String date = DateFormat('EEEE, d MMM').format(DateTime.now());
+  Map data;
+  bool pageUpdated = false;
 
   addTaskBottomSheet() {
     showModalBottomSheet(
@@ -45,107 +47,113 @@ class _TasksState extends State<Tasks> {
 
   @override
   Widget build(BuildContext context) {
+    if(!pageUpdated){
+      data = ModalRoute.of(context).settings.arguments;
+      pageUpdated = true;
+    }
+    String date = DateFormat('EEEE, d MMM').format(data['date']);
+
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Image.asset(
-            'assets/images/manuel-will-gd3t5Dtbwkw-unsplash.jpg',
-            width: double.infinity,
-            height: double.infinity,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/wallpaper.jpg',),
             fit: BoxFit.cover,
           ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.arrow_back_ios),
-                          color: buttonColor,
-                        ),
-                        IconButton(
-                          onPressed: sortTasksBottomSheet,
-                          icon: Icon(Icons.sort),
-                          color: buttonColor,
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Text(
-                        'Today',
-                        style: TextStyle(
-                            fontSize: 32,
-                            color: whiteColor,
-                        ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.arrow_back_ios),
+                        color: buttonColor,
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Text(
-                        date,
-                        style: TextStyle(
-                          fontSize: 18,
+                      IconButton(
+                        onPressed: sortTasksBottomSheet,
+                        icon: Icon(Icons.sort),
+                        color: buttonColor,
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Text(
+                      data['day'],
+                      style: TextStyle(
+                          fontSize: 32,
                           color: whiteColor,
-                          fontFamily: 'Montserrat-Light'
-                        ),
                       ),
                     ),
-                    SizedBox(
-                      height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Text(
+                      date,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: whiteColor,
+                        fontFamily: 'Montserrat-Light'
+                      ),
                     ),
-                    Expanded(
-                      child: LayoutBuilder(
-                        builder: (BuildContext context, BoxConstraints constraints) {
-                          List<Task> items = Provider.of<TasksProvider>(context).items;
-                          List<Task> filteredItems = items.where(
-                                  (element) => element.dueDate.day == DateTime.now().day
-                          ).toList();
-                          if(filteredItems.length == 0){
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: SingleChildScrollView(
-                                child: Center(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Image.asset(
-                                        'assets/images/emptyTasks.png',
-                                        width: 300,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints constraints) {
+                        List<Task> items = Provider.of<TasksProvider>(context).items;
+                        List<Task> filteredItems = items.where(
+                                (element) => element.dueDate.day == data['date'].day
+                        ).toList();
+                        if(filteredItems.length == 0){
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: SingleChildScrollView(
+                              child: Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    Image.asset(
+                                      'assets/images/emptyTasks.png',
+                                      width: 300,
+                                    ),
+                                    Text(
+                                      'Empty Tasks',
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        color: whiteColor,
                                       ),
-                                      Text(
-                                        'Empty Tasks',
-                                        style: TextStyle(
-                                          fontSize: 22,
-                                          color: whiteColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            );
-                          }
-                          else return ListView.builder(
-                            itemCount: filteredItems.length,
-                            itemBuilder: (context, index){
-                              return TaskCard(task: filteredItems[index],);
-                            },
+                            ),
                           );
-                        },
-                      ),
-                    )
-                  ],
-                ),
+                        }
+                        else return ListView.builder(
+                          itemCount: filteredItems.length,
+                          itemBuilder: (context, index){
+                            return TaskCard(task: filteredItems[index],);
+                          },
+                        );
+                      },
+                    ),
+                  )
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 20),

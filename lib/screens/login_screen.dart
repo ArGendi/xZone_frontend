@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
+import 'package:xzone/screens/welcome_screen.dart';
+import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/custom_textfield.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   static final String id = 'login';
@@ -14,6 +18,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   String _email;
   String _password;
+  bool _showErrorMsg = false;
+  bool _loading = false;
+  String _errorMsg = '';
 
   _setEmail(String email){
     _email = email;
@@ -22,15 +29,37 @@ class _LoginScreenState extends State<LoginScreen> {
     _password = password;
   }
 
-  _trySubmit(){
+  _trySubmit() async{
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
     if(isValid){
-      print(_email);
-      print(_password);
-      Navigator.pushNamed(context, Tasks.id);
+      _formKey.currentState.save();
+      var webService = WebServices();
+      setState(() {_loading = true;});
+      try{
+        var response = await webService.post(
+            'http://xzoneapi.azurewebsites.net/api/v1/authentication/login',
+            {
+              "email": _email,
+              "password": _password,
+            }
+        );
+        if(response.statusCode >= 400){
+          setState(() {
+            _showErrorMsg = true;
+            _errorMsg = response.body;
+          });
+        }
+        else Navigator.pushNamedAndRemoveUntil(context, Tasks.id, (route) => false);
+        setState(() {_loading = false;});
+      }
+      catch(e){
+        print(e);
+        setState(() {
+          _errorMsg = e.toString();
+        });
+      }
     }
-    else print("Problem");
   }
 
   @override
@@ -74,7 +103,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontFamily: 'Montserrat-Medium'
                     ),
                   ),
-                  SizedBox(height: 40,),
+                  SizedBox(height: 20,),
+                  Text(
+                    _errorMsg,
+                    style: TextStyle(
+                      color: _showErrorMsg ? Colors.red : backgroundColor
+                    ),
+                  ),
+                  SizedBox(height: 20,),
                   Form(
                     key: _formKey,
                     child: Column(
@@ -125,13 +161,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: buttonColor,
                               borderRadius: BorderRadius.circular(borderRadiusValue),
                             ),
-                            child: Text(
+                            child: !_loading ? Text(
                               "Login",
                               style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
                                   fontFamily: "Montserrat-Medium"
                               ),
+                            ) : CircularProgressIndicator(
+                              strokeWidth: 3,
+                              valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
                             ),
                           ),
                         ),
