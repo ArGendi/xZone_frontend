@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/models/task.dart';
+import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/days_list.dart';
 import 'package:xzone/screens/login_screen.dart';
+import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/screens/welcome_screen.dart';
@@ -27,6 +29,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<TasksProvider>(
           create: (context) => TasksProvider(),
         ),
+        ChangeNotifierProvider<ProjectsProvider>(
+          create: (context) => ProjectsProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -46,6 +51,7 @@ class _MyAppState extends State<MyApp> {
           Tasks.id: (context) => Tasks(),
           AddTask.id: (context) => AddTask(),
           DaysList.id: (context) => DaysList(),
+          ProjectScreen.id: (context) => ProjectScreen(),
         },
       ),
     );

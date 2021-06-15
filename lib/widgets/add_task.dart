@@ -20,6 +20,10 @@ class AddTask extends StatefulWidget {
 class _AddTaskState extends State<AddTask> {
   bool firstTime = true;
   var textfieldController = TextEditingController();
+  IconData flag = Icons.outlined_flag;
+  Color flagColor = buttonColor;
+  var now = DateTime.now();
+  String selectedDate;
 
   setTimeBottomSheet(){
     showModalBottomSheet(
@@ -34,6 +38,7 @@ class _AddTaskState extends State<AddTask> {
         });
   }
   setPriorityBottomSheet(){
+    FocusScope.of(context).unfocus();
     showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: backgroundColor,
@@ -46,6 +51,7 @@ class _AddTaskState extends State<AddTask> {
         });
   }
   setDateBottomSheet(){
+    FocusScope.of(context).unfocus();
     showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: backgroundColor,
@@ -58,6 +64,7 @@ class _AddTaskState extends State<AddTask> {
         });
   }
   setRemainderBottomSheet(){
+    FocusScope.of(context).unfocus();
     showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: backgroundColor,
@@ -84,11 +91,7 @@ class _AddTaskState extends State<AddTask> {
 
   @override
   Widget build(BuildContext context) {
-    IconData flag = Icons.outlined_flag;
-    Color flagColor = buttonColor;
     Task activeTask = Provider.of<TasksProvider>(context).activeTask;
-    var now = DateTime.now();
-    String selectedDate;
 
     if(firstTime) textfieldController.text = activeTask.name;
     textfieldController.selection = TextSelection.fromPosition(TextPosition(offset: textfieldController.text.length));
@@ -108,6 +111,10 @@ class _AddTaskState extends State<AddTask> {
     }
     else if(activeTask.priority == 4)
       flagColor = lowPriority;
+    else {
+      flag = Icons.outlined_flag;
+      flagColor = buttonColor;
+    }
 
     //Date
     if(activeTask.dueDate.day == now.day) selectedDate = 'Today';
@@ -115,121 +122,104 @@ class _AddTaskState extends State<AddTask> {
     else selectedDate = DateFormat('d MMM').format(activeTask.dueDate);
 
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Card(
-        color: backgroundColor,
-        elevation: 0,
-        child: Stack(
-          children: <Widget>[
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  autofocus: true,
-                  cursorColor: Colors.white,
-                  controller: textfieldController,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(20),
-                    fillColor: backgroundColor,
-                    hintText: 'e.g. Drink water',
-                    hintStyle: TextStyle(
-                        color: greyColor,
-                    ),
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                  ),
-                  onChanged: (value){
-                    firstTime = false;
-                    Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(value);
-                  },
-                ),
-                Row(
-                  children: <Widget>[
-                    IconButton(
-                      onPressed: setPriorityBottomSheet,
-                      icon: Icon(
-                        flag,
-                        color: flagColor,
-                      ),
-                    ),
-                    SizedBox(width: 5,),
-                    InkWell(
-                      onTap: setDateBottomSheet,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.calendar_today,
-                              color: buttonColor,
-                            ),
-                            SizedBox(width: 8,),
-                            Text(
-                              selectedDate,
-                              style: TextStyle(
-                                color: buttonColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 5,),
-                    InkWell(
-                      onTap: setRemainderBottomSheet,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.access_alarm_sharp,
-                              color: buttonColor,
-                            ),
-                            SizedBox(width: 5,),
-                            Text(
-                              activeTask.remainder.difference(now).isNegative ||
-                                  activeTask.remainder == now? '' : 'ON',
-                              style: TextStyle(
-                                color: buttonColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+      padding: const EdgeInsets.all(5.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TextField(
+            autofocus: true,
+            cursorColor: Colors.white,
+            controller: textfieldController,
+            style: TextStyle(
+              color: Colors.white,
             ),
-            Positioned(
-              right: 10,
-              bottom: 10,
-              child: IconButton(
-                iconSize: 28,
-                onPressed: (){
-                  if(activeTask.name.length > 1) {
-                    String temp = activeTask.name[0].toUpperCase() + activeTask.name.substring(1, activeTask.name.length);
-                    Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(temp);
-                    Provider.of<TasksProvider>(context, listen: false)
-                        .addTask(activeTask);
-                    Provider.of<TasksProvider>(context, listen: false)
-                        .initializeActiveTask();
-                    textfieldController.clear();
-                  }
-                },
-                icon: Icon(
-                  Icons.add_circle,
-                  color: buttonColor,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(20),
+              fillColor: backgroundColor,
+              hintText: 'e.g. Drink water',
+              hintStyle: TextStyle(
+                  color: greyColor,
+              ),
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+            ),
+            onChanged: (value){
+              firstTime = false;
+              Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(value);
+            },
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: setPriorityBottomSheet,
+                    icon: Icon(
+                      flag,
+                      color: flagColor,
+                    ),
+                  ),
+                  SizedBox(width: 5,),
+                  InkWell(
+                    onTap: setDateBottomSheet,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.calendar_today,
+                            color: buttonColor,
+                          ),
+                          SizedBox(width: 8,),
+                          Text(
+                            selectedDate,
+                            style: TextStyle(
+                              color: buttonColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 5,),
+                  IconButton(
+                      icon: Icon(
+                        Icons.alarm_off,
+                        color: buttonColor,
+                      ),
+                      onPressed: setRemainderBottomSheet
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: IconButton(
+                  iconSize: 28,
+                  onPressed: (){
+                    if(activeTask.name.length > 1) {
+                      DateTime date = activeTask.dueDate;
+                      String temp = activeTask.name[0].toUpperCase() + activeTask.name.substring(1, activeTask.name.length);
+                      Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(temp);
+                      Provider.of<TasksProvider>(context, listen: false)
+                          .addTask(activeTask);
+                      Provider.of<TasksProvider>(context, listen: false)
+                          .initializeActiveTask();
+                      Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(date);
+                      textfieldController.clear();
+                    }
+                  },
+                  icon: Icon(
+                    Icons.add_circle,
+                    color: buttonColor,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }

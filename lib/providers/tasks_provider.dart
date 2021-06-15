@@ -3,7 +3,8 @@ import 'package:xzone/models/task.dart';
 
 class TasksProvider extends ChangeNotifier{
   Task _activeTask = Task();
-  List<Task> _items = List<Task>();
+  Task _recentDeletedTask = Task();
+  List<Task> _items = [];
   String _sortType = 'by Due Date';
 
   List get items {
@@ -11,6 +12,9 @@ class TasksProvider extends ChangeNotifier{
   }
   Task get activeTask{
     return _activeTask;
+  }
+  Task get recentDeletedTask{
+    return _recentDeletedTask;
   }
   String get sortType{
     return _sortType;
@@ -28,17 +32,11 @@ class TasksProvider extends ChangeNotifier{
     notifyListeners();
   }
   void setActiveTaskDueDate(DateTime date){
-    DateTime now = DateTime.now();
-    if(date.day < now.day)
-      _activeTask.dueDate = now;
-    else _activeTask.dueDate = date;
+    _activeTask.dueDate = date;
     notifyListeners();
   }
   void setActiveTaskRemainder(DateTime date){
-    DateTime now = DateTime.now();
-    if(date.difference(now).isNegative)
-      _activeTask.remainder = now;
-    else _activeTask.remainder = date;
+    _activeTask.remainder = date;
     notifyListeners();
   }
   void setActiveTaskPriority(int priority){
@@ -75,6 +73,16 @@ class TasksProvider extends ChangeNotifier{
   }
   void setSortType(String selectedType){
     _sortType = selectedType;
+    notifyListeners();
+  }
+  void moveTaskToRecentlyDeleted(Task task){
+    _recentDeletedTask = task;
+    _items.remove(task);
+    notifyListeners();
+  }
+  void returnBackDeletedTaskToItems(){
+    _items.add(_recentDeletedTask);
+    _recentDeletedTask = Task();
     notifyListeners();
   }
 

@@ -21,30 +21,23 @@ class _ChooseSortTypeState extends State<ChooseSortType> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Card(
-        color: backgroundColor,
-        elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              SortType(
-                text: 'by Due Date',
-                sortBy: sortByDate,
-                icon: Icons.date_range,
-              ),
-              SizedBox(height: 5,),
-              SortType(
-                text: 'by Priority',
-                sortBy: sortByPriority,
-                icon: Icons.flag,
-              ),
-            ],
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SortType(
+            text: 'by Due Date',
+            sortBy: sortByDate,
+            icon: Icons.date_range,
           ),
-        ),
+          SizedBox(height: 5,),
+          SortType(
+            text: 'by Priority',
+            sortBy: sortByPriority,
+            icon: Icons.flag,
+          ),
+        ],
       ),
     );
   }

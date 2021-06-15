@@ -11,7 +11,5 @@ class Task{
   Task(){
     name = '';
     priority = 100;
-    dueDate = DateTime.now();
-    remainder = DateTime.now();
   }
 }

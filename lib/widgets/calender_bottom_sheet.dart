@@ -15,37 +15,30 @@ class CalenderBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Card(
-        color: backgroundColor,
-        elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              Row(
-                children: [
-                  Expanded(child: SizedBox()),
-                  InkWell(
-                    onTap: onClick,
-                    child: Text(
-                      btnText,
-                      style: TextStyle(
-                        color: buttonColor,
-                        fontSize: 16,
-                      ),
-                    ),
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            children: [
+              Expanded(child: SizedBox()),
+              InkWell(
+                onTap: onClick,
+                child: Text(
+                  btnText,
+                  style: TextStyle(
+                    color: buttonColor,
+                    fontSize: 16,
                   ),
-                ],
-              ),
-              CustomCalender(
-                initialSelectedDay: initialSelectedDay,
-                onDaySelected: onDaySelected,
+                ),
               ),
             ],
           ),
-        ),
+          CustomCalender(
+            initialSelectedDay: initialSelectedDay,
+            onDaySelected: onDaySelected,
+          ),
+        ],
       ),
     );
   }

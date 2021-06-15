@@ -17,8 +17,9 @@ class TaskCard extends StatefulWidget {
 }
 
 class _TaskCardState extends State<TaskCard> {
-  bool isChecked = false;
-
+  _completeTask(BuildContext ctx){
+    Provider.of<TasksProvider>(ctx, listen: false).moveTaskToRecentlyDeleted(widget.task);
+  }
   _deleteTask(){
     Provider.of<TasksProvider>(context, listen: false).removeTask(widget.task);
   }
@@ -36,6 +37,32 @@ class _TaskCardState extends State<TaskCard> {
           return AddTask();
     });
   }
+  _showSnackBar(BuildContext ctx){
+    _completeTask(ctx);
+    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+      //width: MediaQuery.of(context).size.width * 0.6,
+      //behavior: SnackBarBehavior.floating,
+      duration: Duration(seconds: 6),
+      backgroundColor: backgroundColor,
+      content: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'Yaaah!! , You complete the task',
+          style: TextStyle(
+              fontSize: 15
+          ),
+        ),
+      ),
+      action: SnackBarAction(
+        label: 'Undo',
+        textColor: buttonColor,
+        onPressed: (){
+          Provider.of<TasksProvider>(ctx, listen: false).returnBackDeletedTaskToItems();
+        },
+      ),
+    ));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,17 +79,19 @@ class _TaskCardState extends State<TaskCard> {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           child: Row(
             children: <Widget>[
-              IconButton(
-                iconSize: 20,
-                onPressed: (){
-                  setState(() {
-                    isChecked = !isChecked;
-                  });
+              Builder(
+                builder: (BuildContext ctx) {
+                  return IconButton(
+                    iconSize: 20,
+                    onPressed: (){
+                      _showSnackBar(ctx);
+                    },
+                    icon: Icon(
+                      Icons.panorama_fish_eye,
+                      color: whiteColor,
+                    ),
+                  );
                 },
-                icon: Icon(
-                  !isChecked ? Icons.panorama_fish_eye : Icons.check_circle,
-                  color: whiteColor,
-                ),
               ),
               Expanded(
                 child: SingleChildScrollView(

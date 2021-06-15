@@ -98,7 +98,7 @@ class _TasksState extends State<Tasks> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
-                      date,
+                      data['day'] == 'Future'? '': date,
                       style: TextStyle(
                         fontSize: 18,
                         color: whiteColor,
@@ -113,9 +113,17 @@ class _TasksState extends State<Tasks> {
                     child: LayoutBuilder(
                       builder: (BuildContext context, BoxConstraints constraints) {
                         List<Task> items = Provider.of<TasksProvider>(context).items;
-                        List<Task> filteredItems = items.where(
-                                (element) => element.dueDate.day == data['date'].day
-                        ).toList();
+                        List<Task> filteredItems;
+                        if(data['day'] != 'Future') {
+                          filteredItems = items.where(
+                                  (element) => element.dueDate.day == data['date'].day
+                          ).toList();
+                        }
+                        else {
+                          filteredItems = items.where(
+                                  (element) => element.dueDate.day >= data['date'].day
+                          ).toList();
+                        }
                         if(filteredItems.length == 0){
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -156,9 +164,12 @@ class _TasksState extends State<Tasks> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: 10),
         child: FloatingActionButton(
-          onPressed: addTaskBottomSheet,
+          onPressed: (){
+            Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(data['date']);
+            addTaskBottomSheet();
+          },
           child: Icon(Icons.add),
           backgroundColor: buttonColor,
         ),
