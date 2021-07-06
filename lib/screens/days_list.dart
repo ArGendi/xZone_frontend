@@ -6,11 +6,14 @@ import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
+import 'package:xzone/servcies/tasks_search.dart';
 import 'package:xzone/widgets/add_project.dart';
 import 'package:xzone/widgets/add_task.dart';
 import 'package:xzone/widgets/project_card.dart';
 import 'package:xzone/widgets/tasks_day.dart';
 import 'package:provider/provider.dart';
+
+import 'login_screen.dart';
 
 class DaysList extends StatefulWidget {
   static final String id = 'days list';
@@ -72,6 +75,7 @@ class _DaysListState extends State<DaysList> {
 
   @override
   Widget build(BuildContext context) {
+    List<Project> projectsItems =  Provider.of<ProjectsProvider>(context).items;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -82,7 +86,9 @@ class _DaysListState extends State<DaysList> {
                 Icons.search,
                 color: whiteColor,
               ),
-              onPressed: (){}
+              onPressed: (){
+                showSearch(context: context, delegate: TasksSearch());
+              }
           )
         ],
       ),
@@ -165,43 +171,39 @@ class _DaysListState extends State<DaysList> {
               ],
             ),
             SizedBox(height: 20,),
-            LayoutBuilder(
-              builder: (context, con){
-                List<Project> projectsItems =  Provider.of<ProjectsProvider>(context).items;
-                if(projectsItems.isEmpty){
-                  return Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/project.png',
-                        width: 250,
-                      ),
-                      Text(
-                        'No Projects',
-                        style: TextStyle(
-                          color: whiteColor,
-                          fontSize: 18
-                        ),
-                      ),
-                    ],
-                  );
-                }
-                else return Column(
+            if(projectsItems.isEmpty)
+              Column(
+                children: [
+                  Image.asset(
+                    'assets/images/project.png',
+                    width: 250,
+                  ),
+                  Text(
+                    'No Projects',
+                    style: TextStyle(
+                        color: whiteColor,
+                        fontSize: 18
+                    ),
+                  ),
+                ],
+              )
+            else ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount:  projectsItems.length,
+              itemBuilder: (ctx, index){
+                return Column(
                   children: [
-                    for(var item in projectsItems)
-                      InkWell(
-                        onTap: (){
-                          Navigator.pushNamed(context, ProjectScreen.id);
-                        },
-                        child: Column(
-                          children: [
-                            ProjectCard(text: item.name,),
-                            Divider(
-                              color: greyColor,
-                              height: 30,
-                            )
-                          ],
-                        ),
-                      )
+                    ProjectCard(
+                      text: projectsItems[index].name,
+                      onClick: (){
+                        Navigator.pushNamed(context, ProjectScreen.id);
+                      },
+                    ),
+                    Divider(
+                      color: greyColor,
+                      height: 30,
+                    )
                   ],
                 );
               },

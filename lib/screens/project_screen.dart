@@ -9,10 +9,12 @@ import 'package:xzone/widgets/task_card.dart';
 
 class ProjectScreen extends StatelessWidget {
   static final String id = 'project screen';
+  final Project project;
+
+  const ProjectScreen({Key key, this.project}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var projectsProvider =  Provider.of<ProjectsProvider>(context);
     return Scaffold(
       body: CarouselSlider.builder(
         options: CarouselOptions(
@@ -26,33 +28,10 @@ class ProjectScreen extends StatelessWidget {
           autoPlayCurve: Curves.fastOutSlowIn,
           enlargeCenterPage: false,
         ),
-        itemCount: projectsProvider.items.length,
+        itemCount: project.sections.length,
         itemBuilder: (BuildContext context, int index, int realIndex) {
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 15),
-                    child: Text(
-                      'P1',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: whiteColor,
-                      ),
-                    ),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemBuilder:(context, index){
-                      return Container();
-                    },
-                  )
-                ],
-              ),
-            ),
+          return Center(
+            child: Text('Hi',style: TextStyle(color: whiteColor),),
           );
         },
       ),
