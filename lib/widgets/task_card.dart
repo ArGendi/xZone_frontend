@@ -74,6 +74,7 @@ class _TaskCardState extends State<TaskCard> {
         color: backgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadiusValue),
+          side: BorderSide(color: whiteColor, width: 2)
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),

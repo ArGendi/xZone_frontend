@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:xzone/models/project.dart';
 import 'package:xzone/models/task.dart';
+import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/widgets/calender_bottom_sheet.dart';
@@ -12,6 +14,11 @@ import 'package:intl/intl.dart';
 
 class AddTask extends StatefulWidget {
   static final String id = 'add task';
+  final bool inSection;
+  final int pIndex;
+  final int sIndex;
+
+  const AddTask({Key key, this.inSection = false, this.pIndex, this.sIndex}) : super(key: key);
 
   @override
   _AddTaskState createState() => _AddTaskState();
@@ -203,7 +210,11 @@ class _AddTaskState extends State<AddTask> {
                       DateTime date = activeTask.dueDate;
                       String temp = activeTask.name[0].toUpperCase() + activeTask.name.substring(1, activeTask.name.length);
                       Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(temp);
-                      Provider.of<TasksProvider>(context, listen: false)
+                      if(widget.inSection)
+                        Provider.of<ProjectsProvider>(context, listen: false)
+                            .addTaskToSection(widget.pIndex, widget.sIndex, activeTask);
+                      else
+                        Provider.of<TasksProvider>(context, listen: false)
                           .addTask(activeTask);
                       Provider.of<TasksProvider>(context, listen: false)
                           .initializeActiveTask();

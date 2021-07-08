@@ -197,7 +197,12 @@ class _DaysListState extends State<DaysList> {
                     ProjectCard(
                       text: projectsItems[index].name,
                       onClick: (){
-                        Navigator.pushNamed(context, ProjectScreen.id);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProjectScreen(pIndex: index,),
+                          ),
+                        );
                       },
                     ),
                     Divider(

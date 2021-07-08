@@ -9,7 +9,7 @@ class Task{
   int priority;
 
   Task(){
-    name = '';
+    name = 'Lolen';
     priority = 100;
   }
 }
