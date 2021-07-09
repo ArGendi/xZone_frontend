@@ -31,7 +31,7 @@ class _ChooseSortTypeState extends State<ChooseSortType> {
             sortBy: sortByDate,
             icon: Icons.date_range,
           ),
-          SizedBox(height: 5,),
+          SizedBox(height: 10,),
           SortType(
             text: 'by Priority',
             sortBy: sortByPriority,

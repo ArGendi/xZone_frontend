@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:xzone/models/project.dart';
+import 'package:provider/provider.dart';
+import 'package:xzone/models/section.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import '../constants.dart';
-import 'package:provider/provider.dart';
 
-class AddProject extends StatelessWidget {
+class AddSection extends StatelessWidget {
   final Key tKey;
-  final bool isEdit;
   final int pIndex;
+  final int sIndex;
+  final bool isEdit;
 
-  const AddProject({Key key, this.tKey, this.isEdit = false, this.pIndex}) : super(key: key);
-
+  const AddSection({Key key, this.tKey, this.pIndex, this.sIndex, this.isEdit = false}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          !isEdit ? 'Add Project' : 'Edit Project',
+          !isEdit ?'Add Section' : 'Edit Section',
           style: TextStyle(
-            fontSize: 18,
-            color: whiteColor
+              fontSize: 18,
+              color: whiteColor
           ),
         ),
         SizedBox(height: 20,),
@@ -35,14 +35,14 @@ class AddProject extends StatelessWidget {
             decoration: InputDecoration(
               contentPadding: EdgeInsets.all(20),
               fillColor: backgroundColor,
-              hintText: 'Project Name',
+              hintText: 'Section Name',
               hintStyle: TextStyle(
                 color: greyColor,
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: greyColor,
-                ),
+                  borderSide: BorderSide(
+                    color: greyColor,
+                  )
               ),
               enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -54,18 +54,18 @@ class AddProject extends StatelessWidget {
             ),
             onSaved: (value){
               if(!isEdit) {
-                Project project = Project(value);
+                Section section = new Section(value);
                 Provider.of<ProjectsProvider>(context, listen: false)
-                    .addProject(project);
+                    .addSection(pIndex, section);
               }
-              else{
+              else {
                 Provider.of<ProjectsProvider>(context, listen: false)
-                    .editProjectName(pIndex, value);
+                    .editSection(pIndex, sIndex, value);
               }
               Navigator.pop(context);
             },
             validator: (value){
-              if(value.isEmpty) return 'Enter project name';
+              if(value.isEmpty) return 'Enter section name';
               return null;
             },
           ),

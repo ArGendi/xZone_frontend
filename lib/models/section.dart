@@ -4,7 +4,11 @@ import 'package:xzone/models/task.dart';
 class Section {
   int id;
   String name;
-  List<Task> tasks;
+  List<Task> tasks = [];
   int parentProjectID;
   Project parentProject;
+
+  Section(String name){
+    this.name = name;
+  }
 }

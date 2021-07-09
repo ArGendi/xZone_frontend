@@ -8,9 +8,6 @@ import 'package:xzone/widgets/choose_sort_type.dart';
 import 'package:xzone/widgets/task_card.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:xzone/repositories/DataBase.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:xzone/servcies/taskService.dart';
 
 class Tasks extends StatefulWidget {
   static final String id = 'today tasks';
@@ -31,11 +28,10 @@ class _TasksState extends State<Tasks> {
           borderRadius: BorderRadius.circular(borderRadiusValue),
         ),
         context: context,
-        builder: (context) {
+        builder: (context){
           return AddTask();
         });
   }
-
   sortTasksBottomSheet() {
     showModalBottomSheet(
         isScrollControlled: true,
@@ -44,36 +40,14 @@ class _TasksState extends State<Tasks> {
           borderRadius: BorderRadius.circular(borderRadiusValue),
         ),
         context: context,
-        builder: (context) {
+        builder: (context){
           return ChooseSortType();
         });
   }
 
-  var _taskservice = Taskservice();
-  var task = Task();
-  getTasks() async {
-    var tasks = await _taskservice.readtasks();
-    tasks.forEach((task) {
-      var mytask = Task();
-      mytask.id = task['id'];
-      mytask.name = task['name'];
-      mytask.userId = task['userid'];
-      mytask.parentId = task['parentid'];
-      mytask.priority = task['priority'];
-      mytask.dueDate = DateTime.parse(task['dueDate']);
-      Provider.of<TasksProvider>(context).addTask(mytask);
-    });
-  }
-
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getTasks();
-  }
-
   Widget build(BuildContext context) {
-    if (!pageUpdated) {
+    if(!pageUpdated){
       data = ModalRoute.of(context).settings.arguments;
       pageUpdated = true;
     }
@@ -83,9 +57,7 @@ class _TasksState extends State<Tasks> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(
-              'assets/images/wallpaper.jpg',
-            ),
+            image: AssetImage('assets/images/wallpaper.jpg',),
             fit: BoxFit.cover,
           ),
         ),
@@ -118,19 +90,20 @@ class _TasksState extends State<Tasks> {
                     child: Text(
                       data['day'],
                       style: TextStyle(
-                        fontSize: 32,
-                        color: whiteColor,
+                          fontSize: 32,
+                          color: whiteColor,
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
-                      data['day'] == 'Future' ? '' : date,
+                      data['day'] == 'Future'? '': date,
                       style: TextStyle(
-                          fontSize: 18,
-                          color: whiteColor,
-                          fontFamily: 'Montserrat-Light'),
+                        fontSize: 18,
+                        color: whiteColor,
+                        fontFamily: 'Montserrat-Light'
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -138,23 +111,20 @@ class _TasksState extends State<Tasks> {
                   ),
                   Expanded(
                     child: LayoutBuilder(
-                      builder:
-                          (BuildContext context, BoxConstraints constraints) {
-                        List<Task> items =
-                            Provider.of<TasksProvider>(context).items;
+                      builder: (BuildContext context, BoxConstraints constraints) {
+                        List<Task> items = Provider.of<TasksProvider>(context).items;
                         List<Task> filteredItems;
-                        if (data['day'] != 'Future') {
-                          filteredItems = items
-                              .where((element) =>
-                                  element.dueDate.day == data['date'].day)
-                              .toList();
-                        } else {
-                          filteredItems = items
-                              .where((element) =>
-                                  element.dueDate.day >= data['date'].day)
-                              .toList();
+                        if(data['day'] != 'Future') {
+                          filteredItems = items.where(
+                                  (element) => element.dueDate.day == data['date'].day
+                          ).toList();
                         }
-                        if (filteredItems.length == 0) {
+                        else {
+                          filteredItems = items.where(
+                                  (element) => element.dueDate.day >= data['date'].day
+                          ).toList();
+                        }
+                        if(filteredItems.length == 0){
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             child: SingleChildScrollView(
@@ -177,15 +147,16 @@ class _TasksState extends State<Tasks> {
                               ),
                             ),
                           );
-                        } else
-                          return ListView.builder(
-                            itemCount: filteredItems.length,
-                            itemBuilder: (context, index) {
-                              return TaskCard(
-                                task: filteredItems[index],
-                              );
-                            },
-                          );
+                        }
+                        else return ListView.builder(
+                          itemCount: filteredItems.length,
+                          itemBuilder: (context, index){
+                            return TaskCard(
+                              task: filteredItems[index],
+                              bgColor: backgroundColor,
+                            );
+                          },
+                        );
                       },
                     ),
                   )
@@ -198,9 +169,8 @@ class _TasksState extends State<Tasks> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: FloatingActionButton(
-          onPressed: () {
-            Provider.of<TasksProvider>(context, listen: false)
-                .setActiveTaskDueDate(data['date']);
+          onPressed: (){
+            Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(data['date']);
             addTaskBottomSheet();
           },
           child: Icon(Icons.add),
