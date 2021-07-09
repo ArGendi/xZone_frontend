@@ -7,15 +7,17 @@ import '../constants.dart';
 class AddSection extends StatelessWidget {
   final Key tKey;
   final int pIndex;
+  final int sIndex;
+  final bool isEdit;
 
-  const AddSection({Key key, this.tKey, this.pIndex}) : super(key: key);
+  const AddSection({Key key, this.tKey, this.pIndex, this.sIndex, this.isEdit = false}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Add Section',
+          !isEdit ?'Add Section' : 'Edit Section',
           style: TextStyle(
               fontSize: 18,
               color: whiteColor
@@ -51,8 +53,15 @@ class AddSection extends StatelessWidget {
               disabledBorder: InputBorder.none,
             ),
             onSaved: (value){
-              Section section = new Section(value);
-              Provider.of<ProjectsProvider>(context, listen: false).addSection(pIndex, section);
+              if(!isEdit) {
+                Section section = new Section(value);
+                Provider.of<ProjectsProvider>(context, listen: false)
+                    .addSection(pIndex, section);
+              }
+              else {
+                Provider.of<ProjectsProvider>(context, listen: false)
+                    .editSection(pIndex, sIndex, value);
+              }
               Navigator.pop(context);
             },
             validator: (value){

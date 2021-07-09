@@ -8,8 +8,10 @@ import 'package:xzone/models/project.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/widgets/add_project.dart';
 import 'package:xzone/widgets/add_section.dart';
 import 'package:xzone/widgets/add_task.dart';
+import 'package:xzone/widgets/more_section_options.dart';
 import 'package:xzone/widgets/task_card.dart';
 
 class ProjectScreen extends StatefulWidget {
@@ -80,12 +82,74 @@ class _ProjectScreenState extends State<ProjectScreen> {
     );
   }
 
+  moreOptionsBottomSheet(int sIndex) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadiusValue),
+        ),
+        context: context,
+        builder: (context){
+          return MoreSectionOptions(
+            pIndex: widget.pIndex,
+            sIndex: sIndex,
+          );
+        });
+  }
+
+  showEditProjectDialog(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: backgroundColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(borderRadiusValue))
+          ),
+          content: AddProject(
+            tKey: globalKey,
+            isEdit: true,
+            pIndex: widget.pIndex,
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextButton(
+                  onPressed: (){
+                    bool valid = globalKey.currentState.validate();
+                    if(valid){
+                      FocusScope.of(context).unfocus();
+                      globalKey.currentState.save();
+                    }
+                  },
+                  child: Text(
+                    'Edit',
+                    style: TextStyle(
+                        color: buttonColor
+                    ),
+                  )
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Project project = Provider.of<ProjectsProvider>(context).items[widget.pIndex];
     return Scaffold(
       appBar: AppBar(
+        elevation: 5,
         title: Text(project.name),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: showEditProjectDialog,
+          )
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -108,19 +172,33 @@ class _ProjectScreenState extends State<ProjectScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    project.sections[index].name,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: whiteColor,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        project.sections[index].name,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: whiteColor,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.more_vert, color: whiteColor,),
+                        onPressed: (){
+                          moreOptionsBottomSheet(index);
+                        },
+                      )
+                    ],
                   ),
                   SizedBox(height: 10,),
                   ListView.builder(
                     shrinkWrap: true,
                     itemCount: project.sections[index].tasks.length,
                     itemBuilder: (ctx, lvIndex){
-                      return TaskCard(task: project.sections[index].tasks[lvIndex],);
+                      return TaskCard(
+                        task: project.sections[index].tasks[lvIndex],
+                        bgColor: Colors.grey[700],
+                      );
                     },
                   ),
                   SizedBox(height: 10,),

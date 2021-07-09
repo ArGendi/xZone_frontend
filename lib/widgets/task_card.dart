@@ -9,8 +9,9 @@ import 'add_task.dart';
 
 class TaskCard extends StatefulWidget {
   final Task task;
+  final Color bgColor;
 
-  const TaskCard({Key key, this.task}) : super(key: key);
+  const TaskCard({Key key, @required this.task,@required this.bgColor}) : super(key: key);
 
   @override
   _TaskCardState createState() => _TaskCardState();
@@ -71,10 +72,9 @@ class _TaskCardState extends State<TaskCard> {
       actionExtentRatio: 0.20,
       child: Card(
         elevation: 0,
-        color: backgroundColor,
+        color: widget.bgColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadiusValue),
-          side: BorderSide(color: whiteColor, width: 2)
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
@@ -84,9 +84,7 @@ class _TaskCardState extends State<TaskCard> {
                 builder: (BuildContext ctx) {
                   return IconButton(
                     iconSize: 20,
-                    onPressed: (){
-                      _showSnackBar(ctx);
-                    },
+                    onPressed: (){},
                     icon: Icon(
                       Icons.panorama_fish_eye,
                       color: whiteColor,

@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 
 class AddProject extends StatelessWidget {
   final Key tKey;
+  final bool isEdit;
+  final int pIndex;
 
-  const AddProject({Key key, this.tKey}) : super(key: key);
+  const AddProject({Key key, this.tKey, this.isEdit = false, this.pIndex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,7 @@ class AddProject extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Add Project',
+          !isEdit ? 'Add Project' : 'Edit Project',
           style: TextStyle(
             fontSize: 18,
             color: whiteColor
@@ -40,7 +42,7 @@ class AddProject extends StatelessWidget {
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: greyColor,
-                )
+                ),
               ),
               enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -51,8 +53,15 @@ class AddProject extends StatelessWidget {
               disabledBorder: InputBorder.none,
             ),
             onSaved: (value){
-              Project project = Project(value);
-              Provider.of<ProjectsProvider>(context, listen: false).addProject(project);
+              if(!isEdit) {
+                Project project = Project(value);
+                Provider.of<ProjectsProvider>(context, listen: false)
+                    .addProject(project);
+              }
+              else{
+                Provider.of<ProjectsProvider>(context, listen: false)
+                    .editProjectName(pIndex, value);
+              }
               Navigator.pop(context);
             },
             validator: (value){

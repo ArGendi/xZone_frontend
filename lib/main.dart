@@ -49,7 +49,6 @@ class _MyAppState extends State<MyApp> {
           WelcomeScreen.id: (context) => WelcomeScreen(),
           RegisterScreen.id: (context) => RegisterScreen(),
           Tasks.id: (context) => Tasks(),
-          AddTask.id: (context) => AddTask(),
           DaysList.id: (context) => DaysList(),
           ProjectScreen.id: (context) => ProjectScreen(),
         },

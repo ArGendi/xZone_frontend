@@ -151,7 +151,10 @@ class _TasksState extends State<Tasks> {
                         else return ListView.builder(
                           itemCount: filteredItems.length,
                           itemBuilder: (context, index){
-                            return TaskCard(task: filteredItems[index],);
+                            return TaskCard(
+                              task: filteredItems[index],
+                              bgColor: backgroundColor,
+                            );
                           },
                         );
                       },

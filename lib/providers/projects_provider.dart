@@ -22,4 +22,20 @@ class ProjectsProvider extends ChangeNotifier{
     _items[pIndex].sections.add(section);
     notifyListeners();
   }
+  editProjectName(int pIndex, String newName){
+    _items[pIndex].name = newName;
+    notifyListeners();
+  }
+  removeProject(int pIndex){
+    _items.removeAt(pIndex);
+    notifyListeners();
+  }
+  editSection(int pIndex, int sIndex, String newName){
+    _items[pIndex].sections[sIndex].name = newName;
+    notifyListeners();
+  }
+  removeSection(int pIndex, int sIndex){
+    _items[pIndex].sections.removeAt(sIndex);
+    notifyListeners();
+  }
 }
