@@ -1,4 +1,4 @@
-import 'package:xzone/models/section.dart';
+import 'section.dart';
 
 class Project {
   int id;
@@ -7,6 +7,6 @@ class Project {
   List<Section> sections;
 
   Project(String name){
-    this.name = name;
+     this.name = name;
   }
 }

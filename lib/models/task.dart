@@ -1,4 +1,4 @@
-class Task{
+class Task {
   int id;
   int userId;
   int parentId;
@@ -8,8 +8,20 @@ class Task{
   DateTime completeDate;
   int priority;
 
-  Task(){
+  Task() {
     name = '';
     priority = 100;
+  }
+  TaskMapping() {
+    var mapping = Map<String, dynamic>();
+    mapping['id'] = id;
+    mapping['name'] = name;
+    mapping['userid'] = userId;
+    mapping['parentid'] = parentId;
+    mapping['dueDate'] = dueDate.toString();
+    mapping['completeDate'] = completeDate.toString();
+    mapping['remainder'] = remainder.toString();
+    mapping['priority'] = priority;
+    return mapping;
   }
 }

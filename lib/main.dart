@@ -11,6 +11,8 @@ import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/screens/welcome_screen.dart';
 import 'package:xzone/widgets/add_task.dart';
+import 'package:xzone/providers/zones_provider.dart';
+import 'package:xzone/screens/Neewsfeed.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,26 +34,28 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<ProjectsProvider>(
           create: (context) => ProjectsProvider(),
         ),
+        ChangeNotifierProvider<ZoneProvider>(
+          create: (context) => ZoneProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'xZone',
         theme: ThemeData(
-          fontFamily: 'Montserrat-Medium',
-          scaffoldBackgroundColor: backgroundColor,
-          appBarTheme: AppBarTheme(
-            color: backgroundColor,
-          )
-        ),
+            fontFamily: 'Montserrat-Medium',
+            scaffoldBackgroundColor: backgroundColor,
+            appBarTheme: AppBarTheme(
+              color: backgroundColor,
+            )),
         initialRoute: DaysList.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
           WelcomeScreen.id: (context) => WelcomeScreen(),
           RegisterScreen.id: (context) => RegisterScreen(),
           Tasks.id: (context) => Tasks(),
-          AddTask.id: (context) => AddTask(),
           DaysList.id: (context) => DaysList(),
           ProjectScreen.id: (context) => ProjectScreen(),
+          Neewsfeed.id: (contetx) => Neewsfeed(),
         },
       ),
     );
