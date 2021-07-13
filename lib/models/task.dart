@@ -7,10 +7,16 @@ class Task {
   DateTime remainder;
   DateTime completeDate;
   int priority;
+  int sectionId;
+  int projectId;
 
   Task() {
     name = '';
     priority = 100;
+    DateTime now = DateTime.now();
+    id = now.hashCode;
+    sectionId = -1;
+    projectId = -1;
   }
   TaskMapping() {
     var mapping = Map<String, dynamic>();

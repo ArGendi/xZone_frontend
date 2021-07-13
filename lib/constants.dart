@@ -31,3 +31,8 @@ const borderRadiusValue = 12.0;
 final priority1Color = buttonColor;
 final priority2Color = whiteColor;
 final lowPriority = greyColor;
+
+//DB tables names
+const String tasksTable = 'tasks';
+const String sectionsTable = 'sections';
+const String projectsTable = 'projects';

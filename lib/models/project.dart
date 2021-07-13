@@ -8,5 +8,7 @@ class Project {
 
   Project(String name){
      this.name = name;
+     DateTime now = DateTime.now();
+     id = now.hashCode;
   }
 }

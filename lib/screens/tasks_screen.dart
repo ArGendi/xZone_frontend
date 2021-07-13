@@ -182,6 +182,7 @@ class _TasksState extends State<Tasks> {
                             itemCount: filteredItems.length,
                             itemBuilder: (context, index) {
                               return TaskCard(
+                                bgColor: backgroundColor,
                                 task: filteredItems[index],
                               );
                             },
