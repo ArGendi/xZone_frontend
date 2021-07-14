@@ -75,4 +75,14 @@ class DBHelper {
     List<Map> result = await dbClient.rawQuery('SELECT * FROM $tasksTable WHERE sectionId=? AND projectId=?', [sectionId, projectId]);
     return result;
   }
+
+  Future<void> deleteAllRowsRelatedToProject(String table, int id) async{
+    var dbClient = await db;
+    await dbClient.delete(table, where: 'projectId = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteAllRowsRelatedToSection(String table, int id) async{
+    var dbClient = await db;
+    await dbClient.delete(table, where: 'sectionId = ?', whereArgs: [id]);
+  }
 }

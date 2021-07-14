@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:xzone/helpers/db_helper.dart';
 import 'package:xzone/models/project.dart';
@@ -92,10 +94,13 @@ class ProjectsProvider extends ChangeNotifier{
       'name': newName,
     });
   }
-  removeProject(int pIndex){
+  removeProject(int pIndex) async{
+    int projectId = _items[pIndex].id;
     _items.removeAt(pIndex);
     notifyListeners();
-    _dbHelper.deleteRow(projectsTable, _items[pIndex].id);
+    await _dbHelper.deleteRow(projectsTable, projectId);
+    await _dbHelper.deleteAllRowsRelatedToProject(sectionsTable, projectId);
+    await _dbHelper.deleteAllRowsRelatedToProject(tasksTable, projectId);
   }
   editSection(int pIndex, int sIndex, String newName){
     _items[pIndex].sections[sIndex].name = newName;
@@ -105,9 +110,11 @@ class ProjectsProvider extends ChangeNotifier{
       'projectId': _items[pIndex].id,
     });
   }
-  removeSection(int pIndex, int sIndex){
+  removeSection(int pIndex, int sIndex) async{
+    int sectionID = _items[pIndex].sections[sIndex].id;
     _items[pIndex].sections.removeAt(sIndex);
     notifyListeners();
-    _dbHelper.deleteRow(sectionsTable, _items[pIndex].sections[sIndex].id);
+    await _dbHelper.deleteRow(sectionsTable, sectionID);
+    await _dbHelper.deleteAllRowsRelatedToSection(tasksTable, sectionID);
   }
 }
