@@ -3,6 +3,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'dart:io' as io;
 
+import 'package:xzone/constants.dart';
+
 class DBHelper {
   static sql.Database _db;
   static const String DB_NAME = 'xZone';
@@ -54,5 +56,23 @@ class DBHelper {
         where: 'id = ?',
         whereArgs: [id]
     );
+  }
+
+  Future<List<Map>> getNormalTasks () async{
+    var dbClient = await db;
+    List<Map> result = await dbClient.rawQuery('SELECT * FROM $tasksTable WHERE projectId=?', [0]);
+    return result;
+  }
+
+  Future<List<Map>> getSectionsOfProject (int id) async{
+    var dbClient = await db;
+    List<Map> result = await dbClient.rawQuery('SELECT * FROM $sectionsTable WHERE projectId=?', [id]);
+    return result;
+  }
+
+  Future<List<Map>> getTasksOfSection (int sectionId, int projectId) async{
+    var dbClient = await db;
+    List<Map> result = await dbClient.rawQuery('SELECT * FROM $tasksTable WHERE sectionId=? AND projectId=?', [sectionId, projectId]);
+    return result;
   }
 }

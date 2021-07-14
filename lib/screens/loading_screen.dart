@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/helpers/db_helper.dart';
 import 'package:xzone/models/task.dart';
+import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/days_list.dart';
 import '../constants.dart';
@@ -17,7 +18,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   DBHelper _dbHelper = DBHelper();
 
   _getDataFromOfflineDB() async{
-    List<Task> projectTasks = await Provider.of<TasksProvider>(context, listen: false)
+    await Provider.of<TasksProvider>(context, listen: false)
+        .fetchAndSetData();
+    await Provider.of<ProjectsProvider>(context, listen: false)
         .fetchAndSetData();
     Navigator.pushReplacementNamed(context, DaysList.id);
   }

@@ -26,9 +26,8 @@ class TasksProvider extends ChangeNotifier {
     return _sortType;
   }
 
-  Future<List<Task>> fetchAndSetData() async{
-    var tasksData = await _dbHelper.getData(tasksTable);
-    List<Task> projectTasks = [];
+  Future<void> fetchAndSetData() async{
+    var tasksData = await _dbHelper.getNormalTasks();
     for(Map item in tasksData){
       Task task = new Task();
       task.id = item['id'];
@@ -37,17 +36,9 @@ class TasksProvider extends ChangeNotifier {
       task.name = item['name'];
       task.dueDate = DateTime.parse(item['dueDate']);
       task.priority = item['priority'];
-      if(item['projectId'] == 0){
-        task.projectId = task.sectionId = 0;
-        _items.add(task);
-      }
-      else{
-        task.projectId = item['projectId'];
-        task.sectionId = item['sectionId'];
-        projectTasks.add(task);
-      }
+      task.projectId = task.sectionId = 0;
+      _items.add(task);
     }
-    return projectTasks;
   }
 
   void addTask(Task task) {

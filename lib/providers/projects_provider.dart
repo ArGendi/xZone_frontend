@@ -14,13 +14,36 @@ class ProjectsProvider extends ChangeNotifier{
     return _items;
   }
 
-  Future<void> fetchAndSetData(List<Task> projectTasks) async{
-    var sectionsData = await _dbHelper.getData(sectionsTable);
+  Future<void> fetchAndSetData() async{
     var projectsData = await _dbHelper.getData(projectsTable);
-    List<Section> sections = [];
-    for(Map item in sectionsData){
-      Section section = new Section(item['name']);
-      section.id = item['id'];
+    ///Projects
+    for(Map item in projectsData){
+      Project project = new Project(item['name']);
+      project.id = item['id'];
+      project.userID = item['userId'];
+      var sectionsData = await _dbHelper.getSectionsOfProject(project.id);
+      ///Sections
+      for(Map sectionItem in sectionsData){
+        Section section = new Section(sectionItem['name']);
+        section.id = sectionItem['id'];
+        section.parentProjectID = sectionItem['projectId'];
+        var tasksData = await _dbHelper.getTasksOfSection(section.id, project.id);
+        ///Tasks
+        for(Map taskItem in tasksData){
+          Task task = new Task();
+          task.id = taskItem['id'];
+          task.userId = taskItem['userId'];
+          task.parentId = taskItem['parentId'];
+          task.name = taskItem['name'];
+          task.dueDate = DateTime.parse(taskItem['dueDate']);
+          task.priority = taskItem['priority'];
+          task.projectId = taskItem['projectId'];
+          task.sectionId = taskItem['sectionId'];
+          section.tasks.add(task);
+        }
+        project.sections.add(section);
+      }
+      _items.add(project);
     }
   }
 
