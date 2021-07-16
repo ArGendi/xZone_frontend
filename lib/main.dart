@@ -5,6 +5,7 @@ import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/days_list.dart';
+import 'package:xzone/screens/loading_screen.dart';
 import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/register_screen.dart';
@@ -47,7 +48,7 @@ class _MyAppState extends State<MyApp> {
             appBarTheme: AppBarTheme(
               color: backgroundColor,
             )),
-        initialRoute: DaysList.id,
+        initialRoute: LoadingScreen.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
           WelcomeScreen.id: (context) => WelcomeScreen(),
@@ -55,7 +56,8 @@ class _MyAppState extends State<MyApp> {
           Tasks.id: (context) => Tasks(),
           DaysList.id: (context) => DaysList(),
           ProjectScreen.id: (context) => ProjectScreen(),
-          Neewsfeed.id: (contetx) => Neewsfeed(),
+          Neewsfeed.id: (context) => Neewsfeed(),
+          LoadingScreen.id: (context) => LoadingScreen(),
         },
       ),
     );

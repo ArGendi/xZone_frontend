@@ -170,7 +170,7 @@ class _DaysListState extends State<DaysList> {
                 )
               ],
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 10,),
             if(projectsItems.isEmpty)
               Column(
                 children: [
@@ -196,6 +196,7 @@ class _DaysListState extends State<DaysList> {
                   children: [
                     ProjectCard(
                       text: projectsItems[index].name,
+                      pIndex: index,
                       onClick: (){
                         Navigator.push(
                           context,
@@ -207,7 +208,7 @@ class _DaysListState extends State<DaysList> {
                     ),
                     Divider(
                       color: greyColor,
-                      height: 30,
+                      height: 10,
                     )
                   ],
                 );

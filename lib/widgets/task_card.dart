@@ -4,7 +4,6 @@ import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import '../constants.dart';
 import 'package:provider/provider.dart';
-
 import 'add_task.dart';
 
 class TaskCard extends StatefulWidget {

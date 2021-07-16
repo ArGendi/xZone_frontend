@@ -130,33 +130,38 @@ class _AddTaskState extends State<AddTask> {
     else selectedDate = DateFormat('d MMM').format(activeTask.dueDate);
 
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          TextField(
-            autofocus: widget.isAutoFocus,
-            cursorColor: Colors.white,
-            controller: textfieldController,
-            style: TextStyle(
-              color: Colors.white,
-            ),
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.all(20),
-              fillColor: backgroundColor,
-              hintText: 'e.g. Drink water',
-              hintStyle: TextStyle(
-                  color: greyColor,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              autofocus: widget.isAutoFocus,
+              cursorColor: Colors.white,
+              controller: textfieldController,
+              style: TextStyle(
+                color: Colors.white,
               ),
-              focusedBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(20),
+                fillColor: backgroundColor,
+                hintText: 'e.g. Drink water',
+                hintStyle: TextStyle(
+                    color: greyColor,
+                ),
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+              ),
+              onChanged: (value){
+                firstTime = false;
+                Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(value);
+              },
             ),
-            onChanged: (value){
-              firstTime = false;
-              Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(value);
-            },
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
