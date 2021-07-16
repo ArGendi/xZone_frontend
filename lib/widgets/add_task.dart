@@ -17,8 +17,9 @@ class AddTask extends StatefulWidget {
   final bool inSection;
   final int pIndex;
   final int sIndex;
+  final bool isAutoFocus;
 
-  const AddTask({Key key, this.inSection = false, this.pIndex, this.sIndex}) : super(key: key);
+  const AddTask({Key key, this.inSection = false, this.pIndex, this.sIndex, this.isAutoFocus = true}) : super(key: key);
 
   @override
   _AddTaskState createState() => _AddTaskState();
@@ -138,7 +139,7 @@ class _AddTaskState extends State<AddTask> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
-              autofocus: true,
+              autofocus: widget.isAutoFocus,
               cursorColor: Colors.white,
               controller: textfieldController,
               style: TextStyle(
