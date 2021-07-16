@@ -85,13 +85,14 @@ class _AddTaskState extends State<AddTask> {
           return CalenderBottomSheet(
             btnText: 'Next',
             onClick: (){
+              if(remainder == null)
+                Provider.of<TasksProvider>(context, listen: false).setActiveTaskRemainder(DateTime.now());
               Navigator.pop(context);
               setTimeBottomSheet();
             },
             initialSelectedDay: Provider.of<TasksProvider>(context).activeTask.remainder,
             onDaySelected: (date, event, _){
-              if(date != remainder)
-                Provider.of<TasksProvider>(context, listen: false).setActiveTaskRemainder(date);
+              Provider.of<TasksProvider>(context, listen: false).setActiveTaskRemainder(date);
             },
           );
         });
@@ -200,7 +201,7 @@ class _AddTaskState extends State<AddTask> {
                   SizedBox(width: 5,),
                   IconButton(
                       icon: Icon(
-                        Icons.alarm_off,
+                        activeTask.remainderOn? Icons.alarm : Icons.alarm_off,
                         color: buttonColor,
                       ),
                       onPressed: setRemainderBottomSheet

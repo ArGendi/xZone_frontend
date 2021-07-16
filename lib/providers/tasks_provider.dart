@@ -35,6 +35,8 @@ class TasksProvider extends ChangeNotifier {
       task.parentId = item['parentId'];
       task.name = item['name'];
       task.dueDate = DateTime.parse(item['dueDate']);
+      if(item['remainder'] != 'Empty')
+        task.remainder = DateTime.parse(item['remainder']);
       task.priority = item['priority'];
       task.projectId = task.sectionId = 0;
       _items.add(task);
@@ -50,7 +52,7 @@ class TasksProvider extends ChangeNotifier {
       'parentId': 0,
       'name': task.name,
       'dueDate': task.dueDate.toString(),
-      'remainder': 'Empty',
+      'remainder': task.remainderOn ? task.remainder.toString() : 'Empty',
       'completeDate': 'Empty',
       'priority': task.priority,
       'sectionId': 0,
@@ -134,6 +136,10 @@ class TasksProvider extends ChangeNotifier {
   void returnBackDeletedTaskToItems() {
     _items.add(_recentDeletedTask);
     _recentDeletedTask = Task();
+    notifyListeners();
+  }
+  void turnOnActiveTaskRemainder(){
+    _activeTask.remainderOn = true;
     notifyListeners();
   }
 }

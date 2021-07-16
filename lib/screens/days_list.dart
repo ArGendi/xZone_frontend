@@ -84,7 +84,7 @@ class _DaysListState extends State<DaysList> {
           IconButton(
               icon: Icon(
                 Icons.search,
-                color: whiteColor,
+                color: buttonColor,
               ),
               onPressed: (){
                 showSearch(context: context, delegate: TasksSearch());
@@ -164,7 +164,7 @@ class _DaysListState extends State<DaysList> {
                 IconButton(
                     icon: Icon(
                       Icons.add,
-                      color: whiteColor,
+                      color: buttonColor,
                     ),
                     onPressed: showAddProjectDialog
                 )
