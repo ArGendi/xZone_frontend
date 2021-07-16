@@ -29,6 +29,7 @@ const borderRadiusValue = 12.0;
 
 class constant {
   static String myname = "";
+  static String myemail = "";
 }
 
 // priorities colors

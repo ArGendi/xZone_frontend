@@ -22,16 +22,14 @@ class _SearchState extends State<Search> {
     });
   }
 
-  createChatroom(username) {
-    String id = getChatRoomId(username, constant.myname);
-    List<String> users = [username, constant.myname];
-    Map<String, dynamic> mappedData = {"chatroomId": id, "users": users};
-    firebaseDB.creatingChatRoom(id, mappedData);
+  createChatroom(username, email) {
+    String id =
+        getChatRoomId(email, constant.myemail, username, constant.myname);
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                conversation(chatRoomId: id, username: username)));
+            builder: (context) => conversation(
+                chatRoomId: id, username: username, email: email)));
   }
 
   Widget searchList() {
@@ -41,22 +39,22 @@ class _SearchState extends State<Search> {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               return searchTile(
-                name: items[index]["name"],
-              );
+                  name: items[index]["name"], email: items[index]["email"]);
             })
         : Container();
   }
 
-  Widget searchTile({name}) {
+  Widget searchTile({name, email}) {
     return ListTile(
         leading: CircleAvatar(
           child: Icon(Icons.person, color: Colors.grey),
           backgroundColor: buttonColor,
         ),
         title: Text(name, style: TextStyle(color: Colors.white)),
+        subtitle: Text(email, style: TextStyle(color: Colors.grey)),
         trailing: GestureDetector(
           onTap: () {
-            createChatroom(name);
+            createChatroom(name, email);
           },
           child: Container(
               padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
@@ -122,10 +120,10 @@ class _SearchState extends State<Search> {
   }
 }
 
-getChatRoomId(String id1, String id2) {
+getChatRoomId(String id1, String id2, String id3, String id4) {
   if (id1.substring(0, 1).codeUnitAt(0) > id2.substring(0, 1).codeUnitAt(0)) {
-    return "$id2\_$id1";
+    return "$id2\_$id1\#$id3$id4";
   } else {
-    return "$id1\_$id2";
+    return "$id1\_$id2\#$id3$id4";
   }
 }

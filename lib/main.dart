@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
             appBarTheme: AppBarTheme(
               color: backgroundColor,
             )),
-        initialRoute: Neewsfeed.id,
+        initialRoute: RegisterScreen.id,
 
         ///IsLoggedIn ? Neewsfeed.id : RegisterScreen.id,
         routes: {

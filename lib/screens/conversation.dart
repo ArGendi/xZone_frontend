@@ -5,7 +5,8 @@ import 'package:xzone/constants.dart';
 class conversation extends StatefulWidget {
   final String chatRoomId;
   final String username;
-  conversation({this.chatRoomId, this.username});
+  final String email;
+  conversation({this.chatRoomId, this.username, this.email});
   @override
   _conversationState createState() => _conversationState();
 }
@@ -26,7 +27,7 @@ class _conversationState extends State<conversation> {
                   return MessageTile(
                     message: snapshot.data.docs[index].data()["message"],
                     isSenderIsMe: snapshot.data.docs[index].data()["sendBy"] ==
-                        constant.myname,
+                        constant.myemail,
                   );
                 },
               )
@@ -39,7 +40,7 @@ class _conversationState extends State<conversation> {
     if (MessagetextEditingController.text.isNotEmpty) {
       Map<String, dynamic> messageMapped = {
         "message": MessagetextEditingController.text,
-        "sendBy": constant.myname,
+        "sendBy": constant.myemail,
         "time": DateTime.now().millisecondsSinceEpoch
       };
       firebaseDB.addConversationMessages(widget.chatRoomId, messageMapped);
@@ -65,6 +66,7 @@ class _conversationState extends State<conversation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: Text(widget.username),
         actions: [
           Icon(
@@ -84,36 +86,46 @@ class _conversationState extends State<conversation> {
       body: Container(
         child: Stack(children: [
           chatMessageList(),
-          Container(
-            alignment: Alignment.bottomCenter,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.black45,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      style: TextStyle(color: Colors.white),
-                      controller: MessagetextEditingController,
-                      decoration: InputDecoration(
-                          hintText: "Send Message",
-                          hintStyle: TextStyle(color: Colors.white),
-                          border: InputBorder.none),
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.black45,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        style: TextStyle(color: Colors.white),
+                        controller: MessagetextEditingController,
+                        decoration: InputDecoration(
+                            hintText: "Send Message",
+                            hintStyle: TextStyle(color: Colors.white),
+                            border: InputBorder.none),
+                      ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      sendMessage();
-                    },
-                    child: Icon(
-                      Icons.send,
-                      color: buttonColor,
-                    ),
-                  )
-                ],
+                    GestureDetector(
+                      onTap: () {
+                        List<String> users = [widget.email, constant.myemail];
+                        Map<String, dynamic> mappedData = {
+                          "chatroomId": widget.chatRoomId,
+                          "users": users
+                        };
+                        firebaseDB.creatingChatRoom(
+                            widget.chatRoomId, mappedData);
+                        sendMessage();
+                      },
+                      child: Icon(
+                        Icons.send,
+                        color: buttonColor,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

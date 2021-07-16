@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Neewsfeed.dart';
 import 'package:xzone/servcies/helperFunction.dart';
+import 'package:xzone/repositories/FireBaseDB.dart';
 
 class LoginScreen extends StatefulWidget {
   static final String id = 'login';
@@ -19,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final firebaseDB = FirestoreDatabase();
   String _email;
   String _password;
   bool _showErrorMsg = false;
@@ -32,6 +34,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _setPass(String password) {
     _password = password;
+  }
+
+  List Temp;
+  getusername(String email) async {
+    Temp = await firebaseDB.getUserByemail(email);
+    String myusername = Temp[0]["name"];
+    print(myusername);
+    HelpFunction.saveuserNamesharedPrefrence(myusername);
   }
 
   _trySubmit() async {
@@ -62,7 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
         });
         final newUser = await _auth.signInWithEmailAndPassword(
             email: _email, password: _password);
-        HelpFunction.saveuserNamesharedPrefrence(_email);
+        HelpFunction.saveuserEmailsharedPrefrence(_email);
+        getusername(_email);
         HelpFunction.saveusersharedPrefrenceUserLoggedInKey(true);
       } catch (e) {
         print(e);

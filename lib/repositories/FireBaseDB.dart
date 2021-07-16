@@ -15,11 +15,11 @@ class FirestoreDatabase {
     return items;
   }
 
-  getUserByemail(String username) async {
+  getUserByemail(String email) async {
     var items = List<dynamic>();
     await FirebaseFirestore.instance
         .collection("users")
-        .where("name", isEqualTo: username)
+        .where("email", isEqualTo: email)
         .get()
         .then((QuerySnapshot querysnapshot) {
       querysnapshot.docs.forEach((element) {
