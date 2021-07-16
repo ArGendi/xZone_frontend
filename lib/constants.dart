@@ -27,6 +27,10 @@ List<colorzone> zonescolor = [
 // Border radius
 const borderRadiusValue = 12.0;
 
+class constant {
+  static String myname = "";
+}
+
 // priorities colors
 final priority1Color = buttonColor;
 final priority2Color = whiteColor;

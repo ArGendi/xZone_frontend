@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/repositories/FireBaseDB.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/screens/conversation.dart';
 
 class Search extends StatefulWidget {
   @override
@@ -12,7 +13,6 @@ class _SearchState extends State<Search> {
   TextEditingController searchtextEditingController =
       new TextEditingController();
   final firebaseDB = FirestoreDatabase();
-  QuerySnapshot searchsnapshot;
   List items;
   List Temp;
   beginsearch() async {
@@ -22,9 +22,16 @@ class _SearchState extends State<Search> {
     });
   }
 
-  createChatroom(username, myname) {
-    List<String> mappedData = [username, myname];
-    firebaseDB.creatingChatRoom(mappedData);
+  createChatroom(username) {
+    String id = getChatRoomId(username, constant.myname);
+    List<String> users = [username, constant.myname];
+    Map<String, dynamic> mappedData = {"chatroomId": id, "users": users};
+    firebaseDB.creatingChatRoom(id, mappedData);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                conversation(chatRoomId: id, username: username)));
   }
 
   Widget searchList() {
@@ -38,6 +45,25 @@ class _SearchState extends State<Search> {
               );
             })
         : Container();
+  }
+
+  Widget searchTile({name}) {
+    return ListTile(
+        leading: CircleAvatar(
+          child: Icon(Icons.person, color: Colors.grey),
+          backgroundColor: buttonColor,
+        ),
+        title: Text(name, style: TextStyle(color: Colors.white)),
+        trailing: GestureDetector(
+          onTap: () {
+            createChatroom(name);
+          },
+          child: Container(
+              padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
+              child: Text("message", style: TextStyle(color: Colors.white)),
+              decoration: BoxDecoration(
+                  color: buttonColor, borderRadius: BorderRadius.circular(13))),
+        ));
   }
 
   @override
@@ -96,23 +122,10 @@ class _SearchState extends State<Search> {
   }
 }
 
-class searchTile extends StatelessWidget {
-  final String name;
-
-  const searchTile({this.name});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-        leading: CircleAvatar(
-          child: Icon(Icons.person, color: Colors.grey),
-          backgroundColor: buttonColor,
-        ),
-        title: Text(name, style: TextStyle(color: Colors.white)),
-        trailing: Container(
-            padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
-            child: Text("message", style: TextStyle(color: Colors.white)),
-            decoration: BoxDecoration(
-                color: buttonColor, borderRadius: BorderRadius.circular(13))));
+getChatRoomId(String id1, String id2) {
+  if (id1.substring(0, 1).codeUnitAt(0) > id2.substring(0, 1).codeUnitAt(0)) {
+    return "$id2\_$id1";
+  } else {
+    return "$id1\_$id2";
   }
 }

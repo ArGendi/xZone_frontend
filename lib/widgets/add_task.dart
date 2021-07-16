@@ -11,6 +11,7 @@ import 'package:xzone/widgets/choose_time.dart';
 import 'package:xzone/widgets/custom_calendar.dart';
 import '../constants.dart';
 import 'package:intl/intl.dart';
+import 'package:xzone/servcies/taskService.dart';
 
 class AddTask extends StatefulWidget {
   static final String id = 'add task';
@@ -18,7 +19,8 @@ class AddTask extends StatefulWidget {
   final int pIndex;
   final int sIndex;
 
-  const AddTask({Key key, this.inSection = false, this.pIndex, this.sIndex}) : super(key: key);
+  const AddTask({Key key, this.inSection = false, this.pIndex, this.sIndex})
+      : super(key: key);
 
   @override
   _AddTaskState createState() => _AddTaskState();
@@ -31,8 +33,8 @@ class _AddTaskState extends State<AddTask> {
   Color flagColor = buttonColor;
   var now = DateTime.now();
   String selectedDate;
-
-  setTimeBottomSheet(){
+  var taskservices = Taskservice();
+  setTimeBottomSheet() {
     showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: backgroundColor,
@@ -40,11 +42,12 @@ class _AddTaskState extends State<AddTask> {
           borderRadius: BorderRadius.circular(borderRadiusValue),
         ),
         context: context,
-        builder: (context){
+        builder: (context) {
           return ChooseTime();
         });
   }
-  setPriorityBottomSheet(){
+
+  setPriorityBottomSheet() {
     FocusScope.of(context).unfocus();
     showModalBottomSheet(
         isScrollControlled: true,
@@ -53,11 +56,12 @@ class _AddTaskState extends State<AddTask> {
           borderRadius: BorderRadius.circular(borderRadiusValue),
         ),
         context: context,
-        builder: (context){
+        builder: (context) {
           return ChoosePriority();
         });
   }
-  setDateBottomSheet(){
+
+  setDateBottomSheet() {
     FocusScope.of(context).unfocus();
     showModalBottomSheet(
         isScrollControlled: true,
@@ -66,11 +70,12 @@ class _AddTaskState extends State<AddTask> {
           borderRadius: BorderRadius.circular(borderRadiusValue),
         ),
         context: context,
-        builder: (context){
+        builder: (context) {
           return ChooseDate();
         });
   }
-  setRemainderBottomSheet(){
+
+  setRemainderBottomSheet() {
     FocusScope.of(context).unfocus();
     showModalBottomSheet(
         isScrollControlled: true,
@@ -79,18 +84,21 @@ class _AddTaskState extends State<AddTask> {
           borderRadius: BorderRadius.circular(borderRadiusValue),
         ),
         context: context,
-        builder: (context){
-          DateTime remainder = Provider.of<TasksProvider>(context).activeTask.remainder;
+        builder: (context) {
+          DateTime remainder =
+              Provider.of<TasksProvider>(context).activeTask.remainder;
           return CalenderBottomSheet(
             btnText: 'Next',
-            onClick: (){
+            onClick: () {
               Navigator.pop(context);
               setTimeBottomSheet();
             },
-            initialSelectedDay: Provider.of<TasksProvider>(context).activeTask.remainder,
-            onDaySelected: (date, event, _){
-              if(date != remainder)
-                Provider.of<TasksProvider>(context, listen: false).setActiveTaskRemainder(date);
+            initialSelectedDay:
+                Provider.of<TasksProvider>(context).activeTask.remainder,
+            onDaySelected: (date, event, _) {
+              if (date != remainder)
+                Provider.of<TasksProvider>(context, listen: false)
+                    .setActiveTaskRemainder(date);
             },
           );
         });
@@ -100,23 +108,21 @@ class _AddTaskState extends State<AddTask> {
   Widget build(BuildContext context) {
     Task activeTask = Provider.of<TasksProvider>(context).activeTask;
 
-    if(firstTime) textfieldController.text = activeTask.name;
-    textfieldController.selection = TextSelection.fromPosition(TextPosition(offset: textfieldController.text.length));
+    if (firstTime) textfieldController.text = activeTask.name;
+    textfieldController.selection = TextSelection.fromPosition(
+        TextPosition(offset: textfieldController.text.length));
 
     //Priority
-    if(activeTask.priority == 1){
+    if (activeTask.priority == 1) {
       flag = Icons.flag;
       flagColor = priority1Color;
-    }
-    else if(activeTask.priority == 2) {
+    } else if (activeTask.priority == 2) {
       flag = Icons.flag;
       flagColor = priority2Color;
-    }
-    else if(activeTask.priority == 3) {
+    } else if (activeTask.priority == 3) {
       flag = Icons.flag;
       flagColor = lowPriority;
-    }
-    else if(activeTask.priority == 4)
+    } else if (activeTask.priority == 4)
       flagColor = lowPriority;
     else {
       flag = Icons.outlined_flag;
@@ -124,9 +130,12 @@ class _AddTaskState extends State<AddTask> {
     }
 
     //Date
-    if(activeTask.dueDate.day == now.day) selectedDate = 'Today';
-    else if(activeTask.dueDate.day == now.day + 1) selectedDate = 'Tomorrow';
-    else selectedDate = DateFormat('d MMM').format(activeTask.dueDate);
+    if (activeTask.dueDate.day == now.day)
+      selectedDate = 'Today';
+    else if (activeTask.dueDate.day == now.day + 1)
+      selectedDate = 'Tomorrow';
+    else
+      selectedDate = DateFormat('d MMM').format(activeTask.dueDate);
 
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -145,16 +154,17 @@ class _AddTaskState extends State<AddTask> {
               fillColor: backgroundColor,
               hintText: 'e.g. Drink water',
               hintStyle: TextStyle(
-                  color: greyColor,
+                color: greyColor,
               ),
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
               errorBorder: InputBorder.none,
               disabledBorder: InputBorder.none,
             ),
-            onChanged: (value){
+            onChanged: (value) {
               firstTime = false;
-              Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(value);
+              Provider.of<TasksProvider>(context, listen: false)
+                  .setActiveTaskName(value);
             },
           ),
           Row(
@@ -169,7 +179,9 @@ class _AddTaskState extends State<AddTask> {
                       color: flagColor,
                     ),
                   ),
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                   InkWell(
                     onTap: setDateBottomSheet,
                     child: Padding(
@@ -180,7 +192,9 @@ class _AddTaskState extends State<AddTask> {
                             Icons.calendar_today,
                             color: buttonColor,
                           ),
-                          SizedBox(width: 8,),
+                          SizedBox(
+                            width: 8,
+                          ),
                           Text(
                             selectedDate,
                             style: TextStyle(
@@ -191,34 +205,41 @@ class _AddTaskState extends State<AddTask> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                   IconButton(
                       icon: Icon(
                         Icons.alarm_off,
                         color: buttonColor,
                       ),
-                      onPressed: setRemainderBottomSheet
-                  ),
+                      onPressed: setRemainderBottomSheet),
                 ],
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child: IconButton(
                   iconSize: 28,
-                  onPressed: (){
-                    if(activeTask.name.length > 1) {
+                  onPressed: () async {
+                    if (activeTask.name.length > 1) {
                       DateTime date = activeTask.dueDate;
-                      String temp = activeTask.name[0].toUpperCase() + activeTask.name.substring(1, activeTask.name.length);
-                      Provider.of<TasksProvider>(context, listen: false).setActiveTaskName(temp);
-                      if(widget.inSection)
+                      String temp = activeTask.name[0].toUpperCase() +
+                          activeTask.name.substring(1, activeTask.name.length);
+                      Provider.of<TasksProvider>(context, listen: false)
+                          .setActiveTaskName(temp);
+                      if (widget.inSection)
                         Provider.of<ProjectsProvider>(context, listen: false)
-                            .addTaskToSection(widget.pIndex, widget.sIndex, activeTask);
+                            .addTaskToSection(
+                                widget.pIndex, widget.sIndex, activeTask);
                       else
                         Provider.of<TasksProvider>(context, listen: false)
-                          .addTask(activeTask);
+                            .addTask(activeTask);
+                      await taskservices.savetask(activeTask);
                       Provider.of<TasksProvider>(context, listen: false)
                           .initializeActiveTask();
-                      Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(date);
+
+                      Provider.of<TasksProvider>(context, listen: false)
+                          .setActiveTaskDueDate(date);
                       textfieldController.clear();
                     }
                   },

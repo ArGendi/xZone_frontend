@@ -10,11 +10,16 @@ import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/screens/welcome_screen.dart';
+import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/widgets/add_task.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:xzone/screens/Neewsfeed.dart';
+import 'package:xzone/screens/chatroom.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -24,6 +29,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool IsLoggedIn = false;
+  getLoggedInstate() async {
+    await HelpFunction.getusersharedPrefrenceUserLoggedInKey().then((value) {
+      setState(() {
+        IsLoggedIn = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -47,7 +61,9 @@ class _MyAppState extends State<MyApp> {
             appBarTheme: AppBarTheme(
               color: backgroundColor,
             )),
-        initialRoute: DaysList.id,
+        initialRoute: Neewsfeed.id,
+
+        ///IsLoggedIn ? Neewsfeed.id : RegisterScreen.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
           WelcomeScreen.id: (context) => WelcomeScreen(),
@@ -56,6 +72,7 @@ class _MyAppState extends State<MyApp> {
           DaysList.id: (context) => DaysList(),
           ProjectScreen.id: (context) => ProjectScreen(),
           Neewsfeed.id: (contetx) => Neewsfeed(),
+          ChatRoom.id: (context) => ChatRoom(),
         },
       ),
     );
