@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "198851425226",
+    "project_id": "xzonechat-21438",
+    "storage_bucket": "xzonechat-21438.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198851425226:android:385c786631900405ead533",
+        "android_client_info": {
+          "package_name": "com.example.xzone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "198851425226-3ktvgvg9dfaelmtvctej72dmjjik32fb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANGCBrDOB5qOm5kpAH_FmbA56gkLlBc-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "198851425226-3ktvgvg9dfaelmtvctej72dmjjik32fb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

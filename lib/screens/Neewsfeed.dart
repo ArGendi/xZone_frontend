@@ -5,6 +5,7 @@ import 'package:xzone/widgets/ZoneWidget.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:xzone/models/ZoneColor.dart';
+import 'package:xzone/screens/chatroom.dart';
 
 class Neewsfeed extends StatelessWidget {
   static String id = 'newsfeed';
@@ -121,7 +122,9 @@ class Neewsfeed extends StatelessWidget {
                   FontAwesomeIcons.facebookMessenger,
                   color: whiteColor,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, 'chatroom');
+                },
               ),
             ],
           ),

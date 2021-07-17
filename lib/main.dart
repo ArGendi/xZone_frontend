@@ -12,14 +12,19 @@ import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/screens/welcome_screen.dart';
+import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/widgets/add_task.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:xzone/screens/Neewsfeed.dart';
+import 'package:xzone/screens/chatroom.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin
         = FlutterLocalNotificationsPlugin();
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -29,7 +34,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     // TODO: implement initState
@@ -69,6 +73,7 @@ class _MyAppState extends State<MyApp> {
             appBarTheme: AppBarTheme(
               color: backgroundColor,
             )),
+        ///IsLoggedIn ? Neewsfeed.id : RegisterScreen.id,
         initialRoute: LoadingScreen.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
@@ -77,8 +82,10 @@ class _MyAppState extends State<MyApp> {
           Tasks.id: (context) => Tasks(),
           DaysList.id: (context) => DaysList(),
           ProjectScreen.id: (context) => ProjectScreen(),
-          Neewsfeed.id: (context) => Neewsfeed(),
+          Neewsfeed.id: (contetx) => Neewsfeed(),
+          ChatRoom.id: (context) => ChatRoom(),
           LoadingScreen.id: (context) => LoadingScreen(),
+
         },
       ),
     );
