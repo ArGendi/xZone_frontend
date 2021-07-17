@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/models/task.dart';
@@ -15,6 +16,9 @@ import 'package:xzone/widgets/add_task.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:xzone/screens/Neewsfeed.dart';
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin
+        = FlutterLocalNotificationsPlugin();
+
 void main() {
   runApp(MyApp());
 }
@@ -25,6 +29,23 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    var androidInitialization = AndroidInitializationSettings('app_icon');
+    var iOSInitialization = IOSInitializationSettings();
+    var initializationSettings = InitializationSettings(android: androidInitialization, iOS: iOSInitialization);
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: (String payload) async{
+        if(payload != null)
+          debugPrint('notification payload: ' + payload);
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

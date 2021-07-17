@@ -146,7 +146,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
         title: Text(project.name),
         actions: [
           IconButton(
-              icon: Icon(Icons.edit),
+              icon: Icon(Icons.edit, color: buttonColor,),
               onPressed: showEditProjectDialog,
           )
         ],
@@ -170,64 +170,83 @@ class _ProjectScreenState extends State<ProjectScreen> {
             itemBuilder: (BuildContext context, int index, int realIndex) {
               if(index < project.sections.length)
               return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        project.sections[index].name,
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: whiteColor,
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.more_vert, color: whiteColor,),
-                        onPressed: (){
-                          moreOptionsBottomSheet(index);
-                        },
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 10,),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: project.sections[index].tasks.length,
-                    itemBuilder: (ctx, lvIndex){
-                      return TaskCard(
-                        task: project.sections[index].tasks[lvIndex],
-                        bgColor: Colors.grey[700],
-                      );
-                    },
-                  ),
-                  SizedBox(height: 10,),
-                  InkWell(
-                    onTap: (){
-                      Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(DateTime.now());
-                      addTaskBottomSheet(index);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(
-                            Icons.add,
-                            color: whiteColor,
-                          ),
-                          SizedBox(width: 5,),
                           Text(
-                            'Add task',
+                            project.sections[index].name,
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               color: whiteColor,
                             ),
                           ),
+                          IconButton(
+                            icon: Icon(Icons.more_vert, color: buttonColor,),
+                            onPressed: (){
+                              moreOptionsBottomSheet(index);
+                            },
+                          )
                         ],
                       ),
-                    ),
+                      SizedBox(height: 10,),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: project.sections[index].tasks.length,
+                        itemBuilder: (ctx, lvIndex){
+                          return TaskCard(
+                            task: project.sections[index].tasks[lvIndex],
+                            bgColor: Colors.grey[700],
+                          );
+                        },
+                      ),
+                      SizedBox(height: 10,),
+                      InkWell(
+                        onTap: (){
+                          Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(DateTime.now());
+                          addTaskBottomSheet(index);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add,
+                                color: buttonColor,
+                              ),
+                              SizedBox(width: 5,),
+                              Text(
+                                'Add task',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: buttonColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for(int i=0; i<project.sections.length + 1; i++)
+                        Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: i != project.sections.length? CircleAvatar(
+                            radius: 4,
+                            backgroundColor: i == index ? whiteColor : greyColor,
+                          ) : Icon(Icons.add, color: greyColor, size: 20,),
+                        )
+                    ],
+                  )
                 ],
               );
               else return InkWell(
@@ -239,14 +258,14 @@ class _ProjectScreenState extends State<ProjectScreen> {
                     children: [
                       Icon(
                         Icons.add,
-                        color: whiteColor,
+                        color: buttonColor,
                       ),
                       SizedBox(width: 5,),
                       Text(
                         'Add section',
                         style: TextStyle(
                           fontSize: 16,
-                          color: whiteColor,
+                          color: buttonColor,
                         ),
                       ),
                     ],

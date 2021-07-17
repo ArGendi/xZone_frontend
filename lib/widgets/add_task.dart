@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:xzone/models/project.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/projects_provider.dart';
@@ -11,6 +12,8 @@ import 'package:xzone/widgets/choose_time.dart';
 import 'package:xzone/widgets/custom_calendar.dart';
 import '../constants.dart';
 import 'package:intl/intl.dart';
+
+import '../main.dart';
 
 class AddTask extends StatefulWidget {
   static final String id = 'add task';
@@ -85,16 +88,48 @@ class _AddTaskState extends State<AddTask> {
           return CalenderBottomSheet(
             btnText: 'Next',
             onClick: (){
+              if(remainder == null)
+                Provider.of<TasksProvider>(context, listen: false).setActiveTaskRemainder(DateTime.now());
               Navigator.pop(context);
               setTimeBottomSheet();
             },
             initialSelectedDay: Provider.of<TasksProvider>(context).activeTask.remainder,
             onDaySelected: (date, event, _){
-              if(date != remainder)
-                Provider.of<TasksProvider>(context, listen: false).setActiveTaskRemainder(date);
+              Provider.of<TasksProvider>(context, listen: false).setActiveTaskRemainder(date);
             },
           );
         });
+  }
+
+  // void scheduleAlarm() async {
+  //   var scheduledNotificationDateTime = DateTime.now().add(Duration(seconds: 4));
+  //   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+  //     'alarm_notif',
+  //     'alarm_notif',
+  //     'Channel for Alarm notification',
+  //     icon: 'app_icon',
+  //     largeIcon: DrawableResourceAndroidBitmap('app_icon'),
+  //   );
+  //
+  //   var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+  //       presentAlert: true,
+  //       presentBadge: true,
+  //       presentSound: true);
+  //   var platformChannelSpecifics = NotificationDetails(
+  //       android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+  //
+  //   //await flutterLocalNotificationsPlugin.zonedSchedule(0, 'xZone', '', scheduledNotificationDateTime, platformChannelSpecifics);
+  //   await flutterLocalNotificationsPlugin.schedule(0, 'Office', '',
+  //       scheduledNotificationDateTime, platformChannelSpecifics);
+  // }
+
+  Future<void> _notification(Task task) async{
+    var androidDetail = AndroidNotificationDetails('Channel ID', 'xZone', 'My Channel',
+        importance: Importance.max, icon: 'app_icon');
+    var iOSDetail = IOSNotificationDetails();
+    var generalNotificationDetail = NotificationDetails(android: androidDetail, iOS: iOSDetail);
+    await flutterLocalNotificationsPlugin.schedule(1, 'xZone', task.name, task.remainder, generalNotificationDetail);
+    print('notification');
   }
 
   @override
@@ -200,7 +235,7 @@ class _AddTaskState extends State<AddTask> {
                   SizedBox(width: 5,),
                   IconButton(
                       icon: Icon(
-                        Icons.alarm_off,
+                        activeTask.remainderOn? Icons.alarm : Icons.alarm_off,
                         color: buttonColor,
                       ),
                       onPressed: setRemainderBottomSheet
@@ -222,6 +257,8 @@ class _AddTaskState extends State<AddTask> {
                       else
                         Provider.of<TasksProvider>(context, listen: false)
                           .addTask(activeTask);
+                      if(activeTask.remainderOn)
+                        _notification(activeTask);
                       Provider.of<TasksProvider>(context, listen: false)
                           .initializeActiveTask();
                       Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(date);

@@ -15,6 +15,7 @@ class _ChooseTimeState extends State<ChooseTime> {
   @override
   Widget build(BuildContext context) {
     DateTime activeTaskRemainder = Provider.of<TasksProvider>(context).activeTask.remainder;
+    bool remainderOn = Provider.of<TasksProvider>(context).activeTask.remainderOn;
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Column(
@@ -23,6 +24,7 @@ class _ChooseTimeState extends State<ChooseTime> {
         children: [
           InkWell(
             onTap: (){
+              Provider.of<TasksProvider>(context, listen: false).turnOnActiveTaskRemainder();
               Navigator.pop(context);
             },
             child: Padding(
@@ -43,7 +45,7 @@ class _ChooseTimeState extends State<ChooseTime> {
                 brightness: Brightness.dark
               ),
               child: CupertinoDatePicker(
-                initialDateTime: _dateTime,
+                initialDateTime: remainderOn ? activeTaskRemainder : _dateTime,
                 onDateTimeChanged: (newDate){
                   DateTime remainder = DateTime(
                     activeTaskRemainder.year,
