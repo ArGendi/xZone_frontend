@@ -5,6 +5,9 @@ import 'package:xzone/models/ZoneColor.dart';
 final backgroundColor = Color(0xFF191720);
 final buttonColor = Color(0xffffd36a);
 final greyColor = Color(0xff3b3941);
+final silver = Color(0xffb40202);
+final gold = Color(0xffd9a502);
+final platinum = Color(0xff2e2e31);
 final whiteColor = Colors.white;
 List<colorzone> zonescolor = [
   colorzone(
@@ -36,3 +39,8 @@ class constant {
 final priority1Color = buttonColor;
 final priority2Color = whiteColor;
 final lowPriority = greyColor;
+
+//DB tables names
+const String tasksTable = 'tasks';
+const String sectionsTable = 'sections';
+const String projectsTable = 'projects';

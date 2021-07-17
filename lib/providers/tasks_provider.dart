@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:xzone/constants.dart';
+import 'package:xzone/helpers/db_helper.dart';
 import 'package:xzone/models/task.dart';
 
 class TasksProvider extends ChangeNotifier {
@@ -6,6 +8,7 @@ class TasksProvider extends ChangeNotifier {
   Task _recentDeletedTask = Task();
   List<Task> _items = [];
   String _sortType = 'by Due Date';
+  DBHelper _dbHelper = DBHelper();
 
   List get items {
     return _items;
@@ -23,14 +26,45 @@ class TasksProvider extends ChangeNotifier {
     return _sortType;
   }
 
+  Future<void> fetchAndSetData() async{
+    var tasksData = await _dbHelper.getNormalTasks();
+    for(Map item in tasksData){
+      Task task = new Task();
+      task.id = item['id'];
+      task.userId = item['userId'];
+      task.parentId = item['parentId'];
+      task.name = item['name'];
+      task.dueDate = DateTime.parse(item['dueDate']);
+      if(item['remainder'] != 'Empty')
+        task.remainder = DateTime.parse(item['remainder']);
+      task.priority = item['priority'];
+      task.projectId = task.sectionId = 0;
+      _items.add(task);
+    }
+  }
+
   void addTask(Task task) {
     _items.add(task);
     notifyListeners();
+    _dbHelper.insert(tasksTable,{
+      'id': task.id,
+      'userId': 0,
+      'parentId': 0,
+      'name': task.name,
+      'dueDate': task.dueDate.toString(),
+      'remainder': task.remainderOn ? task.remainder.toString() : 'Empty',
+      'completeDate': 'Empty',
+      'priority': task.priority,
+      'sectionId': 0,
+      'projectId': 0,
+    });
+    print('Task added');
   }
 
   void removeTask(Task task) {
     _items.remove(task);
     notifyListeners();
+    _dbHelper.deleteRow(tasksTable, task.id);
   }
 
   void setActiveTaskName(String name) {
@@ -102,6 +136,10 @@ class TasksProvider extends ChangeNotifier {
   void returnBackDeletedTaskToItems() {
     _items.add(_recentDeletedTask);
     _recentDeletedTask = Task();
+    notifyListeners();
+  }
+  void turnOnActiveTaskRemainder(){
+    _activeTask.remainderOn = true;
     notifyListeners();
   }
 }

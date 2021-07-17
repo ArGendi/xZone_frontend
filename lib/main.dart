@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/days_list.dart';
+import 'package:xzone/screens/loading_screen.dart';
 import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/register_screen.dart';
@@ -17,7 +19,10 @@ import 'package:xzone/screens/Neewsfeed.dart';
 import 'package:xzone/screens/chatroom.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-void main() async {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin
+        = FlutterLocalNotificationsPlugin();
+
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
@@ -29,13 +34,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool IsLoggedIn = false;
-  getLoggedInstate() async {
-    await HelpFunction.getusersharedPrefrenceUserLoggedInKey().then((value) {
-      setState(() {
-        IsLoggedIn = value;
-      });
-    });
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    var androidInitialization = AndroidInitializationSettings('app_icon');
+    var iOSInitialization = IOSInitializationSettings();
+    var initializationSettings = InitializationSettings(android: androidInitialization, iOS: iOSInitialization);
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: (String payload) async{
+        if(payload != null)
+          debugPrint('notification payload: ' + payload);
+      }
+    );
   }
 
   @override
@@ -61,9 +73,8 @@ class _MyAppState extends State<MyApp> {
             appBarTheme: AppBarTheme(
               color: backgroundColor,
             )),
-        initialRoute: RegisterScreen.id,
-
         ///IsLoggedIn ? Neewsfeed.id : RegisterScreen.id,
+        initialRoute: LoadingScreen.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
           WelcomeScreen.id: (context) => WelcomeScreen(),
@@ -73,6 +84,8 @@ class _MyAppState extends State<MyApp> {
           ProjectScreen.id: (context) => ProjectScreen(),
           Neewsfeed.id: (contetx) => Neewsfeed(),
           ChatRoom.id: (context) => ChatRoom(),
+          LoadingScreen.id: (context) => LoadingScreen(),
+
         },
       ),
     );

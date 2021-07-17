@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/models/project.dart';
 import 'package:xzone/providers/projects_provider.dart';
@@ -13,6 +14,7 @@ import 'package:xzone/widgets/project_card.dart';
 import 'package:xzone/widgets/tasks_day.dart';
 import 'package:provider/provider.dart';
 
+import '../main.dart';
 import 'login_screen.dart';
 
 class DaysList extends StatefulWidget {
@@ -84,7 +86,7 @@ class _DaysListState extends State<DaysList> {
           IconButton(
               icon: Icon(
                 Icons.search,
-                color: whiteColor,
+                color: buttonColor,
               ),
               onPressed: (){
                 showSearch(context: context, delegate: TasksSearch());
@@ -164,13 +166,13 @@ class _DaysListState extends State<DaysList> {
                 IconButton(
                     icon: Icon(
                       Icons.add,
-                      color: whiteColor,
+                      color: buttonColor,
                     ),
                     onPressed: showAddProjectDialog
                 )
               ],
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 10,),
             if(projectsItems.isEmpty)
               Column(
                 children: [
@@ -196,6 +198,7 @@ class _DaysListState extends State<DaysList> {
                   children: [
                     ProjectCard(
                       text: projectsItems[index].name,
+                      pIndex: index,
                       onClick: (){
                         Navigator.push(
                           context,
@@ -207,7 +210,7 @@ class _DaysListState extends State<DaysList> {
                     ),
                     Divider(
                       color: greyColor,
-                      height: 30,
+                      height: 10,
                     )
                   ],
                 );
