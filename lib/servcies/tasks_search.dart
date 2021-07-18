@@ -4,7 +4,6 @@ import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/widgets/task_info.dart';
-
 import '../constants.dart';
 
 class TasksSearch extends SearchDelegate{

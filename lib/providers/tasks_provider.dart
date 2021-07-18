@@ -48,13 +48,13 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
     _dbHelper.insert(tasksTable,{
       'id': task.id,
-      'userId': 0,
-      'parentId': 0,
+      'userId': task.userId,
+      'parentId': task.parentId,
       'name': task.name,
       'dueDate': task.dueDate.toString(),
       'remainder': task.remainderOn ? task.remainder.toString() : 'Empty',
-      'completeDate': 'Empty',
-      'priority': task.priority,
+      'completeDate': task.completeDate.toString(),
+      'priority': task.priority.toString(),
       'sectionId': 0,
       'projectId': 0,
     });

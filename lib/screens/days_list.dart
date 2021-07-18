@@ -5,8 +5,10 @@ import 'package:xzone/constants.dart';
 import 'package:xzone/models/project.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/screens/profile.dart';
 import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
+import 'package:xzone/screens/zones_screen.dart';
 import 'package:xzone/servcies/tasks_search.dart';
 import 'package:xzone/widgets/add_project.dart';
 import 'package:xzone/widgets/add_task.dart';
@@ -15,6 +17,8 @@ import 'package:xzone/widgets/tasks_day.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
+import 'Neewsfeed.dart';
+import 'loading_screen.dart';
 import 'login_screen.dart';
 
 class DaysList extends StatefulWidget {
@@ -79,6 +83,115 @@ class _DaysListState extends State<DaysList> {
   Widget build(BuildContext context) {
     List<Project> projectsItems =  Provider.of<ProjectsProvider>(context).items;
     return Scaffold(
+      drawer: Drawer(
+        child: Container(
+          color: backgroundColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: ListView(
+                  //addAutomaticKeepAlives: true,
+                  children: [
+                    UserAccountsDrawerHeader(
+                      decoration: BoxDecoration(color: backgroundColor),
+                      accountName: Text("Nardine Nabil"),
+                      accountEmail: Text(
+                        "nardin1nabil@gmail.com",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      currentAccountPicture: CircleAvatar(
+                        backgroundColor: Colors.black,
+                      ),
+                    ),
+                    Divider(
+                      color: whiteColor,
+                      thickness: 0.06,
+                    ),
+                    ListTile(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => profile(
+                              checkMe: false,
+                            ),),
+                        );
+                      },
+                      title: Text(
+                        "Profile",
+                        style: TextStyle(color: whiteColor),
+                      ),
+                      leading: Icon(
+                        Icons.person,
+                        color: whiteColor,
+                      ),
+                    ),
+                    ListTile(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => zones_profile(
+                              checkMe: false,
+                            ),),
+                        );
+                      },
+                      title: Text(
+                        "Zones",
+                        style: TextStyle(color: whiteColor),
+                      ),
+                      leading: Icon(
+                        Icons.group,
+                        color: whiteColor,
+                      ),
+                    ),
+                    ListTile(
+                      onTap: (){
+                        Navigator.pushNamed(context, Neewsfeed.id);
+                      },
+                      title: Text("Home", style: TextStyle(color: whiteColor)),
+                      leading: Icon(
+                        Icons.list,
+                        color: whiteColor,
+                      ),
+                    ),
+                    Divider(
+                      color: whiteColor,
+                      thickness: 0.06,
+                    ),
+                    ListTile(
+                      title:
+                      Text("Settings", style: TextStyle(color: whiteColor)),
+                      leading: Icon(
+                        Icons.settings,
+                        color: whiteColor,
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("Help", style: TextStyle(color: whiteColor)),
+                      leading: Icon(
+                        Icons.help,
+                        color: whiteColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                onTap: (){
+                  Navigator.pushNamed(context, LoginScreen.id);
+                },
+                title: Text("Logout", style: TextStyle(color: Colors.red)),
+                leading: Icon(
+                  Icons.logout,
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       appBar: AppBar(
         elevation: 0,
         title: Text('Tasks'),
@@ -98,6 +211,21 @@ class _DaysListState extends State<DaysList> {
         padding: const EdgeInsets.all(20.0),
         child: ListView(
           children: [
+            TasksDay(
+              text: 'Inbox',
+              icon: Icons.inbox,
+              gColor: [
+                Color(0xffED213A),
+                Color(0xff93291E),
+              ],
+              onclick: (){
+                Navigator.pushNamed(context, Tasks.id, arguments: {
+                  'day': 'Inbox',
+                  'date': null,
+                });
+              },
+            ),
+            SizedBox(height: 10,),
             TasksDay(
               text: 'Today',
               icon: Icons.wb_sunny,
@@ -223,7 +351,7 @@ class _DaysListState extends State<DaysList> {
         padding: const EdgeInsets.only(bottom: 10),
         child: FloatingActionButton(
           onPressed: (){
-            Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(DateTime.now());
+            //Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(DateTime.now());
             addTaskBottomSheet();
           },
           child: Icon(Icons.add),

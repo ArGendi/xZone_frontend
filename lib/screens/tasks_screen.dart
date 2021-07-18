@@ -51,6 +51,8 @@ class _TasksState extends State<Tasks> {
 
   var _taskservice = Taskservice();
   var task = Task();
+  String date;
+
   getTasks() async {
     var tasks = await _taskservice.readtasks();
     tasks.forEach((task) {
@@ -77,7 +79,8 @@ class _TasksState extends State<Tasks> {
       data = ModalRoute.of(context).settings.arguments;
       pageUpdated = true;
     }
-    String date = DateFormat('EEEE, d MMM').format(data['date']);
+    if(data['date'] != null)
+      date = DateFormat('EEEE, d MMM').format(data['date']);
 
     return Scaffold(
       body: Container(
@@ -126,7 +129,7 @@ class _TasksState extends State<Tasks> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
-                      data['day'] == 'Future' ? '' : date,
+                      data['day'] == 'Future' || data['day'] == 'Inbox' ? '' : date,
                       style: TextStyle(
                           fontSize: 18,
                           color: whiteColor,
@@ -143,15 +146,26 @@ class _TasksState extends State<Tasks> {
                         List<Task> items =
                             Provider.of<TasksProvider>(context).items;
                         List<Task> filteredItems;
-                        if (data['day'] != 'Future') {
+                        if(data['day'] == 'Inbox'){
                           filteredItems = items
                               .where((element) =>
-                                  element.dueDate.day == data['date'].day)
+                          element.dueDate == null)
                               .toList();
-                        } else {
+                        }
+                        else if (data['day'] != 'Future') {
                           filteredItems = items
-                              .where((element) =>
-                                  element.dueDate.day >= data['date'].day)
+                              .where((element) {
+                                if(element.dueDate == null) return false;
+                                else return element.dueDate.day == data['date'].day;
+                              })
+                              .toList();
+                        }
+                        else {
+                          filteredItems = items
+                              .where((element) {
+                                if(element.dueDate == null) return false;
+                                else return element.dueDate.day >= data['date'].day;
+                              })
                               .toList();
                         }
                         if (filteredItems.length == 0) {

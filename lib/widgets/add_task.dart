@@ -160,7 +160,8 @@ class _AddTaskState extends State<AddTask> {
     }
 
     //Date
-    if(activeTask.dueDate.day == now.day) selectedDate = 'Today';
+    if(activeTask.dueDate == null) selectedDate = '';
+    else if(activeTask.dueDate.day == now.day) selectedDate = 'Today';
     else if(activeTask.dueDate.day == now.day + 1) selectedDate = 'Tomorrow';
     else selectedDate = DateFormat('d MMM').format(activeTask.dueDate);
 
@@ -223,7 +224,7 @@ class _AddTaskState extends State<AddTask> {
                           ),
                           SizedBox(width: 8,),
                           Text(
-                            selectedDate,
+                            activeTask.dueDate != null ? selectedDate : '',
                             style: TextStyle(
                               color: buttonColor,
                             ),
@@ -261,7 +262,7 @@ class _AddTaskState extends State<AddTask> {
                         _notification(activeTask);
                       Provider.of<TasksProvider>(context, listen: false)
                           .initializeActiveTask();
-                      Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(date);
+                      //Provider.of<TasksProvider>(context, listen: false).setActiveTaskDueDate(date);
                       textfieldController.clear();
                     }
                   },
