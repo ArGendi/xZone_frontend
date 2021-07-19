@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/helpers/db_helper.dart';
+import 'package:xzone/models/project.dart';
 import 'package:xzone/models/task.dart';
+import 'package:xzone/servcies/helperFunction.dart';
+import 'package:xzone/servcies/web_services.dart';
+import 'package:http/http.dart' as http;
 
 class TasksProvider extends ChangeNotifier {
   Task _activeTask = Task();
@@ -9,6 +15,7 @@ class TasksProvider extends ChangeNotifier {
   List<Task> _items = [];
   String _sortType = 'by Due Date';
   DBHelper _dbHelper = DBHelper();
+  var webServices = new WebServices();
 
   List get items {
     return _items;
@@ -43,9 +50,19 @@ class TasksProvider extends ChangeNotifier {
     }
   }
 
-  void addTask(Task task) {
+  void addTask(Task task, bool sendToBackend) async{
     _items.add(task);
     notifyListeners();
+    if(sendToBackend){
+      int userId = await HelpFunction.getUserId();
+      task.userId = userId;
+      http.Response response = await addTaskToBackend(task);
+      if(response.statusCode == 200){
+        var body = json.decode(response.body);
+        task.id = body['id'];
+        print('task added to backend');
+      }
+    }
     _dbHelper.insert(tasksTable,{
       'id': task.id,
       'userId': task.userId,
@@ -61,10 +78,26 @@ class TasksProvider extends ChangeNotifier {
     print('Task added');
   }
 
-  void removeTask(Task task) {
+  Future<http.Response> addTaskToBackend(Task task) async{
+    var response = await webServices.post('http://xzoneapi.azurewebsites.net/api/v1/task',
+        {
+          'name': task.name,
+          'userID': task.userId,
+          'priority': task.priority,
+          'dueDate': task.dueDate != null ? task.dueDate.toString() : null,
+          'remainder': task.remainder != null ? task.remainder.toString() : null,
+          'completeDate': task.completeDate != null ? task.completeDate.toString() : null
+        });
+    return response;
+  }
+
+  void removeTask(Task task) async{
     _items.remove(task);
     notifyListeners();
     _dbHelper.deleteRow(tasksTable, task.id);
+    var response = await webServices.delete('http://xzoneapi.azurewebsites.net/api/v1/task/${task.id}');
+    if(response.statusCode >= 200 && response.statusCode < 300)
+      print('Task deleted from backend');
   }
 
   void setActiveTaskName(String name) {

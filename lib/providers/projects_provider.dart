@@ -14,6 +14,7 @@ import '../constants.dart';
 class ProjectsProvider extends ChangeNotifier{
   List<Project> _items = [];
   DBHelper _dbHelper = DBHelper();
+  var webServices = new WebServices();
 
   List get items {
     return _items;
@@ -74,7 +75,6 @@ class ProjectsProvider extends ChangeNotifier{
   }
 
   Future<http.Response> addProjectToBackend(Project project) async{
-    var webServices = new WebServices();
     var response = await webServices.post('http://xzoneapi.azurewebsites.net/api/v1/project',
         {
           'name': project.name,
@@ -121,7 +121,6 @@ class ProjectsProvider extends ChangeNotifier{
   }
 
   Future<http.Response> addSectionToBackend(Section section) async{
-    var webServices = new WebServices();
     var response = await webServices.post('http://xzoneapi.azurewebsites.net/api/v1/Section',
         {
           'name': section.name,
@@ -131,13 +130,21 @@ class ProjectsProvider extends ChangeNotifier{
     return response;
   }
 
-  editProjectName(int pIndex, String newName){
+  editProjectName(int pIndex, String newName) async{
+    int projectId = _items[pIndex].id;
     _items[pIndex].name = newName;
     notifyListeners();
     _dbHelper.updateRow(projectsTable, _items[pIndex].id, {
       'userId': 0,
       'name': newName,
     });
+    int userId = await HelpFunction.getUserId();
+    var response = await webServices.update('http://xzoneapi.azurewebsites.net/api/v1/project/$projectId',{
+      'name': newName,
+      'ownerID': userId
+    });
+    if(response.statusCode == 200)
+      print('Project updated in backend');
   }
   removeProject(int pIndex) async{
     int projectId = _items[pIndex].id;
@@ -146,14 +153,25 @@ class ProjectsProvider extends ChangeNotifier{
     await _dbHelper.deleteRow(projectsTable, projectId);
     await _dbHelper.deleteAllRowsRelatedToProject(sectionsTable, projectId);
     await _dbHelper.deleteAllRowsRelatedToProject(tasksTable, projectId);
+    var response = await webServices.delete('http://xzoneapi.azurewebsites.net/api/v1/project/$projectId');
+    if(response.statusCode >= 200 && response.statusCode < 300)
+      print('Project deleted from backend');
   }
-  editSection(int pIndex, int sIndex, String newName){
+  editSection(int pIndex, int sIndex, String newName) async{
+    int projectId = _items[pIndex].id;
+    int sectionId = _items[pIndex].sections[sIndex].id;
     _items[pIndex].sections[sIndex].name = newName;
     notifyListeners();
     _dbHelper.updateRow(sectionsTable, _items[pIndex].sections[sIndex].id, {
       'name': newName,
       'projectId': _items[pIndex].id,
     });
+    var response = await webServices.update('http://xzoneapi.azurewebsites.net/api/v1/Section/$sectionId',{
+      'name': newName,
+      'parentProjectID': projectId
+    });
+    if(response.statusCode == 200)
+      print('Section updated in backend');
   }
   removeSection(int pIndex, int sIndex) async{
     int sectionID = _items[pIndex].sections[sIndex].id;
@@ -161,5 +179,8 @@ class ProjectsProvider extends ChangeNotifier{
     notifyListeners();
     await _dbHelper.deleteRow(sectionsTable, sectionID);
     await _dbHelper.deleteAllRowsRelatedToSection(tasksTable, sectionID);
+    var response = await webServices.delete('http://xzoneapi.azurewebsites.net/api/v1/Section/$sectionID');
+    if(response.statusCode >= 200 && response.statusCode < 300)
+      print('section deleted from backend');
   }
 }

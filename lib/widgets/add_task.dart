@@ -257,7 +257,7 @@ class _AddTaskState extends State<AddTask> {
                             .addTaskToSection(widget.pIndex, widget.sIndex, activeTask);
                       else
                         Provider.of<TasksProvider>(context, listen: false)
-                          .addTask(activeTask);
+                          .addTask(activeTask, true);
                       if(activeTask.remainderOn)
                         _notification(activeTask);
                       Provider.of<TasksProvider>(context, listen: false)

@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
       else task.remainder = null;
       if(item['completeDate'] != null) task.completeDate = DateTime.parse(item['completeDate']);
       else task.completeDate = null;
-      Provider.of<TasksProvider>(context, listen: false).addTask(task);
+      Provider.of<TasksProvider>(context, listen: false).addTask(task, false);
     }
   }
 
