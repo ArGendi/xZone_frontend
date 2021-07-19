@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'dart:math';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:xzone/helpers/db_helper.dart';
 import 'package:xzone/models/project.dart';
 import 'package:xzone/models/section.dart';
 import 'package:xzone/models/task.dart';
+import 'package:xzone/servcies/helperFunction.dart';
+import 'package:xzone/servcies/web_services.dart';
 
 import '../constants.dart';
 
@@ -49,16 +52,37 @@ class ProjectsProvider extends ChangeNotifier{
     }
   }
 
-  addProject(Project project){
+  addProject(Project project, bool sendToBackend) async{
     _items.add(project);
     notifyListeners();
+    if(sendToBackend){
+      int userId = await HelpFunction.getUserId();
+      project.userID = userId;
+      http.Response response = await addProjectToBackend(project);
+      if(response.statusCode == 200){
+        var body = json.decode(response.body);
+        project.id = body['id'];
+        print('project added to backend');
+      }
+    }
     _dbHelper.insert(projectsTable,{
       'id': project.id,
-      'userId': 0,
+      'userId': project.userID,
       'name': project.name,
     });
     print('Project added');
   }
+
+  Future<http.Response> addProjectToBackend(Project project) async{
+    var webServices = new WebServices();
+    var response = await webServices.post('http://xzoneapi.azurewebsites.net/api/v1/project',
+        {
+          'name': project.name,
+          'ownerID': project.userID,
+        });
+    return response;
+  }
+
   addTaskToSection(int pIndex, int sIndex, Task task){
     _items[pIndex].sections[sIndex].tasks.add(task);
     notifyListeners();
@@ -76,9 +100,18 @@ class ProjectsProvider extends ChangeNotifier{
     });
     print('Task added to section');
   }
-  addSection(int pIndex, Section section){
+  addSection(int pIndex, Section section, bool sendToBackend) async{
+    section.parentProjectID =  _items[pIndex].id;
     _items[pIndex].sections.add(section);
     notifyListeners();
+    if(sendToBackend){
+      http.Response response = await addSectionToBackend(section);
+      if(response.statusCode == 200){
+        var body = json.decode(response.body);
+        section.id = body['id'];
+        print('section added to backend');
+      }
+    }
     _dbHelper.insert(sectionsTable,{
       'id': section.id,
       'name': section.name,
@@ -86,6 +119,18 @@ class ProjectsProvider extends ChangeNotifier{
     });
     print('section added');
   }
+
+  Future<http.Response> addSectionToBackend(Section section) async{
+    var webServices = new WebServices();
+    var response = await webServices.post('http://xzoneapi.azurewebsites.net/api/v1/Section',
+        {
+          'name': section.name,
+          'parentProjectID': section.parentProjectID,
+        });
+
+    return response;
+  }
+
   editProjectName(int pIndex, String newName){
     _items[pIndex].name = newName;
     notifyListeners();

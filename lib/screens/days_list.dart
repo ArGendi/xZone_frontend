@@ -9,7 +9,7 @@ import 'package:xzone/screens/profile.dart';
 import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/screens/zones_screen.dart';
-import 'package:xzone/servcies/tasks_search.dart';
+import 'package:xzone/servcies/offline_search.dart';
 import 'package:xzone/widgets/add_project.dart';
 import 'package:xzone/widgets/add_task.dart';
 import 'package:xzone/widgets/project_card.dart';
@@ -202,7 +202,7 @@ class _DaysListState extends State<DaysList> {
                 color: buttonColor,
               ),
               onPressed: (){
-                showSearch(context: context, delegate: TasksSearch());
+                showSearch(context: context, delegate: OfflineSearch());
               }
           )
         ],

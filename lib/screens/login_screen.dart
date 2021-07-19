@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/helpers/db_helper.dart';
 import 'package:xzone/models/project.dart';
+import 'package:xzone/models/section.dart';
 import 'package:xzone/models/task.dart';
+import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
@@ -72,10 +74,15 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         } else {
           _dbHelper.deleteAllRows(tasksTable);
+          _dbHelper.deleteAllRows(sectionsTable);
+          _dbHelper.deleteAllRows(projectsTable);
           var body = json.decode(response.body);
+          int id = body['id'];
           List tasks = body['tasks'];
           List projects = body['projects'];
           _fetchAndSetTasks(tasks);
+          _fetchAndSetProjects(projects);
+          HelpFunction.saveUserId(id);
           Navigator.pushNamedAndRemoveUntil(
               context, Neewsfeed.id, (route) => false);
         }
@@ -115,8 +122,39 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _fetchAndSetProjects(List projects){
+    int pCounter = 0;
     for(var item in projects){
       Project project = new Project(item['name']);
+      project.id = item['id'];
+      project.userID = 0;
+      Provider.of<ProjectsProvider>(context, listen: false).addProject(project, false);
+      List sections = item['sections'];
+      int sCounter = 0;
+      for(var sectionItem in sections){
+        Section section = new Section(sectionItem['name']);
+        section.id = sectionItem['id'];
+        section.parentProjectID = sectionItem['parentProjectID'];
+        Provider.of<ProjectsProvider>(context, listen: false).addSection(pCounter, section, false);
+        List tasks = sectionItem['projectTasks'];
+        for(var taskItem in tasks){
+          Task task = new Task();
+          task.id = taskItem['id'];
+          task.name = taskItem['name'];
+          task.priority = taskItem['priority'];
+          task.parentId = taskItem['parentID'];
+          if(taskItem['dueDate'] != null) task.dueDate = DateTime.parse(taskItem['dueDate']);
+          else task.dueDate = null;
+          if(taskItem['remainder'] != null) task.remainder = DateTime.parse(taskItem['remainder']);
+          else task.remainder = null;
+          if(taskItem['completeDate'] != null) task.completeDate = DateTime.parse(taskItem['completeDate']);
+          else task.completeDate = null;
+          task.projectId = project.id;
+          task.sectionId = section.id;
+          Provider.of<ProjectsProvider>(context, listen: false).addTaskToSection(pCounter, sCounter, task);
+        }
+        sCounter += 1;
+      }
+      pCounter += 1;
     }
   }
 

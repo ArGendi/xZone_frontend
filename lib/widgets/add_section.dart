@@ -56,7 +56,7 @@ class AddSection extends StatelessWidget {
               if(!isEdit) {
                 Section section = new Section(value);
                 Provider.of<ProjectsProvider>(context, listen: false)
-                    .addSection(pIndex, section);
+                    .addSection(pIndex, section, true);
               }
               else {
                 Provider.of<ProjectsProvider>(context, listen: false)

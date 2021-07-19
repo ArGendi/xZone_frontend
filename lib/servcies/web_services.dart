@@ -11,4 +11,12 @@ class WebServices {
     );
     return response;
   }
+
+  Future<http.Response> get(String url) async{
+    var response = await http.get(
+      Uri.parse(url),
+      headers: {"Content-type": "application/json"},
+    );
+    return response;
+  }
 }

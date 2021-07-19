@@ -121,8 +121,8 @@ class _SearchState extends State<Search> {
 }
 
 getChatRoomId(String id1, String id2, String id3, String id4) {
-  if (id1.substring(0, 1).codeUnitAt(0) > id2.substring(0, 1).codeUnitAt(0)) {
-    return "$id2\_$id1\#$id3$id4";
+  if (id1.substring(0, 1).codeUnitAt(0) > id2.substring(0, 1).codeUnitAt(0) && (id3.substring(0, 1).codeUnitAt(0) > id4.substring(0, 1).codeUnitAt(0))) {
+    return "$id2\_$id1\#$id4$id3";
   } else {
     return "$id1\_$id2\#$id3$id4";
   }
