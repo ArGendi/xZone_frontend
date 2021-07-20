@@ -42,7 +42,8 @@ class _TaskInfoState extends State<TaskInfo> {
   Widget build(BuildContext context) {
     String date = '';
     DateTime now = DateTime.now();
-    if(widget.task.dueDate.day == now.day) date = 'Today';
+    if(widget.task.dueDate == null) date = 'Inbox';
+    else if(widget.task.dueDate.day == now.day) date = 'Today';
     else if(widget.task.dueDate.day == now.day+1) date = 'Tomorrow';
     else date = widget.task.dueDate.toString();
     getFlag();

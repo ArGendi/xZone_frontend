@@ -1,6 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/helpers/db_helper.dart';
+import 'package:xzone/models/project.dart';
+import 'package:xzone/models/section.dart';
+import 'package:xzone/models/task.dart';
+import 'package:xzone/providers/projects_provider.dart';
+import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/screens/welcome_screen.dart';
@@ -11,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'Neewsfeed.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/repositories/FireBaseDB.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   static final String id = 'login';
@@ -27,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _loading = false;
   String _errorMsg = '';
   final _auth = FirebaseAuth.instance;
+  DBHelper _dbHelper = new DBHelper();
 
   _setEmail(String email) {
     _email = email;
@@ -64,9 +72,20 @@ class _LoginScreenState extends State<LoginScreen> {
             _showErrorMsg = true;
             _errorMsg = response.body;
           });
-        } else
+        } else {
+          _dbHelper.deleteAllRows(tasksTable);
+          _dbHelper.deleteAllRows(sectionsTable);
+          _dbHelper.deleteAllRows(projectsTable);
+          var body = json.decode(response.body);
+          int id = body['id'];
+          List tasks = body['tasks'];
+          List projects = body['projects'];
+          _fetchAndSetTasks(tasks);
+          _fetchAndSetProjects(projects);
+          HelpFunction.saveUserId(id);
           Navigator.pushNamedAndRemoveUntil(
               context, Neewsfeed.id, (route) => false);
+        }
         setState(() {
           _loading = false;
         });
@@ -81,6 +100,61 @@ class _LoginScreenState extends State<LoginScreen> {
           _errorMsg = e.toString();
         });
       }
+    }
+  }
+
+  _fetchAndSetTasks(List tasks){
+    for(var item in tasks){
+      Task task = new Task();
+      task.id = item['id'];
+      task.userId = item['userId'];
+      task.name = item['name'];
+      task.priority = item['priority'];
+      task.parentId = item['parentID'];
+      if(item['dueDate'] != null) task.dueDate = DateTime.parse(item['dueDate']);
+      else task.dueDate = null;
+      if(item['remainder'] != null) task.remainder = DateTime.parse(item['remainder']);
+      else task.remainder = null;
+      if(item['completeDate'] != null) task.completeDate = DateTime.parse(item['completeDate']);
+      else task.completeDate = null;
+      Provider.of<TasksProvider>(context, listen: false).addTask(task);
+    }
+  }
+
+  _fetchAndSetProjects(List projects){
+    int pCounter = 0;
+    for(var item in projects){
+      Project project = new Project(item['name']);
+      project.id = item['id'];
+      project.userID = 0;
+      Provider.of<ProjectsProvider>(context, listen: false).addProject(project, false);
+      List sections = item['sections'];
+      int sCounter = 0;
+      for(var sectionItem in sections){
+        Section section = new Section(sectionItem['name']);
+        section.id = sectionItem['id'];
+        section.parentProjectID = sectionItem['parentProjectID'];
+        Provider.of<ProjectsProvider>(context, listen: false).addSection(pCounter, section, false);
+        List tasks = sectionItem['projectTasks'];
+        for(var taskItem in tasks){
+          Task task = new Task();
+          task.id = taskItem['id'];
+          task.name = taskItem['name'];
+          task.priority = taskItem['priority'];
+          task.parentId = taskItem['parentID'];
+          if(taskItem['dueDate'] != null) task.dueDate = DateTime.parse(taskItem['dueDate']);
+          else task.dueDate = null;
+          if(taskItem['remainder'] != null) task.remainder = DateTime.parse(taskItem['remainder']);
+          else task.remainder = null;
+          if(taskItem['completeDate'] != null) task.completeDate = DateTime.parse(taskItem['completeDate']);
+          else task.completeDate = null;
+          task.projectId = project.id;
+          task.sectionId = section.id;
+          Provider.of<ProjectsProvider>(context, listen: false).addTaskToSection(pCounter, sCounter, task);
+        }
+        sCounter += 1;
+      }
+      pCounter += 1;
     }
   }
 
@@ -220,7 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.pop(context);
+                                Navigator.pushNamed(context, RegisterScreen.id);
                               },
                               child: Text(
                                 " Register now",

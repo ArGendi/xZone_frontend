@@ -7,6 +7,7 @@ import 'package:xzone/screens/zones_screen.dart';
 
 
 class profile extends StatefulWidget {
+  static String id = 'profile';
   final bool checkMe;
 
   const profile({Key key, this.checkMe}) : super(key: key);

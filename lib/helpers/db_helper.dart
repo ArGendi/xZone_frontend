@@ -85,4 +85,9 @@ class DBHelper {
     var dbClient = await db;
     await dbClient.delete(table, where: 'sectionId = ?', whereArgs: [id]);
   }
+
+  Future<void> deleteAllRows(String table) async{
+    var dbClient = await db;
+    await dbClient.delete(table);
+  }
 }

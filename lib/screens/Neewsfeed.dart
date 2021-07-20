@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/screens/days_list.dart';
+import 'package:xzone/screens/loading_screen.dart';
+import 'package:xzone/screens/login_screen.dart';
+import 'package:xzone/screens/profile.dart';
+import 'package:xzone/screens/zones_screen.dart';
 import 'package:xzone/widgets/ZoneWidget.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -39,6 +44,15 @@ class Neewsfeed extends StatelessWidget {
                       thickness: 0.06,
                     ),
                     ListTile(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => profile(
+                              checkMe: false,
+                            ),),
+                        );
+                      },
                       title: Text(
                         "Profile",
                         style: TextStyle(color: whiteColor),
@@ -49,6 +63,15 @@ class Neewsfeed extends StatelessWidget {
                       ),
                     ),
                     ListTile(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => zones_profile(
+                              checkMe: false,
+                            ),),
+                        );
+                      },
                       title: Text(
                         "Zones",
                         style: TextStyle(color: whiteColor),
@@ -59,7 +82,10 @@ class Neewsfeed extends StatelessWidget {
                       ),
                     ),
                     ListTile(
-                      title: Text("tasks", style: TextStyle(color: whiteColor)),
+                      onTap: (){
+                        Navigator.pushNamed(context, DaysList.id);
+                      },
+                      title: Text("Tasks", style: TextStyle(color: whiteColor)),
                       leading: Icon(
                         Icons.list,
                         color: whiteColor,
@@ -88,6 +114,9 @@ class Neewsfeed extends StatelessWidget {
                 ),
               ),
               ListTile(
+                onTap: (){
+                  Navigator.pushNamed(context, LoginScreen.id);
+                },
                 title: Text("Logout", style: TextStyle(color: Colors.red)),
                 leading: Icon(
                   Icons.logout,
