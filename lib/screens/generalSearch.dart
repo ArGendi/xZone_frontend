@@ -4,12 +4,12 @@ import 'package:xzone/repositories/FireBaseDB.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/screens/conversation.dart';
 
-class Search extends StatefulWidget {
+class generalSearch extends StatefulWidget {
   @override
-  _SearchState createState() => _SearchState();
+  _generalSearchState createState() => _generalSearchState();
 }
 
-class _SearchState extends State<Search> {
+class _generalSearchState extends State<generalSearch> {
   TextEditingController searchtextEditingController =
       new TextEditingController();
   final firebaseDB = FirestoreDatabase();
@@ -82,33 +82,36 @@ class _SearchState extends State<Search> {
               },
             ),
             Expanded(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: Colors.black45,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: TextField(
-                      style: TextStyle(color: Colors.white),
-                      controller: searchtextEditingController,
-                      decoration: InputDecoration(
-                          hintText: "Search",
-                          hintStyle: TextStyle(color: Colors.white),
-                          border: InputBorder.none),
-                    )),
-                    GestureDetector(
-                      onTap: () {
-                        beginsearch();
-                      },
-                      child: Icon(
-                        Icons.search,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 7),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.black45,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: TextField(
+                        style: TextStyle(color: Colors.white),
+                        controller: searchtextEditingController,
+                        decoration: InputDecoration(
+                            hintText: "Search",
+                            hintStyle: TextStyle(color: Colors.white),
+                            border: InputBorder.none),
+                      )),
+                      GestureDetector(
+                        onTap: () {
+                          beginsearch();
+                        },
+                        child: Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -121,9 +124,8 @@ class _SearchState extends State<Search> {
 }
 
 getChatRoomId(String id1, String id2, String id3, String id4) {
-  if (id1.substring(0, 1).codeUnitAt(0) > id2.substring(0, 1).codeUnitAt(0) &&
-      (id3.substring(0, 1).codeUnitAt(0) > id4.substring(0, 1).codeUnitAt(0))) {
-    return "$id2\_$id1\#$id4$id3";
+  if (id1.substring(0, 1).codeUnitAt(0) > id2.substring(0, 1).codeUnitAt(0)) {
+    return "$id2\_$id1\#$id3$id4";
   } else {
     return "$id1\_$id2\#$id3$id4";
   }

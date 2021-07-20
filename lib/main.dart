@@ -18,11 +18,12 @@ import 'package:xzone/providers/zones_provider.dart';
 import 'package:xzone/screens/Neewsfeed.dart';
 import 'package:xzone/screens/chatroom.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:xzone/screens/skills.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin
-        = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
@@ -40,14 +41,12 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     var androidInitialization = AndroidInitializationSettings('app_icon');
     var iOSInitialization = IOSInitializationSettings();
-    var initializationSettings = InitializationSettings(android: androidInitialization, iOS: iOSInitialization);
-    flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onSelectNotification: (String payload) async{
-        if(payload != null)
-          debugPrint('notification payload: ' + payload);
-      }
-    );
+    var initializationSettings = InitializationSettings(
+        android: androidInitialization, iOS: iOSInitialization);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: (String payload) async {
+      if (payload != null) debugPrint('notification payload: ' + payload);
+    });
   }
 
   @override
@@ -73,8 +72,9 @@ class _MyAppState extends State<MyApp> {
             appBarTheme: AppBarTheme(
               color: backgroundColor,
             )),
+
         ///IsLoggedIn ? Neewsfeed.id : RegisterScreen.id,
-        initialRoute: LoadingScreen.id,
+        initialRoute: Skills.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
           WelcomeScreen.id: (context) => WelcomeScreen(),
@@ -84,8 +84,8 @@ class _MyAppState extends State<MyApp> {
           ProjectScreen.id: (context) => ProjectScreen(),
           Neewsfeed.id: (contetx) => Neewsfeed(),
           ChatRoom.id: (context) => ChatRoom(),
+          Skills.id: (context) => Skills(),
           LoadingScreen.id: (context) => LoadingScreen(),
-
         },
       ),
     );
