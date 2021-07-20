@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
           else task.completeDate = null;
           task.projectId = project.id;
           task.sectionId = section.id;
-          Provider.of<ProjectsProvider>(context, listen: false).addTaskToSection(pCounter, sCounter, task);
+          Provider.of<ProjectsProvider>(context, listen: false).addTaskToSection(pCounter, sCounter, task, false);
         }
         sCounter += 1;
       }

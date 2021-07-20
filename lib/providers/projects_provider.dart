@@ -83,13 +83,22 @@ class ProjectsProvider extends ChangeNotifier{
     return response;
   }
 
-  addTaskToSection(int pIndex, int sIndex, Task task){
+  addTaskToSection(int pIndex, int sIndex, Task task, bool sendToBackend) async{
     _items[pIndex].sections[sIndex].tasks.add(task);
+    task.sectionId = _items[pIndex].sections[sIndex].id;
     notifyListeners();
+    if(sendToBackend){
+      http.Response response = await addProjectTaskToBackend(task);
+      if(response.statusCode == 200){
+        var body = json.decode(response.body);
+        task.id = body['id'];
+        print('Project Task added to backend');
+      }
+    }
     _dbHelper.insert(tasksTable,{
       'id': task.id,
-      'userId': 0,
-      'parentId': 0,
+      'userId': task.id,
+      'parentId': task.parentId,
       'name': task.name,
       'dueDate': task.dueDate.toString(),
       'remainder': 'Empty',
@@ -100,6 +109,29 @@ class ProjectsProvider extends ChangeNotifier{
     });
     print('Task added to section');
   }
+
+  Future<http.Response> addProjectTaskToBackend(Task task) async{
+    var response = await webServices.post('http://xzoneapi.azurewebsites.net/api/v1/ProjectTask',
+        {
+          "name": task.name,
+          "sectionId": task.sectionId,
+          "priority": task.priority,
+          "dueDate": task.dueDate != null ? task.dueDate.toString() : null,
+          "remainder": task.remainder != null ? task.remainder.toString() : null,
+          "completeDate": task.completeDate != null ? task.completeDate.toString() : null
+        });
+    return response;
+  }
+
+  removeTaskFromSection(int pIndex, int sIndex, Task task) async{
+    _items[pIndex].sections[sIndex].tasks.remove(task);
+    notifyListeners();
+    _dbHelper.deleteRow(tasksTable, task.id);
+    var response = await webServices.delete('http://xzoneapi.azurewebsites.net/api/v1/ProjectTask/${task.id}');
+    if(response.statusCode >= 200 && response.statusCode < 300)
+      print('Project Task deleted from backend');
+  }
+
   addSection(int pIndex, Section section, bool sendToBackend) async{
     section.parentProjectID =  _items[pIndex].id;
     _items[pIndex].sections.add(section);
