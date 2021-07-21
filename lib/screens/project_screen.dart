@@ -201,7 +201,9 @@ class _ProjectScreenState extends State<ProjectScreen> {
                         itemBuilder: (ctx, lvIndex){
                           return TaskCard(
                             task: project.sections[index].tasks[lvIndex],
-                            bgColor: Colors.grey[700],
+                            bgColor: Colors.grey[800],
+                            pIndex: widget.pIndex,
+                            sIndex: index,
                           );
                         },
                       ),

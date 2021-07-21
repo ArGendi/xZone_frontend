@@ -56,7 +56,7 @@ class AddProject extends StatelessWidget {
               if(!isEdit) {
                 Project project = Project(value);
                 Provider.of<ProjectsProvider>(context, listen: false)
-                    .addProject(project);
+                    .addProject(project, true);
               }
               else{
                 Provider.of<ProjectsProvider>(context, listen: false)
