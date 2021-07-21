@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/add_task.dart';
 import 'package:intl/intl.dart';
@@ -203,8 +204,21 @@ class ZoneStateTest extends State<ZoneTest>{
                                                   child: IconButton(
                                                     iconSize: 28,
                                                     icon:Icon( Icons.add_circle , color:buttonColor ,),
-                                                  onPressed: (){
+                                                  onPressed: ()async{
+                                                      String userName =  await HelpFunction.getuserNamesharedPrefrence();
+                                                      setState(() {
+                                                        widget.posts.add({
+                                                          "content": textfieldController.text,
+                                                          "writerId": widget.userID,
+                                                          "zoneId": widget.zoneID,
+                                                          "date": DateTime.now().toString(),
+                                                          "writer":{
+                                                            "userName": userName,
+                                                          }
+                                                        });
+                                                      });
                                                     addPostInZone(textfieldController.text,widget.userID,widget.zoneID);
+                                                    textfieldController.clear();
                                                     //print(textfieldController.text);
                                                   },
                                                   ),
