@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
       else task.remainder = null;
       if(item['completeDate'] != null) task.completeDate = DateTime.parse(item['completeDate']);
       else task.completeDate = null;
-      Provider.of<TasksProvider>(context, listen: false).addTask(task);
+      Provider.of<TasksProvider>(context, listen: false).addTask(task, false);
     }
   }
 
@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
           else task.completeDate = null;
           task.projectId = project.id;
           task.sectionId = section.id;
-          Provider.of<ProjectsProvider>(context, listen: false).addTaskToSection(pCounter, sCounter, task);
+          Provider.of<ProjectsProvider>(context, listen: false).addTaskToSection(pCounter, sCounter, task, false);
         }
         sCounter += 1;
       }

@@ -63,7 +63,7 @@ class _TasksState extends State<Tasks> {
       mytask.parentId = task['parentid'];
       mytask.priority = task['priority'];
       mytask.dueDate = DateTime.parse(task['dueDate']);
-      Provider.of<TasksProvider>(context).addTask(mytask);
+      Provider.of<TasksProvider>(context).addTask(mytask, true);
     });
   }
 
