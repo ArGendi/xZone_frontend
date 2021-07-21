@@ -49,6 +49,53 @@ class _TasksState extends State<Tasks> {
         });
   }
 
+  showCongratulationDialog(){
+    FocusScope.of(context).unfocus();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: backgroundColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(borderRadiusValue))
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/images/popper.png',
+                width: 200,
+              ),
+              Text(
+                'You have complete 5 tasks',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: whiteColor,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: TextButton(
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Great',
+                    style: TextStyle(
+                      color: buttonColor,
+                    ),
+                  )
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   var _taskservice = Taskservice();
   var task = Task();
   String date;
@@ -198,6 +245,7 @@ class _TasksState extends State<Tasks> {
                               return TaskCard(
                                 bgColor: backgroundColor,
                                 task: filteredItems[index],
+                                cong: showCongratulationDialog,
                               );
                             },
                           );

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:xzone/models/task.dart';
@@ -12,16 +14,23 @@ class TaskCard extends StatefulWidget {
   final Color bgColor;
   final int pIndex;
   final int sIndex;
+  final Function cong;
 
-  const TaskCard({Key key, @required this.task,@required this.bgColor, this.pIndex, this.sIndex}) : super(key: key);
+  const TaskCard({Key key, @required this.task,@required this.bgColor, this.pIndex, this.sIndex, this.cong}) : super(key: key);
 
   @override
   _TaskCardState createState() => _TaskCardState();
 }
 
 class _TaskCardState extends State<TaskCard> {
-  _completeTask(BuildContext ctx){
-    Provider.of<TasksProvider>(ctx, listen: false).moveTaskToRecentlyDeleted(widget.task);
+
+  _completeTask() async{
+    var response = await Provider.of<TasksProvider>(context, listen: false).completeTask(widget.task);
+    if(response != null){
+      var body = json.decode(response.body);
+      List badges = body['badges'];
+      if(badges.isNotEmpty) widget.cong();
+    }
   }
   _deleteTask(){
     if(widget.task.projectId == 0)
@@ -68,7 +77,7 @@ class _TaskCardState extends State<TaskCard> {
                 builder: (BuildContext ctx) {
                   return IconButton(
                     iconSize: 20,
-                    onPressed: (){},
+                    onPressed: _completeTask,
                     icon: Icon(
                       Icons.panorama_fish_eye,
                       color: whiteColor,
