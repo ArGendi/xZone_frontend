@@ -18,8 +18,8 @@ class zonesState_profile extends State<zones_profile> {
   @override
   leaveZone(int userId,int zoneId)async{
     var webService = WebServices();
-    var response = await webService.delete(
-        'http://xzoneapi.azurewebsites.net/api/v1/ZoneMember', {
+    var response = await webService.anotherDelete(
+        'http://xzoneapi.azurewebsites.net/api/v1/ZoneMember',{
       "accountId": userId,
       "zoneId" : zoneId
     });
