@@ -9,8 +9,9 @@ import 'package:xzone/screens/profile.dart';
 class info extends StatefulWidget{
   static final String id = 'loading';
   final int userId;
+  final bool checkMe;
 
-  const info({Key key, this.userId}) : super(key: key);
+  const info({Key key, this.userId, this.checkMe}) : super(key: key);
   @override
   infoState createState() => infoState();
 }
@@ -38,11 +39,12 @@ class infoState extends State<info>{
          List badges =body['badges'];
          List roadMap =body['roadmaps'];
          List zones = body['zones'];
+         List friends = body['friends'];
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => profile(
-              checkMe: false,
+              checkMe: widget.checkMe,
               userName: userName,
               bio: bio,
               rank: rank,
@@ -50,6 +52,7 @@ class infoState extends State<info>{
               roadMaps:roadMap,
               zones: zones,
               userId: userId,
+              friends: friends,
               //roadMaps: roadMap,
             ),
           ),

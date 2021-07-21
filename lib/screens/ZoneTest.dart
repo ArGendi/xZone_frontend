@@ -88,15 +88,16 @@ class ZoneStateTest extends State<ZoneTest>{
         ),
         ),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Row(
                 children: [
                   Expanded(
                     child: FlatButton(
                       child: Row(
                         children: [
+                          SizedBox(width: 50,),
                           Icon(Icons.people_alt_rounded , color:buttonColor ,),
-                          SizedBox(width: 20,),
+                          SizedBox(width: 50,),
                           Text(
                             "Joined" ,
                             style: TextStyle(color: whiteColor, fontSize: 15),
@@ -114,28 +115,6 @@ class ZoneStateTest extends State<ZoneTest>{
                     ),
                   ),
                   SizedBox(width: 10,),
-                  Expanded(
-                    child: FlatButton(
-                      child: Row(
-                        children: [
-                          Icon(Icons.person_add_alt_1_rounded , color:buttonColor ,),
-                          SizedBox(width: 20,),
-                          Text(
-                            "Invite" ,
-                            style: TextStyle(color: whiteColor, fontSize: 15),
-                          ),
-                        ],
-                      ),
-                      onPressed: () {},
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              color: buttonColor,
-                              width: 2,
-                              style: BorderStyle.solid),
-                          borderRadius:
-                          BorderRadius.circular(borderRadiusValue)),
-                    ),
-                  ),
                 ],
               ),
             ),
