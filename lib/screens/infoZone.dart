@@ -35,6 +35,8 @@ class infoZoneState extends State<infoZone>{
       String zoneName = body['name'];
       String zoneDes = body['description'];
       List posts = body['posts'];
+      List zoneMembers = body['zoneMembers'];
+      int privacy = body['privacy'];
 
 
       Navigator.pushReplacement(
@@ -45,6 +47,8 @@ class infoZoneState extends State<infoZone>{
             zoneName: zoneName,
             zoneID: idZone ,
             userID: idUser,
+            zoneMembers: zoneMembers ,
+            privacy: privacy,
           ),
         ),
       );

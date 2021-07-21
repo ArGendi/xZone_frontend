@@ -50,6 +50,7 @@ class Neewsfeed extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => info(
                               userId: 14,
+                              checkMe: false,
                             ),),
                         );
                       },

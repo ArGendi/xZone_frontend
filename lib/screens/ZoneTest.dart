@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/add_task.dart';
 import 'package:intl/intl.dart';
@@ -10,9 +11,11 @@ class ZoneTest extends StatefulWidget {
   final String zoneName;
   final int zoneID;
   final int userID;
+  final List zoneMembers;
+  final int privacy;
   //final String userName;
 
-  const ZoneTest({Key key, this.posts, this.zoneName, this.zoneID, this.userID}) : super(key: key);
+  const ZoneTest({Key key, this.posts, this.zoneName, this.zoneID, this.userID, this.zoneMembers, this.privacy}) : super(key: key);
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return ZoneStateTest();
@@ -68,12 +71,12 @@ class ZoneStateTest extends State<ZoneTest>{
           Icon(Icons.lock,color: buttonColor,size: 15,),
           SizedBox(width: 5,),
           Text(
-            "Private Zone",
+            widget.privacy==1?"Public Zone":"Private Zone",
             style: TextStyle(color: whiteColor, fontSize: 15),
           ),
           SizedBox(width: 5,),
           Text(
-            "200",
+            widget.zoneMembers.length.toString(),
             style: TextStyle(color: buttonColor, fontSize: 15),
           ),
           SizedBox(width: 5,),
@@ -85,15 +88,16 @@ class ZoneStateTest extends State<ZoneTest>{
         ),
         ),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Row(
                 children: [
                   Expanded(
                     child: FlatButton(
                       child: Row(
                         children: [
+                          SizedBox(width: 50,),
                           Icon(Icons.people_alt_rounded , color:buttonColor ,),
-                          SizedBox(width: 20,),
+                          SizedBox(width: 50,),
                           Text(
                             "Joined" ,
                             style: TextStyle(color: whiteColor, fontSize: 15),
@@ -111,28 +115,6 @@ class ZoneStateTest extends State<ZoneTest>{
                     ),
                   ),
                   SizedBox(width: 10,),
-                  Expanded(
-                    child: FlatButton(
-                      child: Row(
-                        children: [
-                          Icon(Icons.person_add_alt_1_rounded , color:buttonColor ,),
-                          SizedBox(width: 20,),
-                          Text(
-                            "Invite" ,
-                            style: TextStyle(color: whiteColor, fontSize: 15),
-                          ),
-                        ],
-                      ),
-                      onPressed: () {},
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              color: buttonColor,
-                              width: 2,
-                              style: BorderStyle.solid),
-                          borderRadius:
-                          BorderRadius.circular(borderRadiusValue)),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -203,8 +185,21 @@ class ZoneStateTest extends State<ZoneTest>{
                                                   child: IconButton(
                                                     iconSize: 28,
                                                     icon:Icon( Icons.add_circle , color:buttonColor ,),
-                                                  onPressed: (){
+                                                  onPressed: ()async{
+                                                      String userName =  await HelpFunction.getuserNamesharedPrefrence();
+                                                      setState(() {
+                                                        widget.posts.add({
+                                                          "content": textfieldController.text,
+                                                          "writerId": widget.userID,
+                                                          "zoneId": widget.zoneID,
+                                                          "date": DateTime.now().toString(),
+                                                          "writer":{
+                                                            "userName": userName,
+                                                          }
+                                                        });
+                                                      });
                                                     addPostInZone(textfieldController.text,widget.userID,widget.zoneID);
+                                                    textfieldController.clear();
                                                     //print(textfieldController.text);
                                                   },
                                                   ),
