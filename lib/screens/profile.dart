@@ -9,15 +9,20 @@ import 'package:xzone/screens/zones_screen.dart';
 class profile extends StatefulWidget {
   static String id = 'profile';
   final bool checkMe;
-
-  const profile({Key key, this.checkMe}) : super(key: key);
+  final int userId;
+  final String userName;
+  final String bio;
+  final int rank;
+  final List badges;
+  final List roadMaps;
+  final List zones;
+  const profile({Key key, this.checkMe, this.userName, this.bio, this.rank, this.badges, this.roadMaps, this.zones, this.userId}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return profileState();
   }
 }
-
 class profileState extends State<profile> {
   List<Color> colors1 = [
     Color(0xFFE8CBC0),
@@ -32,6 +37,18 @@ class profileState extends State<profile> {
     Color(0xFFDECBA4)
   ];
   int indeex = 0;
+  Color getRankColor(int rank){
+    switch(rank){
+      case 0:
+        return bronze;
+      case 1:
+        return silver;
+      case 2:
+        return gold;
+      case 3:
+        return platinum;
+    }
+  }
   showAddSectionDialog(String name,String Desc){
     showDialog(
       context: context,
@@ -44,7 +61,7 @@ class profileState extends State<profile> {
           content:ListTile(
               leading:Icon(Icons.add_task,color: buttonColor,),
               title:Text(name,style:TextStyle(color: whiteColor,fontSize: 20),),
-              subtitle:Text('The airplane is only in Act II.',style:TextStyle(color: whiteColor),),
+              subtitle:Text(Desc,style:TextStyle(color: whiteColor),),
           ),
           actions: [
             Padding(
@@ -60,7 +77,9 @@ class profileState extends State<profile> {
                     ),
                   )
               ),
-            ),Padding(
+            ),
+            if(widget.checkMe)
+            Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextButton(
                   onPressed: (){
@@ -154,28 +173,28 @@ class profileState extends State<profile> {
                 ),
                 Expanded(
                   child: Container(
-                    height: 150,
-                    width: 150,
+                    height: 130,
+                    width: 130,
                     child: Card(
                       color: backgroundColor,
                       elevation: 4.0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(60),
                       ),
                       child: Center(
-                        child: Image.asset("assets/images/boy.png"),
+                        child: Image.asset("assets/images/pro.png"),
                       ),
                     ),
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: gold,
+                          color: getRankColor(widget.rank),
                           blurRadius: 5.0,
-                          offset: Offset(0, 10),
-                          spreadRadius: 0.5,
+                          offset: Offset(0, 4),
+                          spreadRadius: 0.8,
                         ),
                       ],
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                 ),
@@ -188,6 +207,8 @@ class profileState extends State<profile> {
                           MaterialPageRoute(
                               builder: (context) => zones_profile(
                                     checkMe: widget.checkMe,
+                                userID: widget.userId,
+                                zones: widget.zones,
                                   ),),
                         );
                       },
@@ -204,7 +225,7 @@ class profileState extends State<profile> {
                             height: 7,
                           ),
                           Text(
-                            '10',
+                            widget.zones.length.toString(),
                             style: TextStyle(
                               color: buttonColor,
                               fontSize: 20,
@@ -224,10 +245,10 @@ class profileState extends State<profile> {
               // padding:const EdgeInsets.symmetric(vertical: 10, horizontal: 80),
               child: Container(
                 child: Text(
-                  'Abdelrahman Ayman',
+                  widget.userName,
                   style: TextStyle(
                     color: whiteColor,
-                    fontSize: 20,
+                    fontSize: 25,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -239,10 +260,11 @@ class profileState extends State<profile> {
             SizedBox(
               height: 10,
             ),
+            if(widget.bio.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
               child: Text(
-                "Your life does not get better by chance. It gets better by a change",
+                widget.bio,
                 style: TextStyle(color: whiteColor, fontSize: 15),
               ),
             ),
@@ -332,8 +354,15 @@ class profileState extends State<profile> {
               height: 150,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: 5,
+                  itemCount: widget.badges.length,
                   itemBuilder: (BuildContext context, int index) {
+                    String imageUrl='';String imageName='';
+                    switch(widget.badges[index]['badgeID']){
+                      case 2:
+                        imageUrl='assets/images/5taskfinished.png';
+                        imageName="5 Tasks";
+                        break;
+                    }
                     return Padding(
                       padding: EdgeInsets.only(left: 20.0, right: 20.0),
                       child: Column(
@@ -341,13 +370,13 @@ class profileState extends State<profile> {
                           CircleAvatar(
                             radius: (50),
                             backgroundColor: buttonColor,
-                            child: Image.asset("assets/images/badge.png"),
+                            child: Image.asset(imageUrl),
                           ),
                           SizedBox(
                             height: 20,
                           ),
                           Text(
-                            'Medal',
+                            imageName,
                             style: TextStyle(
                               fontSize: 20,
                               color: whiteColor,
@@ -378,7 +407,7 @@ class profileState extends State<profile> {
             GridView.builder(
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: 6,
+              itemCount: widget.roadMaps.length,
               itemBuilder: (BuildContext context, int index) {
                 indeex = index;
                 if (indeex >= colors1.length) {
@@ -402,7 +431,7 @@ class profileState extends State<profile> {
                         ),
                         child: Center(
                             child: Text(
-                          'C++',
+                          widget.roadMaps[index]['name'],
                           style: TextStyle(
                             fontSize: 25,
                             color: whiteColor,
@@ -412,7 +441,7 @@ class profileState extends State<profile> {
                       ),
                     ),
                     onTap: (){
-                        showAddSectionDialog("c++", "The best ways");
+                        showAddSectionDialog(widget.roadMaps[index]['name'],widget.roadMaps[index]['description']);
                     },
                   ),
                 );
