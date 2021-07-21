@@ -1,131 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/constants.dart';
-import 'package:xzone/screens/days_list.dart';
-import 'package:xzone/screens/loading_screen.dart';
-import 'package:xzone/screens/login_screen.dart';
-import 'package:xzone/screens/profile.dart';
-import 'package:xzone/screens/zones_screen.dart';
 import 'package:xzone/widgets/ZoneWidget.dart';
+import 'package:xzone/widgets/drawer.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:xzone/models/ZoneColor.dart';
-import 'package:xzone/screens/chatroom.dart';
 import 'package:xzone/screens/generalSearch.dart';
 
 class Neewsfeed extends StatelessWidget {
+  final email;
+  final username;
   static String id = 'newsfeed';
+
+  const Neewsfeed({this.email, this.username});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: Container(
-          color: backgroundColor,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                child: ListView(
-                  //addAutomaticKeepAlives: true,
-                  children: [
-                    UserAccountsDrawerHeader(
-                      decoration: BoxDecoration(color: backgroundColor),
-                      accountName: Text("Nardine Nabil"),
-                      accountEmail: Text(
-                        "nardin1nabil@gmail.com",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      currentAccountPicture: CircleAvatar(
-                        backgroundColor: Colors.black,
-                      ),
-                    ),
-                    Divider(
-                      color: whiteColor,
-                      thickness: 0.06,
-                    ),
-                    ListTile(
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => profile(
-                              checkMe: false,
-                            ),),
-                        );
-                      },
-                      title: Text(
-                        "Profile",
-                        style: TextStyle(color: whiteColor),
-                      ),
-                      leading: Icon(
-                        Icons.person,
-                        color: whiteColor,
-                      ),
-                    ),
-                    ListTile(
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => zones_profile(
-                              checkMe: false,
-                            ),),
-                        );
-                      },
-                      title: Text(
-                        "Zones",
-                        style: TextStyle(color: whiteColor),
-                      ),
-                      leading: Icon(
-                        Icons.group,
-                        color: whiteColor,
-                      ),
-                    ),
-                    ListTile(
-                      onTap: (){
-                        Navigator.pushNamed(context, DaysList.id);
-                      },
-                      title: Text("Tasks", style: TextStyle(color: whiteColor)),
-                      leading: Icon(
-                        Icons.list,
-                        color: whiteColor,
-                      ),
-                    ),
-                    Divider(
-                      color: whiteColor,
-                      thickness: 0.06,
-                    ),
-                    ListTile(
-                      title:
-                          Text("Settings", style: TextStyle(color: whiteColor)),
-                      leading: Icon(
-                        Icons.settings,
-                        color: whiteColor,
-                      ),
-                    ),
-                    ListTile(
-                      title: Text("Help", style: TextStyle(color: whiteColor)),
-                      leading: Icon(
-                        Icons.help,
-                        color: whiteColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ListTile(
-                onTap: (){
-                  Navigator.pushNamed(context, LoginScreen.id);
-                },
-                title: Text("Logout", style: TextStyle(color: Colors.red)),
-                leading: Icon(
-                  Icons.logout,
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        ),
+      drawer: drawer(
+        email: email,
+        username: username,
       ),
       appBar: AppBar(
         elevation: 0,

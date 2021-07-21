@@ -47,4 +47,9 @@ class HelpFunction {
     SharedPreferences prefrence = await SharedPreferences.getInstance();
     return prefrence.getInt(sharedPrefrenceUserId);
   }
+
+  static Future<bool> removeEmail(String email) async {
+    SharedPreferences prefrence = await SharedPreferences.getInstance();
+    await prefrence.clear();
+  }
 }

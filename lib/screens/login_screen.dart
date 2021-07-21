@@ -50,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
     String myusername = Temp[0]["name"];
     print(myusername);
     HelpFunction.saveuserNamesharedPrefrence(myusername);
+    return myusername;
   }
 
   _trySubmit() async {
@@ -83,17 +84,21 @@ class _LoginScreenState extends State<LoginScreen> {
           _fetchAndSetTasks(tasks);
           _fetchAndSetProjects(projects);
           HelpFunction.saveUserId(id);
-          Navigator.pushNamedAndRemoveUntil(
-              context, Neewsfeed.id, (route) => false);
+          final newUser = await _auth.signInWithEmailAndPassword(
+              email: _email, password: _password);
+          HelpFunction.saveuserEmailsharedPrefrence(_email);
+          getusername(_email).then((value) {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        Neewsfeed(email: _email, username: value)),
+                (route) => false);
+          });
         }
         setState(() {
           _loading = false;
         });
-        final newUser = await _auth.signInWithEmailAndPassword(
-            email: _email, password: _password);
-        HelpFunction.saveuserEmailsharedPrefrence(_email);
-        getusername(_email);
-        HelpFunction.saveusersharedPrefrenceUserLoggedInKey(true);
       } catch (e) {
         print(e);
         setState(() {
@@ -103,54 +108,69 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  _fetchAndSetTasks(List tasks){
-    for(var item in tasks){
+  _fetchAndSetTasks(List tasks) {
+    for (var item in tasks) {
       Task task = new Task();
       task.id = item['id'];
       task.userId = item['userId'];
       task.name = item['name'];
       task.priority = item['priority'];
       task.parentId = item['parentID'];
-      if(item['dueDate'] != null) task.dueDate = DateTime.parse(item['dueDate']);
-      else task.dueDate = null;
-      if(item['remainder'] != null) task.remainder = DateTime.parse(item['remainder']);
-      else task.remainder = null;
-      if(item['completeDate'] != null) task.completeDate = DateTime.parse(item['completeDate']);
-      else task.completeDate = null;
+      if (item['dueDate'] != null)
+        task.dueDate = DateTime.parse(item['dueDate']);
+      else
+        task.dueDate = null;
+      if (item['remainder'] != null)
+        task.remainder = DateTime.parse(item['remainder']);
+      else
+        task.remainder = null;
+      if (item['completeDate'] != null)
+        task.completeDate = DateTime.parse(item['completeDate']);
+      else
+        task.completeDate = null;
       Provider.of<TasksProvider>(context, listen: false).addTask(task);
     }
   }
 
-  _fetchAndSetProjects(List projects){
+  _fetchAndSetProjects(List projects) {
     int pCounter = 0;
-    for(var item in projects){
+    for (var item in projects) {
       Project project = new Project(item['name']);
       project.id = item['id'];
       project.userID = 0;
-      Provider.of<ProjectsProvider>(context, listen: false).addProject(project, false);
+      Provider.of<ProjectsProvider>(context, listen: false)
+          .addProject(project, false);
       List sections = item['sections'];
       int sCounter = 0;
-      for(var sectionItem in sections){
+      for (var sectionItem in sections) {
         Section section = new Section(sectionItem['name']);
         section.id = sectionItem['id'];
         section.parentProjectID = sectionItem['parentProjectID'];
-        Provider.of<ProjectsProvider>(context, listen: false).addSection(pCounter, section, false);
+        Provider.of<ProjectsProvider>(context, listen: false)
+            .addSection(pCounter, section, false);
         List tasks = sectionItem['projectTasks'];
-        for(var taskItem in tasks){
+        for (var taskItem in tasks) {
           Task task = new Task();
           task.id = taskItem['id'];
           task.name = taskItem['name'];
           task.priority = taskItem['priority'];
           task.parentId = taskItem['parentID'];
-          if(taskItem['dueDate'] != null) task.dueDate = DateTime.parse(taskItem['dueDate']);
-          else task.dueDate = null;
-          if(taskItem['remainder'] != null) task.remainder = DateTime.parse(taskItem['remainder']);
-          else task.remainder = null;
-          if(taskItem['completeDate'] != null) task.completeDate = DateTime.parse(taskItem['completeDate']);
-          else task.completeDate = null;
+          if (taskItem['dueDate'] != null)
+            task.dueDate = DateTime.parse(taskItem['dueDate']);
+          else
+            task.dueDate = null;
+          if (taskItem['remainder'] != null)
+            task.remainder = DateTime.parse(taskItem['remainder']);
+          else
+            task.remainder = null;
+          if (taskItem['completeDate'] != null)
+            task.completeDate = DateTime.parse(taskItem['completeDate']);
+          else
+            task.completeDate = null;
           task.projectId = project.id;
           task.sectionId = section.id;
-          Provider.of<ProjectsProvider>(context, listen: false).addTaskToSection(pCounter, sCounter, task);
+          Provider.of<ProjectsProvider>(context, listen: false)
+              .addTaskToSection(pCounter, sCounter, task);
         }
         sCounter += 1;
       }

@@ -13,13 +13,12 @@ import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/screens/welcome_screen.dart';
-import 'package:xzone/servcies/helperFunction.dart';
-import 'package:xzone/widgets/add_task.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:xzone/screens/Neewsfeed.dart';
 import 'package:xzone/screens/chatroom.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:xzone/screens/skills.dart';
+import 'package:xzone/servcies/helperFunction.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -27,19 +26,28 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  var email;
+  var username;
+
+  username = await HelpFunction.getuserNamesharedPrefrence();
+  email = await HelpFunction.getuserEmailsharedPrefrence();
+  // print(email);
+  runApp(MyApp(email: email, username: username));
 }
 
 class MyApp extends StatefulWidget {
   @override
+  final email;
+  final username;
+
+  const MyApp({this.email, this.username});
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
   void initState() {
     // TODO: implement initState
-    super.initState();
+
     var androidInitialization = AndroidInitializationSettings('app_icon');
     var iOSInitialization = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(
@@ -75,7 +83,7 @@ class _MyAppState extends State<MyApp> {
             )),
 
         ///IsLoggedIn ? Neewsfeed.id : RegisterScreen.id,
-        initialRoute: Skills.id,
+        initialRoute: widget.email == null ? RegisterScreen.id : Neewsfeed.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
           WelcomeScreen.id: (context) => WelcomeScreen(),
@@ -83,7 +91,10 @@ class _MyAppState extends State<MyApp> {
           Tasks.id: (context) => Tasks(),
           DaysList.id: (context) => DaysList(),
           ProjectScreen.id: (context) => ProjectScreen(),
-          Neewsfeed.id: (context) => Neewsfeed(),
+          Neewsfeed.id: (context) => Neewsfeed(
+                email: widget.email == null ? "" : widget.email,
+                username: widget.username == null ? "" : widget.username,
+              ),
           ChatRoom.id: (context) => ChatRoom(),
           Skills.id: (context) => Skills(),
           LoadingScreen.id: (context) => LoadingScreen(),
