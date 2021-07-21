@@ -17,17 +17,8 @@ class profile extends StatefulWidget {
   final List badges;
   final List roadMaps;
   final List zones;
-  const profile(
-      {Key key,
-      this.checkMe,
-      this.userName,
-      this.bio,
-      this.rank,
-      this.badges,
-      this.roadMaps,
-      this.zones,
-      this.userId})
-      : super(key: key);
+  final List friends;
+  const profile({Key key, this.checkMe, this.userName, this.bio, this.rank, this.badges, this.roadMaps, this.zones, this.userId, this.friends}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -159,10 +150,11 @@ class profileState extends State<profile> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => friends(
-                              checkMe: widget.checkMe,
-                            ),
-                          ),
+                              builder: (context) => friends(
+                                    checkMe: widget.checkMe,
+                                  FriendList:widget.friends,
+                                userId: widget.userId,
+                                  ),),
                         );
                       },
                       child: Column(
@@ -178,7 +170,7 @@ class profileState extends State<profile> {
                             height: 7,
                           ),
                           Text(
-                            '20',
+                            widget.friends.length.toString(),
                             style: TextStyle(
                               color: buttonColor,
                               fontSize: 20,
