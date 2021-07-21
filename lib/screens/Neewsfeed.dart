@@ -5,13 +5,14 @@ import 'package:xzone/screens/days_list.dart';
 import 'package:xzone/screens/loading_screen.dart';
 import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/screens/profile.dart';
+import 'package:xzone/screens/zoneNewsfeedInfo.dart';
 import 'package:xzone/screens/zones_screen.dart';
 import 'package:xzone/widgets/ZoneWidget.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:xzone/models/ZoneColor.dart';
 import 'package:xzone/screens/chatroom.dart';
-
+import 'package:xzone/screens/infoProfile.dart';
 class Neewsfeed extends StatelessWidget {
   static String id = 'newsfeed';
   @override
@@ -47,8 +48,8 @@ class Neewsfeed extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => profile(
-                              checkMe: false,
+                            builder: (context) => info(
+                              userId: 14,
                             ),),
                         );
                       },
@@ -66,8 +67,8 @@ class Neewsfeed extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => zones_profile(
-                              checkMe: false,
+                            builder: (context) => infoZoneNewsfeed(
+                              userId: 14,
                             ),),
                         );
                       },
