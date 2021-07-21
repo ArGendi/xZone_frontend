@@ -11,9 +11,11 @@ class ZoneTest extends StatefulWidget {
   final String zoneName;
   final int zoneID;
   final int userID;
+  final List zoneMembers;
+  final int privacy;
   //final String userName;
 
-  const ZoneTest({Key key, this.posts, this.zoneName, this.zoneID, this.userID}) : super(key: key);
+  const ZoneTest({Key key, this.posts, this.zoneName, this.zoneID, this.userID, this.zoneMembers, this.privacy}) : super(key: key);
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return ZoneStateTest();
@@ -69,12 +71,12 @@ class ZoneStateTest extends State<ZoneTest>{
           Icon(Icons.lock,color: buttonColor,size: 15,),
           SizedBox(width: 5,),
           Text(
-            "Private Zone",
+            widget.privacy==1?"Public Zone":"Private Zone",
             style: TextStyle(color: whiteColor, fontSize: 15),
           ),
           SizedBox(width: 5,),
           Text(
-            "200",
+            widget.zoneMembers.length.toString(),
             style: TextStyle(color: buttonColor, fontSize: 15),
           ),
           SizedBox(width: 5,),
