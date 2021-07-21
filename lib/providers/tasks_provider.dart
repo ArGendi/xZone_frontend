@@ -175,4 +175,19 @@ class TasksProvider extends ChangeNotifier {
     _activeTask.remainderOn = true;
     notifyListeners();
   }
+
+  Future<http.Response> completeTask(Task task) async{
+    _items.remove(task);
+    notifyListeners();
+    _dbHelper.deleteRow(tasksTable, task.id);
+    int userId = await HelpFunction.getUserId();
+    var response = await webServices.post('http://xzoneapi.azurewebsites.net/api/v1/task/${task.id}/$userId', {});
+    if(response.statusCode == 200){
+      print('Task Confirmed at Backend');
+      print(response.body);
+      return response;
+    }
+    return null;
+  }
+
 }

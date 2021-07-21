@@ -215,4 +215,21 @@ class ProjectsProvider extends ChangeNotifier{
     if(response.statusCode >= 200 && response.statusCode < 300)
       print('section deleted from backend');
   }
+
+  completeTask(int pIndex, int sIndex, Task task) async{
+    _items[pIndex].sections[sIndex].tasks.remove(task);
+    notifyListeners();
+    _dbHelper.deleteRow(tasksTable, task.id);
+    int userId = await HelpFunction.getUserId();
+    var response = await webServices.post('http://xzoneapi.azurewebsites.net/api/v1/task/${task.id}/$userId', {});
+    if(response.statusCode == 200){
+      print('Task Confirmed at Backend');
+    }
+  }
+
+  addProjectDescription(int pIndex, String description){
+    _items[pIndex].description = description;
+    notifyListeners();
+  }
+
 }

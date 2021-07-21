@@ -8,10 +8,13 @@ import 'package:xzone/models/project.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/servcies/helperFunction.dart';
+import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/add_project.dart';
 import 'package:xzone/widgets/add_section.dart';
 import 'package:xzone/widgets/add_task.dart';
 import 'package:xzone/widgets/more_section_options.dart';
+import 'package:xzone/widgets/publish_project.dart';
 import 'package:xzone/widgets/task_card.dart';
 
 class ProjectScreen extends StatefulWidget {
@@ -26,6 +29,7 @@ class ProjectScreen extends StatefulWidget {
 
 class _ProjectScreenState extends State<ProjectScreen> {
   var globalKey = GlobalKey<FormState>();
+  WebServices _webServices = new WebServices();
 
   addTaskBottomSheet(int index) {
     showModalBottomSheet(
@@ -137,6 +141,98 @@ class _ProjectScreenState extends State<ProjectScreen> {
     );
   }
 
+  showWriteProjectDescriptionDialog(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        bool published = false;
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            backgroundColor: backgroundColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(borderRadiusValue))
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if(published)
+                Icon(
+                  Icons.check_circle,
+                  size: 40,
+                  color: Colors.green,
+                ),
+                SizedBox(height: 10,),
+                PublishProject(
+                  tKey: globalKey,
+                  pIndex: widget.pIndex,
+                ),
+              ],
+            ),
+            actions: [
+              if(!published)
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextButton(
+                    onPressed: () async{
+                      bool valid = globalKey.currentState.validate();
+                      if(valid){
+                        FocusScope.of(context).unfocus();
+                        globalKey.currentState.save();
+                        List projects = Provider.of<ProjectsProvider>(context, listen: false).items;
+                        bool temp = await publishProject(projects[widget.pIndex]);
+                        if(temp){
+                          setState(() {
+                            published = true;
+                          });
+                        }
+                      }
+                    },
+                    child: Text(
+                      'Publish',
+                      style: TextStyle(
+                          color: buttonColor
+                      ),
+                    )
+                ),
+              )
+              else
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextButton(
+                      onPressed: (){
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Close',
+                        style: TextStyle(
+                            color: buttonColor
+                        ),
+                      )
+                  ),
+                )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  publishProject(Project project) async{
+    int userId = await HelpFunction.getUserId();
+    var response = await _webServices.post('http://xzoneapi.azurewebsites.net/api/Roadmap?api-version=1',
+        {
+          "name": project.name,
+          "ownerID": userId,
+          "description": project.description,
+          "projectId": project.id
+        });
+    if(response.statusCode == 200){
+      print('Project published');
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     Project project = Provider.of<ProjectsProvider>(context).items[widget.pIndex];
@@ -148,7 +244,11 @@ class _ProjectScreenState extends State<ProjectScreen> {
           IconButton(
               icon: Icon(Icons.edit, color: buttonColor,),
               onPressed: showEditProjectDialog,
-          )
+          ),
+          IconButton(
+            icon: Icon(Icons.cloud_upload, color: buttonColor,),
+            onPressed: showWriteProjectDescriptionDialog,
+          ),
         ],
       ),
       body: SafeArea(

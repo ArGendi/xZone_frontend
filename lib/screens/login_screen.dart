@@ -105,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _fetchAndSetTasks(List tasks){
     for(var item in tasks){
+      if(item['completeDate'] != null) continue;
       Task task = new Task();
       task.id = item['id'];
       task.userId = item['userId'];
@@ -137,6 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Provider.of<ProjectsProvider>(context, listen: false).addSection(pCounter, section, false);
         List tasks = sectionItem['projectTasks'];
         for(var taskItem in tasks){
+          if(item['completeDate'] != null) continue;
           Task task = new Task();
           task.id = taskItem['id'];
           task.name = taskItem['name'];
