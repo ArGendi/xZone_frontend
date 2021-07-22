@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/screens/days_list.dart';
+import 'package:xzone/screens/loading_screen.dart';
+import 'package:xzone/screens/login_screen.dart';
+import 'package:xzone/screens/profile.dart';
+import 'package:xzone/screens/zoneNewsfeedInfo.dart';
+import 'package:xzone/screens/zones_screen.dart';
+import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/widgets/ZoneWidget.dart';
 import 'package:xzone/widgets/drawer.dart';
 import 'package:xzone/providers/zones_provider.dart';
@@ -29,7 +36,7 @@ class Neewsfeed extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   Icons.search,
-                  color: whiteColor,
+                  color: buttonColor,
                 ),
                 onPressed: () {
                   Navigator.push(context,
@@ -39,14 +46,14 @@ class Neewsfeed extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   Icons.notifications,
-                  color: whiteColor,
+                  color: buttonColor,
                 ),
                 onPressed: () {},
               ),
               IconButton(
                 icon: Icon(
                   FontAwesomeIcons.facebookMessenger,
-                  color: whiteColor,
+                  color: buttonColor,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, 'chatroom');
@@ -55,7 +62,9 @@ class Neewsfeed extends StatelessWidget {
             ],
           ),
         ],
+        iconTheme: IconThemeData(color: buttonColor),
       ),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
