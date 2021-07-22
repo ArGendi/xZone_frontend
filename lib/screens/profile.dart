@@ -114,7 +114,7 @@ class profileState extends State<profile> {
                       project.description = Desc;
                       project.id = roadMap['id'];
                       project.userID = roadMap['ownerID'];
-                      Provider.of<ProjectsProvider>(context).addProject(project, true);
+                      Provider.of<ProjectsProvider>(context, listen: false).addProject(project, true);
                       Navigator.pop(context);
                     },
                     child: Text(

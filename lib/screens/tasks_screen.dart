@@ -64,10 +64,10 @@ class _TasksState extends State<Tasks> {
             children: [
               Image.asset(
                 'assets/images/popper.png',
-                width: 200,
+                width: 100,
               ),
               Text(
-                'You have complete 5 tasks',
+                'You have complete 2 tasks',
                 style: TextStyle(
                   fontSize: 16,
                   color: whiteColor,
