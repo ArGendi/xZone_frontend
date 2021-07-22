@@ -7,6 +7,7 @@ import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/screens/profile.dart';
 import 'package:xzone/screens/zoneNewsfeedInfo.dart';
 import 'package:xzone/screens/zones_screen.dart';
+import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/widgets/ZoneWidget.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -40,16 +41,17 @@ class Neewsfeed extends StatelessWidget {
                       ),
                     ),
                     Divider(
-                      color: whiteColor,
+                      color: buttonColor,
                       thickness: 0.06,
                     ),
                     ListTile(
-                      onTap: (){
+                      onTap: ()async{
+                        int id = await HelpFunction.getUserId();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => info(
-                              userId: 14,
+                              userId: id ,
                               checkMe: false,
                             ),),
                         );
@@ -60,16 +62,17 @@ class Neewsfeed extends StatelessWidget {
                       ),
                       leading: Icon(
                         Icons.person,
-                        color: whiteColor,
+                        color: buttonColor,
                       ),
                     ),
                     ListTile(
-                      onTap: (){
+                      onTap: ()async{
+                        int id = await HelpFunction.getUserId();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => infoZoneNewsfeed(
-                              userId: 14,
+                              userId: id,
                             ),),
                         );
                       },
@@ -79,7 +82,7 @@ class Neewsfeed extends StatelessWidget {
                       ),
                       leading: Icon(
                         Icons.group,
-                        color: whiteColor,
+                        color: buttonColor,
                       ),
                     ),
                     ListTile(
@@ -89,11 +92,11 @@ class Neewsfeed extends StatelessWidget {
                       title: Text("Tasks", style: TextStyle(color: whiteColor)),
                       leading: Icon(
                         Icons.list,
-                        color: whiteColor,
+                        color: buttonColor,
                       ),
                     ),
                     Divider(
-                      color: whiteColor,
+                      color: buttonColor,
                       thickness: 0.06,
                     ),
                     ListTile(
@@ -101,14 +104,14 @@ class Neewsfeed extends StatelessWidget {
                           Text("Settings", style: TextStyle(color: whiteColor)),
                       leading: Icon(
                         Icons.settings,
-                        color: whiteColor,
+                        color: buttonColor,
                       ),
                     ),
                     ListTile(
                       title: Text("Help", style: TextStyle(color: whiteColor)),
                       leading: Icon(
                         Icons.help,
-                        color: whiteColor,
+                        color: buttonColor,
                       ),
                     ),
                   ],
@@ -137,21 +140,21 @@ class Neewsfeed extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   Icons.search,
-                  color: whiteColor,
+                  color: buttonColor,
                 ),
                 onPressed: () {},
               ),
               IconButton(
                 icon: Icon(
                   Icons.notifications,
-                  color: whiteColor,
+                  color: buttonColor,
                 ),
                 onPressed: () {},
               ),
               IconButton(
                 icon: Icon(
                   FontAwesomeIcons.facebookMessenger,
-                  color: whiteColor,
+                  color: buttonColor,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, 'chatroom');
@@ -160,7 +163,9 @@ class Neewsfeed extends StatelessWidget {
             ],
           ),
         ],
+        iconTheme: IconThemeData(color: buttonColor),
       ),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

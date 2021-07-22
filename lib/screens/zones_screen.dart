@@ -71,7 +71,8 @@ class zonesState_profile extends State<zones_profile> {
                   fontSize: 20,
                 ),
               ),
-              trailing: FlatButton(
+              trailing:widget.zones[index]['accountId']!=widget.userID?
+              FlatButton(
                 child: Text(widget.checkMe? "Join":"Leave",style: TextStyle(color: whiteColor,fontSize: 15),),
                 onPressed: (){if(widget.checkMe){print("Send join zone Request");
                 }else{
@@ -85,7 +86,22 @@ class zonesState_profile extends State<zones_profile> {
                     width: 1,
                     style: BorderStyle.solid
                 ), borderRadius: BorderRadius.circular(borderRadiusValue)),
-              ),
+              ):Card(
+                color: backgroundColor,
+                shape: RoundedRectangleBorder(side: BorderSide(
+                    color:buttonColor,
+                    width: 1,
+                    style: BorderStyle.solid
+                ), borderRadius: BorderRadius.circular(borderRadiusValue)),
+                child:FlatButton(
+                child: Text("Leave",style: TextStyle(color: whiteColor,fontSize: 15),),
+                onPressed: (){
+                leaveZone(widget.userID, widget.zones[index]['zoneId']);
+                setState(() {
+                widget.zones.removeAt(index);
+                });
+                },
+              ),),
               leading: CircleAvatar(child: Icon(Icons.add_task),backgroundColor: buttonColor,foregroundColor: backgroundColor,),
             );
           },

@@ -30,13 +30,19 @@ class infoZoneState extends State<infoZone>{
 
       var response = await webService.get(
           'http://xzoneapi.azurewebsites.net/api/v1/Zone/GetZone/$idZone');
-
       var body = json.decode(response.body);
       String zoneName = body['name'];
       String zoneDes = body['description'];
       List posts = body['posts'];
       List zoneMembers = body['zoneMembers'];
       int privacy = body['privacy'];
+      bool userInZone=false;
+      for(int i=0;i<zoneMembers.length;i++){
+        if(idUser == zoneMembers[i]['accountId'])
+          {
+            userInZone = true;
+          }
+      }
 
 
       Navigator.pushReplacement(
@@ -49,6 +55,7 @@ class infoZoneState extends State<infoZone>{
             userID: idUser,
             zoneMembers: zoneMembers ,
             privacy: privacy,
+            userInZone: userInZone,
           ),
         ),
       );

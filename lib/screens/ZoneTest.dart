@@ -13,9 +13,10 @@ class ZoneTest extends StatefulWidget {
   final int userID;
   final List zoneMembers;
   final int privacy;
+  final bool userInZone;
   //final String userName;
 
-  const ZoneTest({Key key, this.posts, this.zoneName, this.zoneID, this.userID, this.zoneMembers, this.privacy}) : super(key: key);
+  const ZoneTest({Key key, this.posts, this.zoneName, this.zoneID, this.userID, this.zoneMembers, this.privacy, this.userInZone}) : super(key: key);
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return ZoneStateTest();
@@ -25,16 +26,15 @@ class ZoneStateTest extends State<ZoneTest>{
   int realIndex;
   var textfieldController = TextEditingController();
 
-  addPostInZone(String content,int writerId,int zoneId)async{
+  addPostInZone(String content,int writerId,int zoneId)async {
     var webService = WebServices();
     var response = await webService.post(
         'http://xzoneapi.azurewebsites.net/api/v1/post/writepost', {
       "content": content,
       "writerId": writerId,
-      "zoneId" : zoneId
+      "zoneId": zoneId
     });
-
-        }
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -68,7 +68,8 @@ class ZoneStateTest extends State<ZoneTest>{
           child: Row(
           children: [
           SizedBox(width: 5,),
-          Icon(Icons.lock,color: buttonColor,size: 15,),
+
+          Icon(widget.privacy==1? Icons.lock_open_sharp:Icons.lock,color: buttonColor,size: 15,),
           SizedBox(width: 5,),
           Text(
             widget.privacy==1?"Public Zone":"Private Zone",
@@ -91,6 +92,7 @@ class ZoneStateTest extends State<ZoneTest>{
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Row(
                 children: [
+                  if(!widget.userInZone)
                   Expanded(
                     child: FlatButton(
                       child: Row(
@@ -99,7 +101,7 @@ class ZoneStateTest extends State<ZoneTest>{
                           Icon(Icons.people_alt_rounded , color:buttonColor ,),
                           SizedBox(width: 50,),
                           Text(
-                            "Joined" ,
+                            "Join" ,
                             style: TextStyle(color: whiteColor, fontSize: 15),
                           ),
                         ],
