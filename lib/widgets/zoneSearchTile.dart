@@ -35,8 +35,9 @@ class _ZoneSearchTileState extends State<ZoneSearchTile> {
               style: TextStyle(color: Colors.white),
             ),
             content: TextField(
-                controller: codeEntry,
-                decoration: InputDecoration(fillColor: Colors.white)),
+              controller: codeEntry,
+              style: TextStyle(color: Colors.white),
+            ),
             actions: [
               MaterialButton(
                   color: buttonColor,
@@ -50,13 +51,47 @@ class _ZoneSearchTileState extends State<ZoneSearchTile> {
         });
   }
 
-  Join(userid, zoneid, joinCode) async {
+  Future<String> CreateErrorAlertDialog(
+      BuildContext context, showErrorMessage, errorMessage) {
+    TextEditingController codeEntry = TextEditingController();
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            elevation: 0,
+            backgroundColor: backgroundColor,
+            title: Text(
+              errorMessage,
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: [
+              MaterialButton(
+                  color: buttonColor,
+                  elevation: 0,
+                  child: Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })
+            ],
+          );
+        });
+  }
+
+  Join(BuildContext context, userid, zoneid, joinCode) async {
     try {
       var response = await webService.post(
           'http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/$joinCode', {
         "zoneId": zoneid,
         "accountId": userid,
       });
+      if (response.statusCode != 200) {
+        CreateErrorAlertDialog(
+            context, true, "Sorry,Incorrect Code,Try Again!");
+      } else {
+        setState(() {
+          pressed = true;
+        });
+      }
     } catch (e) {
       print(e);
     }
@@ -100,9 +135,9 @@ class _ZoneSearchTileState extends State<ZoneSearchTile> {
                 onTap: () {
                   HelpFunction.getUserId().then((userId) {
                     widget.privacy == 0
-                        ? Join(userId, widget.zoneId, 0000)
+                        ? Join(context, userId, widget.zoneId, 0000)
                         : CreateAlertDialog(context).then((value) {
-                            Join(userId, widget.zoneId, value);
+                            Join(context, userId, widget.zoneId, value);
                           });
                   });
                 },
