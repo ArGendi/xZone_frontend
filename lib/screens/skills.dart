@@ -7,7 +7,7 @@ import 'package:xzone/constants.dart';
 import 'package:xzone/screens/conversation.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
-import 'package:xzone/widgets/searchTile.dart';
+import 'package:xzone/widgets/skillSearchTile.dart';
 
 class Skills extends StatefulWidget {
   static String id = "skills";
@@ -23,6 +23,8 @@ class _SkillsState extends State<Skills> {
   bool alreadyadded = false;
   var webService = WebServices();
   List Temp;
+  List skillsuserHave;
+  var userid;
   beginsearch() async {
     try {
       var input = searchtextEditingController.text;
@@ -38,20 +40,52 @@ class _SkillsState extends State<Skills> {
     }
   }
 
-  bool selected;
-  Widget searchList() {
+  checkIfSkillAlreadyFound(skillid) {
+    bool Found = false;
+
+    var input = searchtextEditingController.text;
+
+    Found = skillsuserHave.contains(skillid);
+    return Found;
+  }
+
+  searchList() {
     return skills != null
         ? ListView.builder(
             itemCount: skills.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
               return SearchTile(
-                  name: skills[index]["name"],
-                  alreadyadded: alreadyadded,
-                  selected: false,
-                  id: skills[index]["id"]);
+                name: skills[index]["name"],
+                alreadyadded: checkIfSkillAlreadyFound(skills[index]["id"]),
+                selected: false,
+                id: skills[index]["id"],
+                userid: userid,
+              );
             })
         : Container();
+  }
+
+  getuserskills() async {
+    HelpFunction.getUserId().then((id) async {
+      userid = id;
+      try {
+        var response = await webService
+            .get('http://xzoneapi.azurewebsites.net/api/v1/AccountSkill/$id');
+
+        skillsuserHave =
+            response.statusCode != 200 ? [] : jsonDecode(response.body);
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getuserskills();
+    super.initState();
   }
 
   @override

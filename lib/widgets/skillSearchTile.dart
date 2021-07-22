@@ -7,18 +7,20 @@ class SearchTile extends StatefulWidget {
   var alreadyadded;
   var selected;
   var id;
-  SearchTile({this.name, this.alreadyadded, this.selected, this.id});
+  var userid;
+  SearchTile(
+      {this.name, this.alreadyadded, this.selected, this.id, this.userid});
   @override
   _SearchTileState createState() => _SearchTileState();
 }
 
 class _SearchTileState extends State<SearchTile> {
   var webService = WebServices();
-  AddSkillToAccount(id) async {
+  AddSkillToAccount(id, userid) async {
     try {
       var response = await webService
           .post('http://xzoneapi.azurewebsites.net/api/v1/AccountSkill', {
-        "accountID": 8,
+        "accountID": userid,
         "skillID": id,
       });
     } catch (e) {
@@ -41,7 +43,7 @@ class _SearchTileState extends State<SearchTile> {
                 color: buttonColor,
               ),
               onPressed: () {
-                AddSkillToAccount(widget.id);
+                AddSkillToAccount(widget.id, widget.userid);
                 setState(() {
                   widget.selected = !widget.selected;
                 });

@@ -1,12 +1,11 @@
 import 'dart:convert';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/repositories/FireBaseDB.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/screens/conversation.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
+import 'package:xzone/widgets/zoneSearchTile.dart';
 
 class generalSearch extends StatefulWidget {
   @override
@@ -23,6 +22,23 @@ class _generalSearchState extends State<generalSearch> {
   List Temp;
   var input;
   var webService = WebServices();
+  var userid;
+  List zonesUserjoined;
+  getuserZones() async {
+    HelpFunction.getUserId().then((id) async {
+      userid = id;
+      try {
+        var response = await webService
+            .get('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/$id');
+
+        zonesUserjoined =
+            response.statusCode != 200 ? [] : jsonDecode(response.body);
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+
   beginsearch() async {
     await beginsearchUsers();
     await beginsearchZones();
@@ -77,6 +93,15 @@ class _generalSearchState extends State<generalSearch> {
     }
   }
 
+  checkIfAlreadyJoined(zoneId) {
+    bool Found = false;
+
+    var input = searchtextEditingController.text;
+
+    Found = zonesUserjoined.contains(zoneId);
+    return Found;
+  }
+
   createChatroom(username, email) {
     String id =
         getChatRoomId(email, constant.myemail, username, constant.myname);
@@ -85,18 +110,6 @@ class _generalSearchState extends State<generalSearch> {
         MaterialPageRoute(
             builder: (context) => conversation(
                 chatRoomId: id, username: username, email: email)));
-  }
-
-  Join(userid, zoneid) async {
-    try {
-      var response = await webService
-          .post('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/0000', {
-        "zoneId": zoneid,
-        "accountId": userid,
-      });
-    } catch (e) {
-      print(e);
-    }
   }
 
   Widget searchList() {
@@ -126,11 +139,13 @@ class _generalSearchState extends State<generalSearch> {
             itemCount: itemszones.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return searchTileZone(
-                  name: itemszones[index]["name"],
-                  description: itemszones[index]["description"],
-                  privacy: itemszones[index]["privacy"],
-                  zoneId: itemszones[index]["id"]);
+              return ZoneSearchTile(
+                name: itemszones[index]["name"],
+                description: itemszones[index]["description"],
+                privacy: itemszones[index]["privacy"],
+                zoneId: itemszones[index]["id"],
+                alreadyYourzone: checkIfAlreadyJoined(itemszones[index]["id"]),
+              );
             })
         : Center(
             child: Container(
@@ -186,49 +201,6 @@ class _generalSearchState extends State<generalSearch> {
         ));
   }
 
-  Widget searchTileZone({name, description, privacy, zoneId}) {
-    return ListTile(
-        leading: CircleAvatar(
-          child: Icon(Icons.group, color: Colors.grey),
-          backgroundColor: buttonColor,
-        ),
-        title: Row(
-          children: [
-            Text(name, style: TextStyle(color: Colors.white)),
-            SizedBox(
-              width: 8,
-            ),
-            privacy == 1
-                ? Icon(
-                    Icons.lock,
-                    color: Colors.white,
-                    size: 18,
-                  )
-                : Icon(
-                    Icons.public,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-          ],
-        ),
-        subtitle: Text(description, style: TextStyle(color: Colors.grey)),
-        trailing: GestureDetector(
-          onTap: () {
-            HelpFunction.getUserId().then((userId) {
-              Join(userId, zoneId);
-            });
-          },
-          child: Container(
-              padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
-              child: Text("join",
-                  style: TextStyle(
-                    color: Colors.black,
-                  )),
-              decoration: BoxDecoration(
-                  color: buttonColor, borderRadius: BorderRadius.circular(13))),
-        ));
-  }
-
   Widget searchTileRoadmap({name, description}) {
     return ListTile(
         leading: CircleAvatar(
@@ -250,6 +222,13 @@ class _generalSearchState extends State<generalSearch> {
               decoration: BoxDecoration(
                   color: buttonColor, borderRadius: BorderRadius.circular(13))),
         ));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getuserZones();
+    super.initState();
   }
 
   @override
