@@ -5,7 +5,7 @@ class HelpFunction {
   static String sharedPrefrenceUserNameKey = "USERNAMEKEY";
   static String sharedPrefrenceUserEmailKey = "USEREMAILKEY";
   static String sharedPrefrenceUserId = "USERIDKEY";
-  
+
   static Future<bool> saveusersharedPrefrenceUserLoggedInKey(
       bool isUserLoggedin) async {
     SharedPreferences prefrence = await SharedPreferences.getInstance();
@@ -46,5 +46,10 @@ class HelpFunction {
   static Future<int> getUserId() async {
     SharedPreferences prefrence = await SharedPreferences.getInstance();
     return prefrence.getInt(sharedPrefrenceUserId);
+  }
+
+  static Future<bool> removeEmail(String email) async {
+    SharedPreferences prefrence = await SharedPreferences.getInstance();
+    await prefrence.clear();
   }
 }

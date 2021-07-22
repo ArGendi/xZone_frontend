@@ -1,67 +1,91 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/repositories/FireBaseDB.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/screens/conversation.dart';
+import 'package:xzone/servcies/helperFunction.dart';
+import 'package:xzone/servcies/web_services.dart';
+import 'package:xzone/widgets/skillSearchTile.dart';
 
-class Search extends StatefulWidget {
+class Skills extends StatefulWidget {
+  static String id = "skills";
   @override
-  _SearchState createState() => _SearchState();
+  _SkillsState createState() => _SkillsState();
 }
 
-class _SearchState extends State<Search> {
+class _SkillsState extends State<Skills> {
   TextEditingController searchtextEditingController =
       new TextEditingController();
-  final firebaseDB = FirestoreDatabase();
-  List items;
+  List skills;
+  String _errorMsg = '';
+  bool alreadyadded = false;
+  var webService = WebServices();
   List Temp;
+  List skillsuserHave;
+  var userid;
   beginsearch() async {
-    Temp = await firebaseDB.getUserByname(searchtextEditingController.text);
-    setState(() {
-      items = Temp;
-    });
+    try {
+      var input = searchtextEditingController.text;
+      var response = await webService
+          .get('http://xzoneapi.azurewebsites.net/api/v1/Skill/$input');
+
+      Temp = jsonDecode(response.body);
+      setState(() {
+        skills = Temp;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
-  createChatroom(username, email) {
-    String id =
-        getChatRoomId(email, constant.myemail, username, constant.myname);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => conversation(
-                chatRoomId: id, username: username, email: email)));
+  checkIfSkillAlreadyFound(skillid) {
+    bool Found = false;
+
+    var input = searchtextEditingController.text;
+
+    Found = skillsuserHave.contains(skillid);
+    return Found;
   }
 
-  Widget searchList() {
-    return items != null
+  searchList() {
+    return skills != null
         ? ListView.builder(
-            itemCount: items.length,
+            itemCount: skills.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return searchTile(
-                  name: items[index]["name"], email: items[index]["email"]);
+              return SearchTile(
+                name: skills[index]["name"],
+                alreadyadded: checkIfSkillAlreadyFound(skills[index]["id"]),
+                selected: false,
+                id: skills[index]["id"],
+                userid: userid,
+              );
             })
         : Container();
   }
 
-  Widget searchTile({name, email}) {
-    return ListTile(
-        leading: CircleAvatar(
-          child: Icon(Icons.person, color: Colors.grey),
-          backgroundColor: buttonColor,
-        ),
-        title: Text(name, style: TextStyle(color: Colors.white)),
-        subtitle: Text(email, style: TextStyle(color: Colors.grey)),
-        trailing: GestureDetector(
-          onTap: () {
-            createChatroom(name, email);
-          },
-          child: Container(
-              padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
-              child: Text("message", style: TextStyle(color: Colors.white)),
-              decoration: BoxDecoration(
-                  color: buttonColor, borderRadius: BorderRadius.circular(13))),
-        ));
+  getuserskills() async {
+    HelpFunction.getUserId().then((id) async {
+      userid = id;
+      try {
+        var response = await webService
+            .get('http://xzoneapi.azurewebsites.net/api/v1/AccountSkill/$id');
+
+        skillsuserHave =
+            response.statusCode != 200 ? [] : jsonDecode(response.body);
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getuserskills();
+    super.initState();
   }
 
   @override
@@ -69,7 +93,7 @@ class _SearchState extends State<Search> {
     return Scaffold(
         body: Container(
       padding: EdgeInsets.symmetric(horizontal: 7, vertical: 20),
-      child: Column(
+      child: ListView(
         children: [
           Row(children: [
             IconButton(
@@ -95,13 +119,15 @@ class _SearchState extends State<Search> {
                       style: TextStyle(color: Colors.white),
                       controller: searchtextEditingController,
                       decoration: InputDecoration(
-                          hintText: "Search",
+                          hintText: "What is your skill?..",
                           hintStyle: TextStyle(color: Colors.white),
                           border: InputBorder.none),
                     )),
                     GestureDetector(
                       onTap: () {
-                        beginsearch();
+                        setState(() {
+                          beginsearch();
+                        });
                       },
                       child: Icon(
                         Icons.search,
@@ -113,17 +139,9 @@ class _SearchState extends State<Search> {
               ),
             ),
           ]),
+          searchList()
         ],
       ),
     ));
-  }
-}
-
-getChatRoomId(String id1, String id2, String id3, String id4) {
-  if (id1.substring(0, 1).codeUnitAt(0) > id2.substring(0, 1).codeUnitAt(0) &&
-      (id3.substring(0, 1).codeUnitAt(0) > id4.substring(0, 1).codeUnitAt(0))) {
-    return "$id2\_$id1\#$id4$id3";
-  } else {
-    return "$id1\_$id2\#$id3$id4";
   }
 }

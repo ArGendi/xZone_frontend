@@ -9,153 +9,23 @@ import 'package:xzone/screens/zoneNewsfeedInfo.dart';
 import 'package:xzone/screens/zones_screen.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/widgets/ZoneWidget.dart';
+import 'package:xzone/widgets/drawer.dart';
 import 'package:xzone/providers/zones_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:xzone/models/ZoneColor.dart';
-import 'package:xzone/screens/chatroom.dart';
-import 'package:xzone/screens/infoProfile.dart';
-class Neewsfeed extends StatefulWidget {
+import 'package:xzone/screens/generalSearch.dart';
+
+class Neewsfeed extends StatelessWidget {
+  final email;
+  final username;
   static String id = 'newsfeed';
 
-  @override
-  _NeewsfeedState createState() => _NeewsfeedState();
-}
-
-class _NeewsfeedState extends State<Neewsfeed> {
-  String _email = '';
-  String _userName = '';
-
-  Future<void> getCurrentUserInfo() async{
-    _email = await HelpFunction.getuserEmailsharedPrefrence();
-    _userName = await HelpFunction.getuserNamesharedPrefrence();
-  }
-
+  const Neewsfeed({this.email, this.username});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: FutureBuilder(
-          future: getCurrentUserInfo(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if(snapshot.connectionState == ConnectionState.waiting)
-              return Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(buttonColor),
-                ),
-              );
-            else return Container(
-              color: backgroundColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: ListView(
-                      //addAutomaticKeepAlives: true,
-                      children: [
-                        UserAccountsDrawerHeader(
-                          decoration: BoxDecoration(color: backgroundColor),
-                          accountName: Text(_userName),
-                          accountEmail: Text(
-                            _email,
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          currentAccountPicture: CircleAvatar(
-                            backgroundColor: Colors.black,
-                          ),
-                        ),
-                        Divider(
-                          color: whiteColor,
-                          thickness: 0.06,
-                        ),
-                        ListTile(
-                          onTap: () async{
-                            int id = await HelpFunction.getUserId();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => info(
-                                  userId: id,
-                                  checkMe: false,
-                                ),),
-                            );
-                          },
-                          title: Text(
-                            "Profile",
-                            style: TextStyle(color: whiteColor),
-                          ),
-                          leading: Icon(
-                            Icons.person,
-                            color: whiteColor,
-                          ),
-                        ),
-                        ListTile(
-                          onTap: () async{
-                            int id = await HelpFunction.getUserId();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => infoZoneNewsfeed(
-                                  userId: id,
-                                ),),
-                            );
-                          },
-                          title: Text(
-                            "Zones",
-                            style: TextStyle(color: whiteColor),
-                          ),
-                          leading: Icon(
-                            Icons.group,
-                            color: whiteColor,
-                          ),
-                        ),
-                        ListTile(
-                          onTap: (){
-                            Navigator.pushNamed(context, DaysList.id);
-                          },
-                          title: Text("Tasks", style: TextStyle(color: whiteColor)),
-                          leading: Icon(
-                            Icons.list,
-                            color: whiteColor,
-                          ),
-                        ),
-                        Divider(
-                          color: whiteColor,
-                          thickness: 0.06,
-                        ),
-                        ListTile(
-                          title:
-                          Text("Settings", style: TextStyle(color: whiteColor)),
-                          leading: Icon(
-                            Icons.settings,
-                            color: whiteColor,
-                          ),
-                        ),
-                        ListTile(
-                          title: Text("Help", style: TextStyle(color: whiteColor)),
-                          leading: Icon(
-                            Icons.help,
-                            color: whiteColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ListTile(
-                    onTap: (){
-                      Navigator.pushNamed(context, LoginScreen.id);
-                    },
-                    title: Text("Logout", style: TextStyle(color: Colors.red)),
-                    leading: Icon(
-                      Icons.logout,
-                      color: Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
+      drawer: drawer(
+        email: email,
+        username: username,
       ),
       appBar: AppBar(
         elevation: 0,
@@ -168,7 +38,10 @@ class _NeewsfeedState extends State<Neewsfeed> {
                   Icons.search,
                   color: buttonColor,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (contetx) => generalSearch()));
+                },
               ),
               IconButton(
                 icon: Icon(
