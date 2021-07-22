@@ -166,21 +166,21 @@ class _NeewsfeedState extends State<Neewsfeed> {
               IconButton(
                 icon: Icon(
                   Icons.search,
-                  color: whiteColor,
+                  color: buttonColor,
                 ),
                 onPressed: () {},
               ),
               IconButton(
                 icon: Icon(
                   Icons.notifications,
-                  color: whiteColor,
+                  color: buttonColor,
                 ),
                 onPressed: () {},
               ),
               IconButton(
                 icon: Icon(
                   FontAwesomeIcons.facebookMessenger,
-                  color: whiteColor,
+                  color: buttonColor,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, 'chatroom');
@@ -189,7 +189,9 @@ class _NeewsfeedState extends State<Neewsfeed> {
             ],
           ),
         ],
+        iconTheme: IconThemeData(color: buttonColor),
       ),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

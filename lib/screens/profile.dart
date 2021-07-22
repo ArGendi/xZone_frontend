@@ -6,6 +6,8 @@ import 'package:xzone/screens/ZoneTest.dart';
 import 'package:xzone/screens/friends_screen.dart';
 import 'package:xzone/screens/zones_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:xzone/servcies/helperFunction.dart';
+import 'package:xzone/servcies/web_services.dart';
 
 class profile extends StatefulWidget {
   static String id = 'profile';
@@ -18,7 +20,8 @@ class profile extends StatefulWidget {
   final List roadMaps;
   final List zones;
   final List friends;
-  const profile({Key key, this.checkMe, this.userName, this.bio, this.rank, this.badges, this.roadMaps, this.zones, this.userId, this.friends}) : super(key: key);
+  final bool checkFriedns;
+  const profile({Key key, this.checkMe, this.userName, this.bio, this.rank, this.badges, this.roadMaps, this.zones, this.userId, this.friends, this.checkFriedns}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -51,6 +54,20 @@ class profileState extends State<profile> {
       case 3:
         return platinum;
     }
+  }
+  Addfriend(int firstUserId,int secondUserID)async{
+    var webService = WebServices();
+    var response = await webService.post(
+        'http://xzoneapi.azurewebsites.net/api/v1/FriendRequest',{
+      "senderId": firstUserId,
+      "receiverId" : secondUserID
+    });
+    print(response.statusCode);
+  }
+  int basicUserId;
+  getuserId(int secondUserID)async{
+    basicUserId = await HelpFunction.getUserId();
+    Addfriend(basicUserId, secondUserID);
   }
 
   showAddSectionDialog(String name, String Desc, roadMap) {
@@ -146,7 +163,8 @@ class profileState extends State<profile> {
                 Expanded(
                   child: Container(
                     child: TextButton(
-                      onPressed: () {
+                      onPressed: () async{
+                        int id  = await HelpFunction.getUserId();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -154,6 +172,7 @@ class profileState extends State<profile> {
                                     checkMe: widget.checkMe,
                                   FriendList:widget.friends,
                                 userId: widget.userId,
+                                myId: id,
                                   ),),
                         );
                       },
@@ -290,13 +309,16 @@ class profileState extends State<profile> {
                     SizedBox(
                       width: 20,
                     ),
+                    if(!widget.checkFriedns)
                     Expanded(
                       child: FlatButton(
                         child: Text(
                           "Add Friend",
                           style: TextStyle(color: whiteColor, fontSize: 15),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          getuserId(widget.userId);
+                        },
                         shape: RoundedRectangleBorder(
                             side: BorderSide(
                                 color: buttonColor,
@@ -307,7 +329,7 @@ class profileState extends State<profile> {
                       ),
                     ),
                     SizedBox(
-                      width: 20,
+                      width: 15,
                     ),
                     Expanded(
                       child: FlatButton(
@@ -353,6 +375,7 @@ class profileState extends State<profile> {
                   style: TextStyle(
                     color: buttonColor,
                     fontSize: 15,
+                      fontWeight: FontWeight.bold
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -361,6 +384,7 @@ class profileState extends State<profile> {
             SizedBox(
               height: 20,
             ),
+            widget.badges.length!=0?
             Container(
               height: 150,
               child: ListView.builder(
@@ -398,6 +422,18 @@ class profileState extends State<profile> {
                       ),
                     );
                   }),
+            ):Column(
+              children: [
+                CircleAvatar(
+                  radius: (70),
+                  backgroundColor: backgroundColor,
+                  child:Image.asset("assets/images/empty.png"),
+                ),
+                 Text('Work Hard To Get Badges',style:TextStyle(
+                  color: buttonColor,
+                  fontSize: 15,
+                ),),
+              ],
             ),
             Divider(
               color: greyColor,
@@ -411,11 +447,13 @@ class profileState extends State<profile> {
                   style: TextStyle(
                     color: buttonColor,
                     fontSize: 15,
+                      fontWeight: FontWeight.bold
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
+            widget.roadMaps.length!=0?
             GridView.builder(
               shrinkWrap: true,
               physics: ScrollPhysics(),
@@ -462,6 +500,23 @@ class profileState extends State<profile> {
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount:
                       (orientation == Orientation.portrait) ? 2 : 3),
+            ):
+            Column(
+              children: [
+                SizedBox(height: 15,),
+                CircleAvatar(
+                  radius: (50),
+                  backgroundColor: backgroundColor,
+                  child:Image.asset("assets/images/roadmap.png"),
+                ),
+                SizedBox(height: 15,),
+                Text('No RoadMap Yet',style:TextStyle(
+                  color: buttonColor,
+                  fontSize: 15,
+                ),
+                ),
+                SizedBox(height: 15,),
+              ],
             ),
           ],
         ),

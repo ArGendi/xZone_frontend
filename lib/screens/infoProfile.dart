@@ -10,8 +10,9 @@ class info extends StatefulWidget{
   static final String id = 'loading';
   final int userId;
   final bool checkMe;
+  final int myId;
 
-  const info({Key key, this.userId, this.checkMe}) : super(key: key);
+  const info({Key key, this.userId, this.checkMe, this.myId}) : super(key: key);
   @override
   infoState createState() => infoState();
 }
@@ -40,6 +41,12 @@ class infoState extends State<info>{
          List roadMap =body['roadmaps'];
          List zones = body['zones'];
          List friends = body['friends'];
+         bool checkFriedns=false;
+         for(int i=0;i<friends.length;i++){
+           if(friends[i]['id']==widget.myId){
+             checkFriedns = true;
+           }
+         }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -53,6 +60,7 @@ class infoState extends State<info>{
               zones: zones,
               userId: userId,
               friends: friends,
+              checkFriedns: checkFriedns,
               //roadMaps: roadMap,
             ),
           ),
