@@ -1,10 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/servcies/helperFunction.dart';
+import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/add_task.dart';
-
+import 'package:intl/intl.dart';
 class ZoneTest extends StatefulWidget {
   @override
+  final List posts;
+  final String zoneName;
+  final int zoneID;
+  final int userID;
+  final List zoneMembers;
+  final int privacy;
+  final bool userInZone;
+  //final String userName;
+
+  const ZoneTest({Key key, this.posts, this.zoneName, this.zoneID, this.userID, this.zoneMembers, this.privacy, this.userInZone}) : super(key: key);
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return ZoneStateTest();
@@ -13,6 +25,16 @@ class ZoneTest extends StatefulWidget {
 class ZoneStateTest extends State<ZoneTest>{
   int realIndex;
   var textfieldController = TextEditingController();
+
+  addPostInZone(String content,int writerId,int zoneId)async {
+    var webService = WebServices();
+    var response = await webService.post(
+        'http://xzoneapi.azurewebsites.net/api/v1/post/writepost', {
+      "content": content,
+      "writerId": writerId,
+      "zoneId": zoneId
+    });
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -36,7 +58,7 @@ class ZoneStateTest extends State<ZoneTest>{
               onPressed: () {},
             ),
           ],
-          title:  Center(child: Text('FCAI-Zone',style: TextStyle(color: whiteColor, fontSize: 25),)),
+          title:  Center(child: Text(widget.zoneName,style: TextStyle(color: whiteColor, fontSize: 25),)),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -46,15 +68,16 @@ class ZoneStateTest extends State<ZoneTest>{
           child: Row(
           children: [
           SizedBox(width: 5,),
-          Icon(Icons.lock,color: buttonColor,size: 15,),
+
+          Icon(widget.privacy==1? Icons.lock_open_sharp:Icons.lock,color: buttonColor,size: 15,),
           SizedBox(width: 5,),
           Text(
-            "Private Zone",
+            widget.privacy==1?"Public Zone":"Private Zone",
             style: TextStyle(color: whiteColor, fontSize: 15),
           ),
           SizedBox(width: 5,),
           Text(
-            "200",
+            widget.zoneMembers.length.toString(),
             style: TextStyle(color: buttonColor, fontSize: 15),
           ),
           SizedBox(width: 5,),
@@ -66,17 +89,19 @@ class ZoneStateTest extends State<ZoneTest>{
         ),
         ),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Row(
                 children: [
+                  if(!widget.userInZone)
                   Expanded(
                     child: FlatButton(
                       child: Row(
                         children: [
+                          SizedBox(width: 50,),
                           Icon(Icons.people_alt_rounded , color:buttonColor ,),
-                          SizedBox(width: 20,),
+                          SizedBox(width: 50,),
                           Text(
-                            "Joined" ,
+                            "Join" ,
                             style: TextStyle(color: whiteColor, fontSize: 15),
                           ),
                         ],
@@ -92,28 +117,6 @@ class ZoneStateTest extends State<ZoneTest>{
                     ),
                   ),
                   SizedBox(width: 10,),
-                  Expanded(
-                    child: FlatButton(
-                      child: Row(
-                        children: [
-                          Icon(Icons.person_add_alt_1_rounded , color:buttonColor ,),
-                          SizedBox(width: 20,),
-                          Text(
-                            "Invite" ,
-                            style: TextStyle(color: whiteColor, fontSize: 15),
-                          ),
-                        ],
-                      ),
-                      onPressed: () {},
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              color: buttonColor,
-                              width: 2,
-                              style: BorderStyle.solid),
-                          borderRadius:
-                          BorderRadius.circular(borderRadiusValue)),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -184,7 +187,23 @@ class ZoneStateTest extends State<ZoneTest>{
                                                   child: IconButton(
                                                     iconSize: 28,
                                                     icon:Icon( Icons.add_circle , color:buttonColor ,),
-                                                  onPressed: (){},
+                                                  onPressed: ()async{
+                                                      String userName =  await HelpFunction.getuserNamesharedPrefrence();
+                                                      setState(() {
+                                                        widget.posts.add({
+                                                          "content": textfieldController.text,
+                                                          "writerId": widget.userID,
+                                                          "zoneId": widget.zoneID,
+                                                          "date": DateTime.now().toString(),
+                                                          "writer":{
+                                                            "userName": userName,
+                                                          }
+                                                        });
+                                                      });
+                                                    addPostInZone(textfieldController.text,widget.userID,widget.zoneID);
+                                                    textfieldController.clear();
+                                                    //print(textfieldController.text);
+                                                  },
                                                   ),
                                                 ),
                                               ],
@@ -192,11 +211,12 @@ class ZoneStateTest extends State<ZoneTest>{
                                       ),
                                       Container(
                                         child: ListView.builder(
-
                                           shrinkWrap: true,
                                           physics: ScrollPhysics(),
-                                          itemCount: 10,
+                                          itemCount: widget.posts.length,
                                           itemBuilder: (BuildContext context,int index){
+                                            String date = widget.posts[index]['date'];
+                                            DateTime dt = DateTime.parse("$date");
                                             return Card(
                                               elevation: 5,
                                               shape: RoundedRectangleBorder(
@@ -216,16 +236,16 @@ class ZoneStateTest extends State<ZoneTest>{
                                                       children: [
                                                         Icon(Icons.person,color: buttonColor,),
                                                         SizedBox(width: 5,),
-                                                        Text("Abdelrahman Ayman",style: TextStyle(color: whiteColor),),
+                                                        Text(widget.posts[index]['writer']['userName'],style: TextStyle(color: whiteColor),),
                                                       ],
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets.only(left: 30),
-                                                      child: Text("1 min",style: TextStyle(color: greyColor),),
+                                                      child: Text(DateFormat('yyyy-MM-dd – kk:mm').format(dt).toString(),style: TextStyle(color: greyColor),),
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets.all(8.0),
-                                                      child: Text("Your life does not get better by chance. It gets better by a change",style: TextStyle(color: whiteColor),),
+                                                      child: Text(widget.posts[index]['content'],style: TextStyle(color: whiteColor),),
                                                     ),
                                                   ],
                                                 ),

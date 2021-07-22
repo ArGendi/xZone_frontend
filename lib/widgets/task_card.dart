@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:xzone/models/task.dart';
+import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import '../constants.dart';
 import 'package:provider/provider.dart';
@@ -9,23 +12,40 @@ import 'add_task.dart';
 class TaskCard extends StatefulWidget {
   final Task task;
   final Color bgColor;
+  final int pIndex;
+  final int sIndex;
+  final Function cong;
 
-  const TaskCard({Key key, @required this.task,@required this.bgColor}) : super(key: key);
+  const TaskCard({Key key, @required this.task,@required this.bgColor, this.pIndex, this.sIndex, this.cong}) : super(key: key);
 
   @override
   _TaskCardState createState() => _TaskCardState();
 }
 
 class _TaskCardState extends State<TaskCard> {
-  _completeTask(BuildContext ctx){
-    Provider.of<TasksProvider>(ctx, listen: false).moveTaskToRecentlyDeleted(widget.task);
+
+  _completeTask() async{
+    var response = await Provider.of<TasksProvider>(context, listen: false).completeTask(widget.task);
+    if(response != null){
+      var body = json.decode(response.body);
+      List badges = body['badges'];
+      if(badges.isNotEmpty) widget.cong();
+    }
   }
   _deleteTask(){
-    Provider.of<TasksProvider>(context, listen: false).removeTask(widget.task);
+    if(widget.task.projectId == 0)
+      Provider.of<TasksProvider>(context, listen: false).removeTask(widget.task);
+    else
+      Provider.of<ProjectsProvider>(context, listen: false)
+          .removeTaskFromSection(widget.pIndex, widget.sIndex, widget.task);
   }
   _editTask(Task task){
     Provider.of<TasksProvider>(context, listen: false).assignActiveTask(widget.task);
-    Provider.of<TasksProvider>(context, listen: false).removeTask(widget.task);
+    if(widget.task.projectId == 0)
+      Provider.of<TasksProvider>(context, listen: false).removeTask(widget.task);
+    else
+      Provider.of<ProjectsProvider>(context, listen: false)
+          .removeTaskFromSection(widget.pIndex, widget.sIndex, widget.task);
     showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: backgroundColor,
@@ -37,32 +57,6 @@ class _TaskCardState extends State<TaskCard> {
           return AddTask();
     });
   }
-  _showSnackBar(BuildContext ctx){
-    _completeTask(ctx);
-    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-      //width: MediaQuery.of(context).size.width * 0.6,
-      //behavior: SnackBarBehavior.floating,
-      duration: Duration(seconds: 6),
-      backgroundColor: backgroundColor,
-      content: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          'Yaaah!! , You complete the task',
-          style: TextStyle(
-              fontSize: 15
-          ),
-        ),
-      ),
-      action: SnackBarAction(
-        label: 'Undo',
-        textColor: buttonColor,
-        onPressed: (){
-          Provider.of<TasksProvider>(ctx, listen: false).returnBackDeletedTaskToItems();
-        },
-      ),
-    ));
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +77,7 @@ class _TaskCardState extends State<TaskCard> {
                 builder: (BuildContext ctx) {
                   return IconButton(
                     iconSize: 20,
-                    onPressed: (){},
+                    onPressed: _completeTask,
                     icon: Icon(
                       Icons.panorama_fish_eye,
                       color: whiteColor,

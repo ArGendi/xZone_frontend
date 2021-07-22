@@ -108,27 +108,23 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  _fetchAndSetTasks(List tasks) {
-    for (var item in tasks) {
+  _fetchAndSetTasks(List tasks){
+    for(var item in tasks){
+      if(item['completeDate'] != null) continue;
+
       Task task = new Task();
       task.id = item['id'];
       task.userId = item['userId'];
       task.name = item['name'];
       task.priority = item['priority'];
       task.parentId = item['parentID'];
-      if (item['dueDate'] != null)
-        task.dueDate = DateTime.parse(item['dueDate']);
-      else
-        task.dueDate = null;
-      if (item['remainder'] != null)
-        task.remainder = DateTime.parse(item['remainder']);
-      else
-        task.remainder = null;
-      if (item['completeDate'] != null)
-        task.completeDate = DateTime.parse(item['completeDate']);
-      else
-        task.completeDate = null;
-      Provider.of<TasksProvider>(context, listen: false).addTask(task);
+      if(item['dueDate'] != null) task.dueDate = DateTime.parse(item['dueDate']);
+      else task.dueDate = null;
+      if(item['remainder'] != null) task.remainder = DateTime.parse(item['remainder']);
+      else task.remainder = null;
+      if(item['completeDate'] != null) task.completeDate = DateTime.parse(item['completeDate']);
+      else task.completeDate = null;
+      Provider.of<TasksProvider>(context, listen: false).addTask(task, false);
     }
   }
 
@@ -149,7 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
         Provider.of<ProjectsProvider>(context, listen: false)
             .addSection(pCounter, section, false);
         List tasks = sectionItem['projectTasks'];
-        for (var taskItem in tasks) {
+        for(var taskItem in tasks){
+          if(item['completeDate'] != null) continue;
           Task task = new Task();
           task.id = taskItem['id'];
           task.name = taskItem['name'];
@@ -169,8 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
             task.completeDate = null;
           task.projectId = project.id;
           task.sectionId = section.id;
-          Provider.of<ProjectsProvider>(context, listen: false)
-              .addTaskToSection(pCounter, sCounter, task);
+          Provider.of<ProjectsProvider>(context, listen: false).addTaskToSection(pCounter, sCounter, task, false);
         }
         sCounter += 1;
       }

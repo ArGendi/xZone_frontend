@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/models/project.dart';
+import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/screens/ZoneTest.dart';
 import 'package:xzone/screens/friends_screen.dart';
 import 'package:xzone/screens/zones_screen.dart';
-
-
+import 'package:provider/provider.dart';
+import 'package:xzone/servcies/helperFunction.dart';
+import 'package:xzone/servcies/web_services.dart';
 
 class profile extends StatefulWidget {
   static String id = 'profile';
   final bool checkMe;
-
-  const profile({Key key, this.checkMe}) : super(key: key);
+  final int userId;
+  final String userName;
+  final String bio;
+  final int rank;
+  final List badges;
+  final List roadMaps;
+  final List zones;
+  final List friends;
+  final bool checkFriedns;
+  const profile({Key key, this.checkMe, this.userName, this.bio, this.rank, this.badges, this.roadMaps, this.zones, this.userId, this.friends, this.checkFriedns}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -32,52 +43,85 @@ class profileState extends State<profile> {
     Color(0xFFDECBA4)
   ];
   int indeex = 0;
-  showAddSectionDialog(String name,String Desc){
+  Color getRankColor(int rank) {
+    switch (rank) {
+      case 0:
+        return bronze;
+      case 1:
+        return silver;
+      case 2:
+        return gold;
+      case 3:
+        return platinum;
+    }
+  }
+  Addfriend(int firstUserId,int secondUserID)async{
+    var webService = WebServices();
+    var response = await webService.post(
+        'http://xzoneapi.azurewebsites.net/api/v1/FriendRequest',{
+      "senderId": firstUserId,
+      "receiverId" : secondUserID
+    });
+    print(response.statusCode);
+  }
+  int basicUserId;
+  getuserId(int secondUserID)async{
+    basicUserId = await HelpFunction.getUserId();
+    Addfriend(basicUserId, secondUserID);
+  }
+
+  showAddSectionDialog(String name, String Desc, roadMap) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(borderRadiusValue))
-          ),
-          content:ListTile(
-              leading:Icon(Icons.add_task,color: buttonColor,),
-              title:Text(name,style:TextStyle(color: whiteColor,fontSize: 20),),
-              subtitle:Text('The airplane is only in Act II.',style:TextStyle(color: whiteColor),),
+              borderRadius:
+                  BorderRadius.all(Radius.circular(borderRadiusValue))),
+          content: ListTile(
+            leading: Icon(
+              Icons.add_task,
+              color: buttonColor,
+            ),
+            title: Text(
+              name,
+              style: TextStyle(color: whiteColor, fontSize: 20),
+            ),
+            subtitle: Text(
+              Desc,
+              style: TextStyle(color: whiteColor),
+            ),
           ),
           actions: [
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextButton(
-                  onPressed: (){
+                  onPressed: () {
                     Navigator.pop(context);
                   },
                   child: Text(
                     'Cancel',
-                    style: TextStyle(
-                        color: buttonColor
-                    ),
-                  )
-              ),
-            ),Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TextButton(
-                  onPressed: (){
-/*                    bool valid = globalKey.currentState.validate();
-                    if(valid){
-                      FocusScope.of(context).unfocus();
-                      globalKey.currentState.save();
-                    }*/
-                  },
-                  child: Text(
-                    'Get',
-                    style: TextStyle(
-                        color: buttonColor
-                    ),
-                  )
-              ),
+                    style: TextStyle(color: buttonColor),
+                  )),
             ),
+            if (widget.checkMe)
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextButton(
+                    onPressed: () {
+                      Project project = new Project(name);
+                      project.description = Desc;
+                      project.id = roadMap['id'];
+                      project.userID = roadMap['ownerID'];
+                      Provider.of<ProjectsProvider>(context, listen: false).addProject(project, true);
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Get',
+                      style: TextStyle(color: buttonColor),
+                    )),
+              ),
           ],
         );
       },
@@ -119,12 +163,16 @@ class profileState extends State<profile> {
                 Expanded(
                   child: Container(
                     child: TextButton(
-                      onPressed: () {
+                      onPressed: () async{
+                        int id  = await HelpFunction.getUserId();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => friends(
                                     checkMe: widget.checkMe,
+                                  FriendList:widget.friends,
+                                userId: widget.userId,
+                                myId: id,
                                   ),),
                         );
                       },
@@ -141,7 +189,7 @@ class profileState extends State<profile> {
                             height: 7,
                           ),
                           Text(
-                            '20',
+                            widget.friends.length.toString(),
                             style: TextStyle(
                               color: buttonColor,
                               fontSize: 20,
@@ -154,28 +202,28 @@ class profileState extends State<profile> {
                 ),
                 Expanded(
                   child: Container(
-                    height: 150,
-                    width: 150,
+                    height: 130,
+                    width: 130,
                     child: Card(
                       color: backgroundColor,
                       elevation: 4.0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(60),
                       ),
                       child: Center(
-                        child: Image.asset("assets/images/boy.png"),
+                        child: Image.asset("assets/images/pro.png"),
                       ),
                     ),
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: gold,
+                          color: getRankColor(widget.rank),
                           blurRadius: 5.0,
-                          offset: Offset(0, 10),
-                          spreadRadius: 0.5,
+                          offset: Offset(0, 4),
+                          spreadRadius: 0.8,
                         ),
                       ],
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                 ),
@@ -186,9 +234,12 @@ class profileState extends State<profile> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => zones_profile(
-                                    checkMe: widget.checkMe,
-                                  ),),
+                            builder: (context) => zones_profile(
+                              checkMe: widget.checkMe,
+                              userID: widget.userId,
+                              zones: widget.zones,
+                            ),
+                          ),
                         );
                       },
                       child: Column(
@@ -204,7 +255,7 @@ class profileState extends State<profile> {
                             height: 7,
                           ),
                           Text(
-                            '10',
+                            widget.zones.length.toString(),
                             style: TextStyle(
                               color: buttonColor,
                               fontSize: 20,
@@ -224,10 +275,10 @@ class profileState extends State<profile> {
               // padding:const EdgeInsets.symmetric(vertical: 10, horizontal: 80),
               child: Container(
                 child: Text(
-                  'Abdelrahman Ayman',
+                  widget.userName,
                   style: TextStyle(
                     color: whiteColor,
-                    fontSize: 20,
+                    fontSize: 25,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -239,13 +290,15 @@ class profileState extends State<profile> {
             SizedBox(
               height: 10,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: Text(
-                "Your life does not get better by chance. It gets better by a change",
-                style: TextStyle(color: whiteColor, fontSize: 15),
+            if (widget.bio.isNotEmpty)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                child: Text(
+                  widget.bio,
+                  style: TextStyle(color: whiteColor, fontSize: 15),
+                ),
               ),
-            ),
             SizedBox(
               height: 10,
             ),
@@ -256,13 +309,15 @@ class profileState extends State<profile> {
                     SizedBox(
                       width: 20,
                     ),
+                    if(!widget.checkFriedns)
                     Expanded(
                       child: FlatButton(
                         child: Text(
-                           "Add Friend" ,
+                          "Add Friend",
                           style: TextStyle(color: whiteColor, fontSize: 15),
                         ),
                         onPressed: () {
+                          getuserId(widget.userId);
                         },
                         shape: RoundedRectangleBorder(
                             side: BorderSide(
@@ -274,12 +329,12 @@ class profileState extends State<profile> {
                       ),
                     ),
                     SizedBox(
-                      width: 20,
+                      width: 15,
                     ),
                     Expanded(
-                      child:  FlatButton(
+                      child: FlatButton(
                         child: Text(
-                          "Chat" ,
+                          "Chat",
                           style: TextStyle(color: whiteColor, fontSize: 15),
                         ),
                         onPressed: () {
@@ -296,7 +351,7 @@ class profileState extends State<profile> {
                                 width: 2,
                                 style: BorderStyle.solid),
                             borderRadius:
-                            BorderRadius.circular(borderRadiusValue)),
+                                BorderRadius.circular(borderRadiusValue)),
                       ),
                     ),
                     SizedBox(
@@ -320,6 +375,7 @@ class profileState extends State<profile> {
                   style: TextStyle(
                     color: buttonColor,
                     fontSize: 15,
+                      fontWeight: FontWeight.bold
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -328,12 +384,21 @@ class profileState extends State<profile> {
             SizedBox(
               height: 20,
             ),
+            widget.badges.length!=0?
             Container(
               height: 150,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: 5,
+                  itemCount: widget.badges.length,
                   itemBuilder: (BuildContext context, int index) {
+                    String imageUrl = '';
+                    String imageName = '';
+                    switch (widget.badges[index]['badgeID']) {
+                      case 2:
+                        imageUrl = 'assets/images/5taskfinished.png';
+                        imageName = "5 Tasks";
+                        break;
+                    }
                     return Padding(
                       padding: EdgeInsets.only(left: 20.0, right: 20.0),
                       child: Column(
@@ -341,13 +406,13 @@ class profileState extends State<profile> {
                           CircleAvatar(
                             radius: (50),
                             backgroundColor: buttonColor,
-                            child: Image.asset("assets/images/badge.png"),
+                            child: Image.asset(imageUrl),
                           ),
                           SizedBox(
                             height: 20,
                           ),
                           Text(
-                            'Medal',
+                            imageName,
                             style: TextStyle(
                               fontSize: 20,
                               color: whiteColor,
@@ -357,6 +422,18 @@ class profileState extends State<profile> {
                       ),
                     );
                   }),
+            ):Column(
+              children: [
+                CircleAvatar(
+                  radius: (70),
+                  backgroundColor: backgroundColor,
+                  child:Image.asset("assets/images/empty.png"),
+                ),
+                 Text('Work Hard To Get Badges',style:TextStyle(
+                  color: buttonColor,
+                  fontSize: 15,
+                ),),
+              ],
             ),
             Divider(
               color: greyColor,
@@ -370,15 +447,17 @@ class profileState extends State<profile> {
                   style: TextStyle(
                     color: buttonColor,
                     fontSize: 15,
+                      fontWeight: FontWeight.bold
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
+            widget.roadMaps.length!=0?
             GridView.builder(
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: 6,
+              itemCount: widget.roadMaps.length,
               itemBuilder: (BuildContext context, int index) {
                 indeex = index;
                 if (indeex >= colors1.length) {
@@ -401,18 +480,19 @@ class profileState extends State<profile> {
                           ),
                         ),
                         child: Center(
-                            child: Text(
-                          'C++',
-                          style: TextStyle(
-                            fontSize: 25,
-                            color: whiteColor,
+                          child: Text(
+                            widget.roadMaps[index]['name'],
+                            style: TextStyle(
+                              fontSize: 25,
+                              color: whiteColor,
+                            ),
                           ),
-                        ),
                         ),
                       ),
                     ),
-                    onTap: (){
-                        showAddSectionDialog("c++", "The best ways");
+                    onTap: () {
+                      showAddSectionDialog(widget.roadMaps[index]['name'],
+                          widget.roadMaps[index]['description'], widget.roadMaps[index]);
                     },
                   ),
                 );
@@ -420,12 +500,27 @@ class profileState extends State<profile> {
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount:
                       (orientation == Orientation.portrait) ? 2 : 3),
+            ):
+            Column(
+              children: [
+                SizedBox(height: 15,),
+                CircleAvatar(
+                  radius: (50),
+                  backgroundColor: backgroundColor,
+                  child:Image.asset("assets/images/roadmap.png"),
+                ),
+                SizedBox(height: 15,),
+                Text('No RoadMap Yet',style:TextStyle(
+                  color: buttonColor,
+                  fontSize: 15,
+                ),
+                ),
+                SizedBox(height: 15,),
+              ],
             ),
           ],
         ),
       ),
     );
-
   }
 }
-
