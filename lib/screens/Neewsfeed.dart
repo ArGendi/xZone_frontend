@@ -20,6 +20,7 @@ import 'package:xzone/screens/notifications.dart';
 import 'package:xzone/servcies/web_services.dart';
 
 import 'createNewZone.dart';
+import 'infoZone.dart';
 
 class Neewsfeed extends StatefulWidget {
   final email;
@@ -176,12 +177,26 @@ class _NeewsfeedState extends State<Neewsfeed> {
             child: zones != null
                 ? ListView.builder(
                     itemBuilder: (context, index) {
-                      return ZoneWidget(
-                        name: zones[index]["name"],
-                        numberOfmembers: zones[index]["numOfMembers"],
-                        description: zones[index]["description"],
-                        zoneId: zones[index]["id"],
-                        alreadyfound: checkIfAlreadyJoined(zones[index]["id"]),
+                      return InkWell(
+                        onTap: ()async{
+                          int id = await HelpFunction.getUserId();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>infoZone(
+                                idUser: id,
+                                idZone: zones[index]['id'],
+                              ),
+                            ),
+                          );
+                        },
+                        child: ZoneWidget(
+                          name: zones[index]["name"],
+                          numberOfmembers: zones[index]["numOfMembers"],
+                          description: zones[index]["description"],
+                          zoneId: zones[index]["id"],
+                          alreadyfound: checkIfAlreadyJoined(zones[index]["id"]),
+                        ),
                       );
                     },
                     itemCount: zones.length,

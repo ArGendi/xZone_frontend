@@ -33,10 +33,11 @@ class _ZoneWidgetState extends State<ZoneWidget> {
   Join(userid, zoneid, joinCode) async {
     try {
       var response = await webService
-          .post('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/0000', {
+          .post('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/000000', {
         "zoneId": zoneid,
         "accountId": userid,
       });
+      print(response.statusCode);
       if (response.statusCode == 200) {
         setState(() {
           pressed = true;
@@ -101,7 +102,7 @@ class _ZoneWidgetState extends State<ZoneWidget> {
                   FlatButton(
                       onPressed: () {
                         HelpFunction.getUserId().then((userId) {
-                          Join(userId, widget.zoneId, 0000);
+                          Join(userId, widget.zoneId, "0000");
                         });
                       },
                       child: Row(

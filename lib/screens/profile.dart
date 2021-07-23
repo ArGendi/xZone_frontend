@@ -486,7 +486,7 @@ class profileState extends State<profile> {
                         ),
                       ),
                     ),
-                    HelpFunction.getUserId()==widget.userId?
+                    isMe?
                     Positioned(
                       right: 0,
                       child: IconButton(

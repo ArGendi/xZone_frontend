@@ -211,6 +211,7 @@ class ZoneStateTest extends State<ZoneTest>{
                                       ),
                                       Container(
                                         child: ListView.builder(
+                                          reverse: true,
                                           shrinkWrap: true,
                                           physics: ScrollPhysics(),
                                           itemCount: widget.posts.length,

@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:xzone/screens/zoneSkills.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/custom_textfield.dart';
+import 'package:xzone/widgets/skillSearchTile.dart';
 import '../constants.dart';
 
 class CreateNewZone extends StatefulWidget {
@@ -12,6 +16,7 @@ class CreateNewZone extends StatefulWidget {
 
 class _CreateNewZoneState extends State<CreateNewZone> {
   final _formKey = GlobalKey<FormState>();
+  List skills;
   bool _loading = false;
   String _zonename;
   String _zonecode="000000";
@@ -32,9 +37,27 @@ class _CreateNewZoneState extends State<CreateNewZone> {
   _setCode(String code) {
     _zonecode = code;
   }
-  Widget DropDownList(){
-    
+
+  _setList(List skills){
+    print(skills);
+    this.skills = skills;
   }
+  WebServices webServices = WebServices();
+  AddSkillToZone(zoneId, skillId) async {
+    try {
+      var response = await webServices
+          .post('http://xzoneapi.azurewebsites.net/api/v1/ZoneSkill', {
+        "zoneId": zoneId,
+        "skillId": skillId,
+      });
+      if(response.statusCode==200) skills.remove(skillId);
+
+     // print(id);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   _trySubmit() async {
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
@@ -52,8 +75,16 @@ class _CreateNewZoneState extends State<CreateNewZone> {
             "name": _zonename,
             "description": _zonedescription,
             "privacy": priv,
-            "joinCode": _zonecode
+            "joinCode": _zonecode,
           });
+          if(response.statusCode==200){
+           var x =  jsonDecode(response.body)['id'];
+           skills.forEach((id) async {
+            await AddSkillToZone(x,id);
+            if(skills.isEmpty)  Navigator.pop(context);
+           });
+
+          }
           print(id);
           print(response.statusCode);
           print(_zonecode);
@@ -115,6 +146,40 @@ class _CreateNewZoneState extends State<CreateNewZone> {
               validation: (value) {
                 if (value.isEmpty) return 'Enter your zone zone description';
               },
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            GestureDetector(
+              onTap: (){
+                Navigator.push(context,MaterialPageRoute(builder: (context){
+                  return zoneSkill(setValue: _setList,);
+                }));
+              },
+              child: Container(
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  borderRadius:  BorderRadius.circular(15),
+                  border: Border.all(width: 2,color: greyColor),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Skills",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    /*GestureDetector(
+                      onTap: () {
+                        beginsearch();
+                      },*/
+                       Icon(
+                        Icons.search,
+                        color: Colors.white,
+                      ),
+                  ],
+                ),
+
+              ),
             ),
             SizedBox(
               height: 10,
