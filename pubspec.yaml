@@ -38,7 +38,6 @@ dependencies:
   flutter_local_notifications: ^6.0.0
   country_code_picker: ^2.0.2
 
-
 dev_dependencies:
   carousel_slider: ^3.0.0
   http: ^0.13.1
