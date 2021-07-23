@@ -33,20 +33,33 @@ class infoState extends State<info>{
       var response = await webService.get(
           'http://xzoneapi.azurewebsites.net/api/v1/account/profile/$userId');
         var body = json.decode(response.body);
-
+          print(response.statusCode);
          userName = body['userName'];
+    print(userName);
          bio = body['bio'];
+    print(bio);
          rank  = body['rank'];
+    print(rank);
          List badges =body['badges'];
+    print(badges);
          List roadMap =body['roadmaps'];
          List zones = body['zones'];
          List friends = body['friends'];
+         print("!");
+         List skill = body['skills'];
+          String email;
+         if(skill.isNotEmpty) {
+           skill = body['skills'][0]['account']['skills'];
+           email = body['skills'][0]['account']['email'];
+         }
+         //print(skills);
          bool checkFriedns=false;
          for(int i=0;i<friends.length;i++){
            if(friends[i]['id']==widget.myId){
              checkFriedns = true;
            }
          }
+         print(email);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -61,6 +74,8 @@ class infoState extends State<info>{
               userId: userId,
               friends: friends,
               checkFriedns: checkFriedns,
+              skills: skill,
+              email: email,
               //roadMaps: roadMap,
             ),
           ),

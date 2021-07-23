@@ -9,6 +9,7 @@ import 'package:xzone/screens/loading_screen.dart';
 import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/screens/profile.dart';
 import 'package:xzone/screens/register_screen.dart';
+import 'package:xzone/screens/zoneNewsfeedInfo.dart';
 import 'package:xzone/screens/zones_screen.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:provider/provider.dart';
@@ -75,14 +76,14 @@ class _drawerState extends State<drawer> {
                     ),
                   ),
                   ListTile(
-                    onTap: () {
+                    onTap: () async{
+                      int id = await HelpFunction.getUserId();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => zones_profile(
-                            checkMe: false,
-                          ),
-                        ),
+                          builder: (context) => infoZoneNewsfeed(
+                            userId: id,
+                          ),),
                       );
                     },
                     title: Text(

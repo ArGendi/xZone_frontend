@@ -1,13 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/models/project.dart';
 import 'package:xzone/providers/projects_provider.dart';
+import 'package:xzone/repositories/FireBaseDB.dart';
 import 'package:xzone/screens/ZoneTest.dart';
 import 'package:xzone/screens/friends_screen.dart';
+import 'package:xzone/screens/skills.dart';
 import 'package:xzone/screens/zones_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
+
+import 'conversation.dart';
 
 class profile extends StatefulWidget {
   static String id = 'profile';
@@ -21,7 +26,23 @@ class profile extends StatefulWidget {
   final List zones;
   final List friends;
   final bool checkFriedns;
-  const profile({Key key, this.checkMe, this.userName, this.bio, this.rank, this.badges, this.roadMaps, this.zones, this.userId, this.friends, this.checkFriedns}) : super(key: key);
+  final List skills;
+  final String email;
+  const profile(
+      {Key key,
+      this.checkMe,
+      this.userName,
+      this.bio,
+      this.rank,
+      this.badges,
+      this.roadMaps,
+      this.zones,
+      this.userId,
+      this.friends,
+      this.checkFriedns,
+      this.skills,
+      this.email})
+      : super(key: key);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -43,6 +64,7 @@ class profileState extends State<profile> {
     Color(0xFFDECBA4)
   ];
   int indeex = 0;
+  bool isMe=false;
   Color getRankColor(int rank) {
     switch (rank) {
       case 0:
@@ -55,17 +77,71 @@ class profileState extends State<profile> {
         return platinum;
     }
   }
-  Addfriend(int firstUserId,int secondUserID)async{
-    var webService = WebServices();
-    var response = await webService.post(
-        'http://xzoneapi.azurewebsites.net/api/v1/FriendRequest',{
-      "senderId": firstUserId,
-      "receiverId" : secondUserID
+
+  final _auth = FirebaseAuth.instance;
+  final firebaseDB = FirestoreDatabase();
+  Stream chatRoomsStream;
+  getcurrentuser() async {
+    String myname = await HelpFunction.getuserNamesharedPrefrence();
+    User myuser = await _auth.currentUser;
+    //   var username = myuser.displayName;
+    var email = myuser.email;
+
+    setState(() {
+      constant.myname = myname;
+      // constant.myname = username;
+      constant.myemail = email;
     });
+    firebaseDB.getChatRooms(constant.myemail).then((value) {
+      setState(() {
+        chatRoomsStream = value;
+      });
+    });
+  }
+
+  createChatroom(username, email) async {
+    HelpFunction.getuserNamesharedPrefrence().then((myName) {
+      HelpFunction.getuserEmailsharedPrefrence().then((myEmail) {
+        print("username" + username);
+        print("email" + email);
+        print(myName);
+        print(myEmail);
+
+        String id = getChatRoomId(email, myEmail, username, myName);
+        print(id);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => conversation(
+                      chatRoomId: id,
+                      username: username,
+                      email: email,
+                      myEmail: myEmail,
+                    )));
+      });
+    });
+  }
+
+  getChatRoomId(String id1, String id2, String id3, String id4) {
+    if (id1.substring(0, 1).codeUnitAt(0) > id2.substring(0, 1).codeUnitAt(0) &&
+        (id3.substring(0, 1).codeUnitAt(0) >
+            id4.substring(0, 1).codeUnitAt(0))) {
+      return "$id2\_$id1\#$id4$id3";
+    } else {
+      return "$id1\_$id2\#$id3$id4";
+    }
+  }
+  var webService = WebServices();
+  Addfriend(int firstUserId, int secondUserID) async {
+    var response = await webService.post(
+        'http://xzoneapi.azurewebsites.net/api/v1/FriendRequest',
+        {"senderId": firstUserId, "receiverId": secondUserID});
     print(response.statusCode);
   }
+
   int basicUserId;
-  getuserId(int secondUserID)async{
+  bool friend =false;
+  getuserId(int secondUserID) async {
     basicUserId = await HelpFunction.getUserId();
     Addfriend(basicUserId, secondUserID);
   }
@@ -114,7 +190,8 @@ class profileState extends State<profile> {
                       project.description = Desc;
                       project.id = roadMap['id'];
                       project.userID = roadMap['ownerID'];
-                      Provider.of<ProjectsProvider>(context, listen: false).addProject(project, true);
+                      Provider.of<ProjectsProvider>(context, listen: false)
+                          .addProject(project, true);
                       Navigator.pop(context);
                     },
                     child: Text(
@@ -127,7 +204,16 @@ class profileState extends State<profile> {
       },
     );
   }
-
+  @override
+  void initState() {
+    // TODO: implement initState
+     HelpFunction.getUserId().then((value) {
+       if(value == widget.userId) setState(() {
+         isMe = true;
+       });
+     });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
@@ -163,17 +249,18 @@ class profileState extends State<profile> {
                 Expanded(
                   child: Container(
                     child: TextButton(
-                      onPressed: () async{
-                        int id  = await HelpFunction.getUserId();
+                      onPressed: () async {
+                        int id = await HelpFunction.getUserId();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => friends(
-                                    checkMe: widget.checkMe,
-                                  FriendList:widget.friends,
-                                userId: widget.userId,
-                                myId: id,
-                                  ),),
+                            builder: (context) => friends(
+                              checkMe: widget.checkMe,
+                              FriendList: widget.friends,
+                              userId: widget.userId,
+                              myId: id,
+                            ),
+                          ),
                         );
                       },
                       child: Column(
@@ -302,32 +389,48 @@ class profileState extends State<profile> {
             SizedBox(
               height: 10,
             ),
-            if (widget.checkMe)
+            !isMe?
               Container(
                 child: Row(
                   children: <Widget>[
                     SizedBox(
                       width: 20,
                     ),
-                    if(!widget.checkFriedns)
-                    Expanded(
-                      child: FlatButton(
-                        child: Text(
-                          "Add Friend",
-                          style: TextStyle(color: whiteColor, fontSize: 15),
+                    if (!widget.checkFriedns)
+                      Expanded(
+                        child: FlatButton(
+                          child: Text(
+                            friend?"Request Sent":"Add Friend",
+                            style: TextStyle(color: whiteColor, fontSize: 15),
+                          ),
+                          onPressed: () async {
+                            try {
+                              int id = await HelpFunction.getUserId();
+                              var response = await webService.post(
+                                  'http://xzoneapi.azurewebsites.net/api/v1/FriendRequest',
+                                  {
+                                    "senderId": id,
+                                    "receiverId": widget.userId,
+                                  });
+                              print(response.statusCode);
+                              if (response.statusCode == 200) {
+                                setState(() {
+                                  friend = true;
+                                });
+                              }
+                            } catch (e) {
+                              print(e);
+                            }
+                          },
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                  color: buttonColor,
+                                  width: 2,
+                                  style: BorderStyle.solid),
+                              borderRadius:
+                                  BorderRadius.circular(borderRadiusValue)),
                         ),
-                        onPressed: () {
-                          getuserId(widget.userId);
-                        },
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: buttonColor,
-                                width: 2,
-                                style: BorderStyle.solid),
-                            borderRadius:
-                                BorderRadius.circular(borderRadiusValue)),
                       ),
-                    ),
                     SizedBox(
                       width: 15,
                     ),
@@ -338,12 +441,9 @@ class profileState extends State<profile> {
                           style: TextStyle(color: whiteColor, fontSize: 15),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ZoneTest(),
-                            ),
-                          );
+                          getcurrentuser().then((value) {
+                            createChatroom(widget.userName, widget.email);
+                          });
                         },
                         shape: RoundedRectangleBorder(
                             side: BorderSide(
@@ -359,7 +459,103 @@ class profileState extends State<profile> {
                     ),
                   ],
                 ),
+              ):Card(),
+            SizedBox(
+              height: 10,
+            ),
+            Divider(
+              color: greyColor,
+              thickness: 2,
+              height: 30,
+            ),
+            Center(
+              child: Container(
+                child: Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 40,
+                      child: Center(
+                        child: Text(
+                          'Skills',
+                          style: TextStyle(
+                              color: buttonColor,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    HelpFunction.getUserId()==widget.userId?
+                    Positioned(
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.add,
+                          color: buttonColor,
+                          size: 25,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Skills(),
+                            ),
+                          );
+                        },
+                      ),
+                    ):Card(),
+                  ],
+                ),
               ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              height: 150,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemCount: widget.skills.length,
+                itemBuilder: (BuildContext context, int index) {
+                  indeex = index;
+                  if (indeex >= colors1.length) {
+                    indeex = indeex % colors1.length;
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 10),
+                    child: Container(
+                      height: 100,
+                      width: 170,
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(40)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                          colors: [
+                            zonescolor[indeex].firstColor,
+                            zonescolor[indeex].secondColor,
+                          ],
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.skills[index]['skill']['name'],
+                          style: TextStyle(
+                            fontSize: 25,
+                            color: whiteColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
             SizedBox(
               height: 10,
             ),
@@ -373,10 +569,9 @@ class profileState extends State<profile> {
                 child: Text(
                   'Badges',
                   style: TextStyle(
-                    color: buttonColor,
-                    fontSize: 15,
-                      fontWeight: FontWeight.bold
-                  ),
+                      color: buttonColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -384,57 +579,61 @@ class profileState extends State<profile> {
             SizedBox(
               height: 20,
             ),
-            widget.badges.length!=0?
-            Container(
-              height: 150,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: widget.badges.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    String imageUrl = '';
-                    String imageName = '';
-                    switch (widget.badges[index]['badgeID']) {
-                      case 2:
-                        imageUrl = 'assets/images/5taskfinished.png';
-                        imageName = "5 Tasks";
-                        break;
-                    }
-                    return Padding(
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: (50),
-                            backgroundColor: buttonColor,
-                            child: Image.asset(imageUrl),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            imageName,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: whiteColor,
+            widget.badges.length != 0
+                ? Container(
+                    height: 150,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: widget.badges.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          String imageUrl = '';
+                          String imageName = '';
+                          switch (widget.badges[index]['badgeID']) {
+                            case 2:
+                              imageUrl = 'assets/images/5taskfinished.png';
+                              imageName = "5 Tasks";
+                              break;
+                          }
+                          return Padding(
+                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: (50),
+                                  backgroundColor: buttonColor,
+                                  child: Image.asset(imageUrl),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  imageName,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: whiteColor,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          );
+                        }),
+                  )
+                : Column(
+                    children: [
+                      CircleAvatar(
+                        radius: (70),
+                        backgroundColor: backgroundColor,
+                        child: Image.asset("assets/images/empty.png"),
                       ),
-                    );
-                  }),
-            ):Column(
-              children: [
-                CircleAvatar(
-                  radius: (70),
-                  backgroundColor: backgroundColor,
-                  child:Image.asset("assets/images/empty.png"),
-                ),
-                 Text('Work Hard To Get Badges',style:TextStyle(
-                  color: buttonColor,
-                  fontSize: 15,
-                ),),
-              ],
-            ),
+                      Text(
+                        'Work Hard To Get Badges',
+                        style: TextStyle(
+                          color: buttonColor,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
             Divider(
               color: greyColor,
               thickness: 2,
@@ -445,79 +644,88 @@ class profileState extends State<profile> {
                 child: Text(
                   'RoadMap',
                   style: TextStyle(
-                    color: buttonColor,
-                    fontSize: 15,
-                      fontWeight: FontWeight.bold
-                  ),
+                      color: buttonColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
-            widget.roadMaps.length!=0?
-            GridView.builder(
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-              itemCount: widget.roadMaps.length,
-              itemBuilder: (BuildContext context, int index) {
-                indeex = index;
-                if (indeex >= colors1.length) {
-                  indeex = indeex % colors1.length;
-                }
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  child: GestureDetector(
-                    child: Card(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            colors: [
-                              colors1[indeex],
-                              colors2[indeex],
-                            ],
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            widget.roadMaps[index]['name'],
-                            style: TextStyle(
-                              fontSize: 25,
-                              color: whiteColor,
+            widget.roadMaps.length != 0
+                ? GridView.builder(
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemCount: widget.roadMaps.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      indeex = index;
+                      if (indeex >= colors1.length) {
+                        indeex = indeex % colors1.length;
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
+                        child: GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(40)),
+                              gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                                  zonescolor[indeex].firstColor,
+                                  zonescolor[indeex].secondColor,
+                                ],
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                widget.roadMaps[index]['name'],
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  color: whiteColor,
+                                ),
+                              ),
                             ),
                           ),
+                          onTap: () {
+                            showAddSectionDialog(
+                                widget.roadMaps[index]['name'],
+                                widget.roadMaps[index]['description'],
+                                widget.roadMaps[index]);
+                          },
+                        ),
+                      );
+                    },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            (orientation == Orientation.portrait) ? 2 : 3),
+                  )
+                : Column(
+                    children: [
+                      SizedBox(
+                        height: 15,
+                      ),
+                      CircleAvatar(
+                        radius: (50),
+                        backgroundColor: backgroundColor,
+                        child: Image.asset("assets/images/roadmap.png"),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Text(
+                        'No RoadMap Yet',
+                        style: TextStyle(
+                          color: buttonColor,
+                          fontSize: 15,
                         ),
                       ),
-                    ),
-                    onTap: () {
-                      showAddSectionDialog(widget.roadMaps[index]['name'],
-                          widget.roadMaps[index]['description'], widget.roadMaps[index]);
-                    },
+                      SizedBox(
+                        height: 15,
+                      ),
+                    ],
                   ),
-                );
-              },
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      (orientation == Orientation.portrait) ? 2 : 3),
-            ):
-            Column(
-              children: [
-                SizedBox(height: 15,),
-                CircleAvatar(
-                  radius: (50),
-                  backgroundColor: backgroundColor,
-                  child:Image.asset("assets/images/roadmap.png"),
-                ),
-                SizedBox(height: 15,),
-                Text('No RoadMap Yet',style:TextStyle(
-                  color: buttonColor,
-                  fontSize: 15,
-                ),
-                ),
-                SizedBox(height: 15,),
-              ],
-            ),
           ],
         ),
       ),
