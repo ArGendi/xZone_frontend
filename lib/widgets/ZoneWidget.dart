@@ -68,7 +68,7 @@ class _ZoneWidgetState extends State<ZoneWidget> {
         : Padding(
             padding: const EdgeInsets.all(12.0),
             child: Container(
-              padding: EdgeInsets.all(12.0),
+              padding: EdgeInsets.all(20.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -79,7 +79,7 @@ class _ZoneWidgetState extends State<ZoneWidget> {
                       Text(
                         widget.name,
                         style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                             color: Colors.white
                             //fontFamily: 'Montserrat-Light'
@@ -88,15 +88,12 @@ class _ZoneWidgetState extends State<ZoneWidget> {
                       Text(
                         widget.description,
                         style: TextStyle(
-                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          //fontFamily: 'Montserrat-Light'
                         ),
                       ),
                       Text("${widget.numberOfmembers} member",
                           style: TextStyle(
-                            fontSize: 18,
                             color: Colors.white,
                           )),
                     ],

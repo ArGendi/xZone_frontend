@@ -1,14 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/providers/projects_provider.dart';
+import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/days_list.dart';
 import 'package:xzone/screens/infoProfile.dart';
+import 'package:xzone/screens/loading_screen.dart';
 import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/screens/profile.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/zoneNewsfeedInfo.dart';
 import 'package:xzone/screens/zones_screen.dart';
 import 'package:xzone/servcies/helperFunction.dart';
+import 'package:provider/provider.dart';
 
 class drawer extends StatefulWidget {
   final email;
@@ -51,16 +55,15 @@ class _drawerState extends State<drawer> {
                     thickness: 0.06,
                   ),
                   ListTile(
-                    onTap: ()async {
+                    onTap: () async{
                       int id = await HelpFunction.getUserId();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => info(
-                            checkMe: false,
                             userId: id,
-                          ),
-                        ),
+                            checkMe: false,
+                          ),),
                       );
                     },
                     title: Text(
@@ -94,7 +97,12 @@ class _drawerState extends State<drawer> {
                   ),
                   ListTile(
                     onTap: () {
-                      Navigator.pushNamed(context, DaysList.id);
+                      List tasks = Provider.of<TasksProvider>(context, listen: false).items;
+                      List projects = Provider.of<ProjectsProvider>(context, listen: false).items;
+                      if(tasks.isEmpty && projects.isEmpty)
+                        Navigator.pushNamed(context, LoadingScreen.id);
+                      else
+                        Navigator.pushNamed(context, DaysList.id);
                     },
                     title: Text("Tasks", style: TextStyle(color: whiteColor)),
                     leading: Icon(

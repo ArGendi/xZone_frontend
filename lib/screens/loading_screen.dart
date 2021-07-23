@@ -15,8 +15,6 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
 
-  DBHelper _dbHelper = DBHelper();
-
   _getDataFromOfflineDB() async{
     await Provider.of<TasksProvider>(context, listen: false)
         .fetchAndSetData();

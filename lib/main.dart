@@ -5,6 +5,7 @@ import 'package:xzone/constants.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/screens/createNewZone.dart';
 import 'package:xzone/screens/days_list.dart';
 import 'package:xzone/screens/loading_screen.dart';
 import 'package:xzone/screens/login_screen.dart';
@@ -81,8 +82,6 @@ class _MyAppState extends State<MyApp> {
             appBarTheme: AppBarTheme(
               color: backgroundColor,
             )),
-
-        ///IsLoggedIn ? Neewsfeed.id : RegisterScreen.id,
         initialRoute: widget.email == null ? RegisterScreen.id : Neewsfeed.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
@@ -96,6 +95,7 @@ class _MyAppState extends State<MyApp> {
                 username: widget.username == null ? "" : widget.username,
               ),
           ChatRoom.id: (context) => ChatRoom(),
+          CreateNewZone.id: (context) => CreateNewZone(),
           Skills.id: (context) => Skills(),
           LoadingScreen.id: (context) => LoadingScreen(),
           profile.id: (context) => profile(),
