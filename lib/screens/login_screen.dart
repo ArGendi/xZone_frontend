@@ -111,7 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
   _fetchAndSetTasks(List tasks){
     for(var item in tasks){
       if(item['completeDate'] != null) continue;
-
       Task task = new Task();
       task.id = item['id'];
       task.userId = item['userId'];

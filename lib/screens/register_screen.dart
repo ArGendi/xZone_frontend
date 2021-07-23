@@ -1,3 +1,4 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/screens/login_screen.dart';
@@ -20,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _email;
   String _password;
   String _fullName;
+  String _countryCode = '+20';
   bool _showErrorMsg = false;
   bool _loading = false;
   String _errorMsg = '';
@@ -53,6 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               "userName": _fullName.trim(),
               "email": _email.trim(),
               "password": _password,
+              "location": _countryCode,
             });
         if (response.statusCode >= 400) {
           setState(() {
@@ -119,7 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Form(
                     key: _formKey,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         CustomTextField(
                           text: "Full Name",
@@ -159,6 +162,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             if (value.length < 6) return 'Short password';
                             return null;
                           },
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Select Country',
+                              style: TextStyle(
+                                color: whiteColor,
+                                fontSize: 16
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(borderRadiusValue),
+                                border: Border.all(color: greyColor, width: 2)
+                              ),
+                              child: CountryCodePicker(
+                                onChanged: (value){
+                                  _countryCode = value.toString();
+                                },
+                                backgroundColor: backgroundColor,
+                                hideMainText: true,
+                                textStyle: TextStyle(color: Colors.white),
+                                showCountryOnly: true,
+                                initialSelection: 'EG',
+                                showOnlyCountryWhenClosed: false,
+                                alignLeft: false,
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(
                           height: 30,

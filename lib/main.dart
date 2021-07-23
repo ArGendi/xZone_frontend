@@ -82,7 +82,6 @@ class _MyAppState extends State<MyApp> {
               color: backgroundColor,
             )),
 
-        ///IsLoggedIn ? Neewsfeed.id : RegisterScreen.id,
         initialRoute: widget.email == null ? RegisterScreen.id : Neewsfeed.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),

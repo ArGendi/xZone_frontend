@@ -4,6 +4,7 @@ import 'package:xzone/constants.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:xzone/screens/days_list.dart';
+import 'package:xzone/screens/infoProfile.dart';
 import 'package:xzone/screens/loading_screen.dart';
 import 'package:xzone/screens/login_screen.dart';
 import 'package:xzone/screens/profile.dart';
@@ -53,14 +54,15 @@ class _drawerState extends State<drawer> {
                     thickness: 0.06,
                   ),
                   ListTile(
-                    onTap: () {
+                    onTap: () async{
+                      int id = await HelpFunction.getUserId();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => profile(
+                          builder: (context) => info(
+                            userId: id,
                             checkMe: false,
-                          ),
-                        ),
+                          ),),
                       );
                     },
                     title: Text(

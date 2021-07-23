@@ -28,6 +28,15 @@ class WebServices {
     return response;
   }
 
+  Future<http.Response> update(String url, data) async{
+    var response = await http.patch(
+      Uri.parse(url),
+      headers: {"Content-type": "application/json"},
+      body: json.encode(data),
+    );
+    return response;
+  }
+
   Future<http.Response> anotherDelete(String url, data) async{
     var response = await http.delete(
       Uri.parse(url),
@@ -37,14 +46,7 @@ class WebServices {
     return response;
   }
 
-  Future<http.Response> update(String url, data) async{
-    var response = await http.patch(
-      Uri.parse(url),
-      headers: {"Content-type": "application/json"},
-      body: json.encode(data),
-    );
-    return response;
-  }
+
 
 }
 
