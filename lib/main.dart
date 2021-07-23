@@ -82,10 +82,7 @@ class _MyAppState extends State<MyApp> {
             appBarTheme: AppBarTheme(
               color: backgroundColor,
             )),
-
-        ///IsLoggedIn ? Neewsfeed.id : RegisterScreen.id,
-        initialRoute: CreateNewZone
-            .id, // widget.email == null ? RegisterScreen.id : Neewsfeed.id,
+        initialRoute: widget.email == null ? RegisterScreen.id : Neewsfeed.id,
         routes: {
           LoginScreen.id: (context) => LoginScreen(),
           WelcomeScreen.id: (context) => WelcomeScreen(),

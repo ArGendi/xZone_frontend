@@ -99,28 +99,47 @@ class _NeewsfeedState extends State<Neewsfeed> {
               IconButton(
                 icon: Icon(
                   Icons.search,
-                  color: buttonColor,
+                  color: whiteColor,
                 ),
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (contetx) => generalSearch()));
                 },
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.notifications,
-                  color: buttonColor,
-                ),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (contetx) {
-                    return Notifications();
-                  }));
-                },
+              Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.notifications,
+                      color: whiteColor,
+                    ),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (contetx) {
+                        return Notifications();
+                      }));
+                    },
+                  ),
+                  Positioned(
+                    right: 5,
+                    top: 5,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.red,
+                      radius: 8,
+                      child: Text(
+                        '1',
+                        style: TextStyle(
+                          color: whiteColor,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               IconButton(
                 icon: Icon(
                   FontAwesomeIcons.facebookMessenger,
-                  color: buttonColor,
+                  color: whiteColor,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, 'chatroom');
@@ -129,7 +148,7 @@ class _NeewsfeedState extends State<Neewsfeed> {
             ],
           ),
         ],
-        iconTheme: IconThemeData(color: buttonColor),
+        iconTheme: IconThemeData(color: whiteColor),
       ),
 
       body: Column(

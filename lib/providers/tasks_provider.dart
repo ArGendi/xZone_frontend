@@ -36,12 +36,13 @@ class TasksProvider extends ChangeNotifier {
   Future<void> fetchAndSetData() async{
     var tasksData = await _dbHelper.getNormalTasks();
     for(Map item in tasksData){
+      //if(item['completeDate'] != null) continue;
       Task task = new Task();
       task.id = item['id'];
       task.userId = item['userId'];
       task.parentId = item['parentId'];
       task.name = item['name'];
-      task.dueDate = DateTime.parse(item['dueDate']);
+      task.dueDate = item['dueDate'] != null ? DateTime.parse(item['dueDate']) : null;
       if(item['remainder'] != 'Empty')
         task.remainder = DateTime.parse(item['remainder']);
       task.priority = item['priority'];
@@ -68,9 +69,9 @@ class TasksProvider extends ChangeNotifier {
       'userId': task.userId,
       'parentId': task.parentId,
       'name': task.name,
-      'dueDate': task.dueDate.toString(),
+      'dueDate': task.dueDate != null ? task.dueDate.toString() : null,
       'remainder': task.remainderOn ? task.remainder.toString() : 'Empty',
-      'completeDate': task.completeDate.toString(),
+      'completeDate': task.completeDate != null ? task.completeDate.toString() : null,
       'priority': task.priority.toString(),
       'sectionId': 0,
       'projectId': 0,
