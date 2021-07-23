@@ -5,6 +5,7 @@ import 'package:xzone/constants.dart';
 import 'package:xzone/screens/conversation.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
+import 'package:xzone/widgets/RoadMapSearchTile.dart';
 import 'package:xzone/widgets/zoneSearchTile.dart';
 
 class generalSearch extends StatefulWidget {
@@ -84,7 +85,6 @@ class _generalSearchState extends State<generalSearch> {
           .get('http://xzoneapi.azurewebsites.net/api/Roadmap/$input');
 
       Temp = jsonDecode(response.body);
-
       setState(() {
         itemsroadmaps = Temp;
       });
@@ -163,9 +163,10 @@ class _generalSearchState extends State<generalSearch> {
             itemCount: itemsroadmaps.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return searchTileRoadmap(
+              return RoadmapTile(
                 name: itemsroadmaps[index]["name"],
                 description: itemsroadmaps[index]["description"],
+                jsoncode: itemsroadmaps[index],
               );
             })
         : Center(
@@ -193,29 +194,6 @@ class _generalSearchState extends State<generalSearch> {
           child: Container(
               padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
               child: Text("message",
-                  style: TextStyle(
-                    color: Colors.black,
-                  )),
-              decoration: BoxDecoration(
-                  color: buttonColor, borderRadius: BorderRadius.circular(13))),
-        ));
-  }
-
-  Widget searchTileRoadmap({name, description}) {
-    return ListTile(
-        leading: CircleAvatar(
-          child: Icon(Icons.list, color: Colors.grey),
-          backgroundColor: buttonColor,
-        ),
-        title: Text(name, style: TextStyle(color: Colors.white)),
-        subtitle: Text(description, style: TextStyle(color: Colors.grey)),
-        trailing: GestureDetector(
-          onTap: () {
-            //Join(userid, zoneid)
-          },
-          child: Container(
-              padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
-              child: Text("Add",
                   style: TextStyle(
                     color: Colors.black,
                   )),
