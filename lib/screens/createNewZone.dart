@@ -14,15 +14,17 @@ class _CreateNewZoneState extends State<CreateNewZone> {
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
   String _zonename;
-  String _zonecode;
+  String _zonecode="000000";
   String _zonedescription;
   bool _showErrorMsg = false;
   String _errorMsg = '';
   List privacy = ["Private", "Public"];
+  String dropdownvalue = 'Public';
+  int priv=1;
+  var items =  ['Public','Private'];
   _setName(String name) {
     _zonename = name;
   }
-
   _setDesc(String desc) {
     _zonedescription = desc;
   }
@@ -49,7 +51,7 @@ class _CreateNewZoneState extends State<CreateNewZone> {
               'http://xzoneapi.azurewebsites.net/api/v1/Zone/createzone/$id', {
             "name": _zonename,
             "description": _zonedescription,
-            "privacy": 0,
+            "privacy": priv,
             "joinCode": _zonecode
           });
           print(id);
@@ -91,7 +93,7 @@ class _CreateNewZoneState extends State<CreateNewZone> {
       body: Form(
         key: _formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CustomTextField(
               text: "Name your zone",
@@ -117,6 +119,44 @@ class _CreateNewZoneState extends State<CreateNewZone> {
             SizedBox(
               height: 10,
             ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius:  BorderRadius.circular(10),
+                border: Border.all(width: 2,color: greyColor),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DropdownButton(
+                  value: dropdownvalue,
+                  dropdownColor: backgroundColor,
+                  underline: Container() ,
+                  style: TextStyle(
+                    color: whiteColor,
+                    fontSize: 18,
+                  ),
+                  icon: Icon(Icons.keyboard_arrow_down),
+                  items:items.map((String items) {
+                    return DropdownMenuItem(
+                        value: items,
+                        child: Text(items)
+                    );
+                  }
+                  ).toList(),
+                  onChanged: (String newValue){
+                    setState(() {
+                      dropdownvalue = newValue;
+                      if(newValue == "Public") priv=1;
+                      else priv=0;
+                      print(priv);
+                    });
+                  },
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            priv==0?
             CustomTextField(
               text: "Zone code",
               obscureText: false,
@@ -127,10 +167,7 @@ class _CreateNewZoneState extends State<CreateNewZone> {
                 if (value.length < 4) return 'Short code';
                 return null;
               },
-            ),
-            SizedBox(
-              height: 5,
-            ),
+            ):Card(),
             SizedBox(
               height: 30,
             ),

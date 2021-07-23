@@ -19,6 +19,8 @@ import 'package:xzone/screens/notifications.dart';
 
 import 'package:xzone/servcies/web_services.dart';
 
+import 'createNewZone.dart';
+
 class Neewsfeed extends StatefulWidget {
   final email;
   final username;
@@ -89,6 +91,22 @@ class _NeewsfeedState extends State<Neewsfeed> {
       drawer: drawer(
         email: widget.email,
         username: widget.username,
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: FloatingActionButton(
+          onPressed: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CreateNewZone(),
+              ),
+            );
+
+          },
+          child: Icon(Icons.add),
+          backgroundColor: buttonColor,
+        ),
       ),
       appBar: AppBar(
         elevation: 0,
