@@ -94,6 +94,7 @@ class ZoneStateTest extends State<ZoneTest>{
               child: Row(
                 children: [
                   if(!widget.userInZone)
+                    HelpFunction.getUserId()==widget.userID?
                   Expanded(
                     child: FlatButton(
                       child: Row(
@@ -116,7 +117,7 @@ class ZoneStateTest extends State<ZoneTest>{
                           borderRadius:
                           BorderRadius.circular(borderRadiusValue)),
                     ),
-                  ),
+                  ):Card(),
                   SizedBox(width: 10,),
                 ],
               ),
