@@ -6,7 +6,8 @@ class conversation extends StatefulWidget {
   final String chatRoomId;
   final String username;
   final String email;
-  conversation({this.chatRoomId, this.username, this.email});
+  final String myEmail;
+  conversation({this.chatRoomId, this.username, this.email, this.myEmail});
   @override
   _conversationState createState() => _conversationState();
 }
@@ -65,7 +66,9 @@ class _conversationState extends State<conversation> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
+        backgroundColor: backgroundColor,
         elevation: 0,
         title: Text(widget.username),
         actions: [

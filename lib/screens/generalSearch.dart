@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:xzone/repositories/FireBaseDB.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/screens/conversation.dart';
+import 'package:xzone/screens/zoneNewsfeedInfo.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/zoneSearchTile.dart';
+
+import 'infoProfile.dart';
+import 'infoZone.dart';
 
 class generalSearch extends StatefulWidget {
   @override
@@ -118,9 +122,23 @@ class _generalSearchState extends State<generalSearch> {
             itemCount: itemsusers.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return searchTileUsers(
-                name: itemsusers[index]["userName"],
-                email: itemsusers[index]["email"],
+              return InkWell(
+                onTap: ()async{
+                  print(itemsusers[index]["id"]);
+                  //int id = await HelpFunction.getUserId();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => info(
+                        userId: itemsusers[index]["id"],
+                        checkMe: true,
+                      ),),
+                  );
+                },
+                child: searchTileUsers(
+                  name: itemsusers[index]["userName"],
+                  email: itemsusers[index]["email"],
+                ),
               );
             })
         : Center(
@@ -139,12 +157,26 @@ class _generalSearchState extends State<generalSearch> {
             itemCount: itemszones.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return ZoneSearchTile(
-                name: itemszones[index]["name"],
-                description: itemszones[index]["description"],
-                privacy: itemszones[index]["privacy"],
-                zoneId: itemszones[index]["id"],
-                alreadyYourzone: checkIfAlreadyJoined(itemszones[index]["id"]),
+              return InkWell(
+                onTap: ()async{
+                  int id  = await HelpFunction.getUserId();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>infoZone(
+                        idUser: id,
+                        idZone: itemszones[index]["id"],
+                      ),
+                    ),
+                  );
+                },
+                child: ZoneSearchTile(
+                  name: itemszones[index]["name"],
+                  description: itemszones[index]["description"],
+                  privacy: itemszones[index]["privacy"],
+                  zoneId: itemszones[index]["id"],
+                  alreadyYourzone: checkIfAlreadyJoined(itemszones[index]["id"]),
+                ),
               );
             })
         : Center(
