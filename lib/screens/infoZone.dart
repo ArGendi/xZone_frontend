@@ -36,6 +36,7 @@ class infoZoneState extends State<infoZone>{
       List posts = body['posts'];
       List zoneMembers = body['zoneMembers'];
       int privacy = body['privacy'];
+      List tasks = body['tasks'];
       bool userInZone=false;
       for(int i=0;i<zoneMembers.length;i++){
         if(idUser == zoneMembers[i]['accountId'])
@@ -56,6 +57,7 @@ class infoZoneState extends State<infoZone>{
             zoneMembers: zoneMembers ,
             privacy: privacy,
             userInZone: userInZone,
+            tasks: tasks,
           ),
         ),
       );

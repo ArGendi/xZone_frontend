@@ -19,7 +19,7 @@ class _CreateNewZoneState extends State<CreateNewZone> {
   List skills;
   bool _loading = false;
   String _zonename;
-  String _zonecode="000000";
+  String _zonecode="0000";
   String _zonedescription;
   bool _showErrorMsg = false;
   String _errorMsg = '';

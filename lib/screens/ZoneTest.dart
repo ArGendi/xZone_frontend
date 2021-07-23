@@ -14,9 +14,10 @@ class ZoneTest extends StatefulWidget {
   final List zoneMembers;
   final int privacy;
   final bool userInZone;
+  final List tasks;
   //final String userName;
 
-  const ZoneTest({Key key, this.posts, this.zoneName, this.zoneID, this.userID, this.zoneMembers, this.privacy, this.userInZone}) : super(key: key);
+  const ZoneTest({Key key, this.posts, this.zoneName, this.zoneID, this.userID, this.zoneMembers, this.privacy, this.userInZone, this.tasks}) : super(key: key);
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return ZoneStateTest();
@@ -279,11 +280,13 @@ class ZoneStateTest extends State<ZoneTest>{
                                           child: AddTask(isAutoFocus: false,)),
                                       Container(
                                         child: ListView.builder(
-
+                                          reverse: true,
                                           shrinkWrap: true,
                                           physics: ScrollPhysics(),
-                                          itemCount: 10,
+                                          itemCount: widget.tasks.length,
                                           itemBuilder: (BuildContext context,int index){
+                                            String date = widget.tasks[index]['publishDate'];
+                                            DateTime dt = DateTime.parse("$date");
                                             return Card(
                                               elevation: 5,
                                               shape: RoundedRectangleBorder(
@@ -301,19 +304,19 @@ class ZoneStateTest extends State<ZoneTest>{
                                                   children: [
                                                     Row(
                                                       children: [
-                                                        Icon(Icons.person,color: buttonColor,),
+                                                        Icon(Icons.task_sharp,color: buttonColor,),
                                                         SizedBox(width: 5,),
-                                                        Text("Abdelrahman Ayman",style: TextStyle(color: whiteColor),),
+                                                        Text(widget.tasks[index]['name'],style: TextStyle(color: whiteColor),),
                                                       ],
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets.only(left: 30),
-                                                      child: Text("1 min",style: TextStyle(color: greyColor),),
+                                                      child: Text(DateFormat('yyyy-MM-dd – kk:mm').format(dt).toString(),style: TextStyle(color: greyColor),),
                                                     ),
-                                                    Padding(
+                                                  /*  Padding(
                                                       padding: const EdgeInsets.all(8.0),
                                                       child: Text("Your life does not get better by chance. It gets better by a change",style: TextStyle(color: whiteColor),),
-                                                    ),
+                                                    ),*/
                                                   ],
                                                 ),
                                               ),
