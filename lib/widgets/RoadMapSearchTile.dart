@@ -3,6 +3,7 @@ import 'package:xzone/constants.dart';
 import 'package:xzone/models/project.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:xzone/providers/tasks_provider.dart';
 
 class RoadmapTile extends StatefulWidget {
   final name;
@@ -61,8 +62,7 @@ class _RoadmapTileState extends State<RoadmapTile> {
                     project.description = Desc;
                     project.id = roadMap['id'];
                     project.userID = roadMap['ownerID'];
-                    Provider.of(context, Listen: false)
-                        .addProject(project, true);
+                    Provider.of<ProjectsProvider>(context, listen: false).addProject(project, true);
                     Navigator.pop(context);
                   },
                   child: Text(
@@ -104,8 +104,4 @@ class _RoadmapTileState extends State<RoadmapTile> {
                   color: buttonColor, borderRadius: BorderRadius.circular(13))),
         ));
   }
-}
-
-class Provider {
-  static of(BuildContext context, {bool Listen}) {}
 }
