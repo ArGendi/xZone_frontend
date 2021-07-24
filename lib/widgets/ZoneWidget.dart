@@ -37,6 +37,7 @@ class _ZoneWidgetState extends State<ZoneWidget> {
         "zoneId": zoneid,
         "accountId": userid,
       });
+      print(response.statusCode);
       if (response.statusCode == 200) {
         setState(() {
           pressed = true;
@@ -73,35 +74,37 @@ class _ZoneWidgetState extends State<ZoneWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.name,
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                            //fontFamily: 'Montserrat-Light'
-                            ),
-                      ),
-                      Text(
-                        widget.description,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text("${widget.numberOfmembers} member",
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.name,
                           style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white
+                              //fontFamily: 'Montserrat-Light'
+                              ),
+                        ),
+                        Text(
+                          widget.description,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
                             color: Colors.white,
-                          )),
-                    ],
+                          ),
+                        ),
+                        Text("${widget.numberOfmembers} member",
+                            style: TextStyle(
+                              color: Colors.white,
+                            )),
+                      ],
+                    ),
                   ),
                   FlatButton(
                       onPressed: () {
                         HelpFunction.getUserId().then((userId) {
-                          Join(userId, widget.zoneId, 0000);
+                          Join(userId, widget.zoneId, "0000");
                         });
                       },
                       child: Row(

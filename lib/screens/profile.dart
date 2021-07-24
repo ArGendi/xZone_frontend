@@ -486,7 +486,7 @@ class profileState extends State<profile> {
                         ),
                       ),
                     ),
-                    HelpFunction.getUserId()==widget.userId?
+                    isMe?
                     Positioned(
                       right: 0,
                       child: IconButton(
@@ -512,6 +512,7 @@ class profileState extends State<profile> {
             SizedBox(
               height: 20,
             ),
+            widget.skills.length !=0?
             Container(
               height: 150,
               child: ListView.builder(
@@ -555,7 +556,22 @@ class profileState extends State<profile> {
                   );
                 },
               ),
-            ),
+            ):Column(
+              children: [
+              CircleAvatar(
+              radius: (70),
+              backgroundColor: backgroundColor,
+              child: Image.asset("assets/images/es.png"),
+              ),
+              Text(
+              'No Skills Yet',
+              style: TextStyle(
+              color: buttonColor,
+              fontSize: 15,
+              ),
+              ),
+              ],
+              ),
             SizedBox(
               height: 10,
             ),

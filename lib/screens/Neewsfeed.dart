@@ -19,6 +19,9 @@ import 'package:xzone/screens/notifications.dart';
 
 import 'package:xzone/servcies/web_services.dart';
 
+import 'createNewZone.dart';
+import 'infoZone.dart';
+
 class Neewsfeed extends StatefulWidget {
   final email;
   final username;
@@ -90,6 +93,22 @@ class _NeewsfeedState extends State<Neewsfeed> {
         email: widget.email,
         username: widget.username,
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: FloatingActionButton(
+          onPressed: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CreateNewZone(),
+              ),
+            );
+
+          },
+          child: Icon(Icons.add),
+          backgroundColor: buttonColor,
+        ),
+      ),
       appBar: AppBar(
         elevation: 0,
         actions: [
@@ -158,12 +177,26 @@ class _NeewsfeedState extends State<Neewsfeed> {
             child: zones != null
                 ? ListView.builder(
                     itemBuilder: (context, index) {
-                      return ZoneWidget(
-                        name: zones[index]["name"],
-                        numberOfmembers: zones[index]["numOfMembers"],
-                        description: zones[index]["description"],
-                        zoneId: zones[index]["id"],
-                        alreadyfound: checkIfAlreadyJoined(zones[index]["id"]),
+                      return InkWell(
+                        onTap: ()async{
+                          int id = await HelpFunction.getUserId();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>infoZone(
+                                idUser: id,
+                                idZone: zones[index]['id'],
+                              ),
+                            ),
+                          );
+                        },
+                        child: ZoneWidget(
+                          name: zones[index]["name"],
+                          numberOfmembers: zones[index]["numOfMembers"],
+                          description: zones[index]["description"],
+                          zoneId: zones[index]["id"],
+                          alreadyfound: checkIfAlreadyJoined(zones[index]["id"]),
+                        ),
                       );
                     },
                     itemCount: zones.length,

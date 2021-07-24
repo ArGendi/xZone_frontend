@@ -18,8 +18,7 @@ class generalSearch extends StatefulWidget {
 }
 
 class _generalSearchState extends State<generalSearch> {
-  TextEditingController searchtextEditingController =
-      new TextEditingController();
+  TextEditingController searchtextEditingController = new TextEditingController();
   final firebaseDB = FirestoreDatabase();
   List itemsusers;
   List itemszones;
@@ -124,14 +123,14 @@ class _generalSearchState extends State<generalSearch> {
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: ()async{
-                  print(itemsusers[index]["id"]);
-                  //int id = await HelpFunction.getUserId();
+                  int id = await HelpFunction.getUserId();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => info(
-                        userId: itemsusers[index]["id"],
+                        userId: itemsusers[index]['id'],
                         checkMe: true,
+                        myId: id,
                       ),),
                   );
                 },

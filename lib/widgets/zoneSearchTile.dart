@@ -112,12 +112,12 @@ class _ZoneSearchTileState extends State<ZoneSearchTile> {
             ),
             widget.privacy == 1
                 ? Icon(
-                    Icons.lock,
+                    Icons.lock_open_rounded,
                     color: Colors.white,
                     size: 18,
                   )
                 : Icon(
-                    Icons.public,
+                    Icons.lock,
                     color: Colors.white,
                     size: 18,
                   ),
