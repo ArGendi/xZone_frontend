@@ -33,7 +33,7 @@ class _ZoneWidgetState extends State<ZoneWidget> {
   Join(userid, zoneid, joinCode) async {
     try {
       var response = await webService
-          .post('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/000000', {
+          .post('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/0000', {
         "zoneId": zoneid,
         "accountId": userid,
       });
@@ -74,30 +74,32 @@ class _ZoneWidgetState extends State<ZoneWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.name,
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                            //fontFamily: 'Montserrat-Light'
-                            ),
-                      ),
-                      Text(
-                        widget.description,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text("${widget.numberOfmembers} member",
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.name,
                           style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white
+                              //fontFamily: 'Montserrat-Light'
+                              ),
+                        ),
+                        Text(
+                          widget.description,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
                             color: Colors.white,
-                          )),
-                    ],
+                          ),
+                        ),
+                        Text("${widget.numberOfmembers} member",
+                            style: TextStyle(
+                              color: Colors.white,
+                            )),
+                      ],
+                    ),
                   ),
                   FlatButton(
                       onPressed: () {

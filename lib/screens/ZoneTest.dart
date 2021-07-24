@@ -337,7 +337,7 @@ class ZoneStateTest extends State<ZoneTest>{
                                     child: ListView.builder(
                                       shrinkWrap: true,
                                       physics: ScrollPhysics(),
-                                      itemCount: 10,
+                                      itemCount: widget.zoneMembers.length,
                                       itemBuilder: (BuildContext context,int index){
                                         realIndex = index+1;
                                         return Card(
@@ -359,8 +359,8 @@ class ZoneStateTest extends State<ZoneTest>{
                                                   children: [
                                                     Text("$realIndex",style: TextStyle(color: buttonColor,fontSize: 20),),
                                                     SizedBox(width: 7,),
-                                                    Expanded(child: Text("Abdelrahman Ayman",style: TextStyle(color: whiteColor,fontSize: 15),)),
-                                                    Text("230",style: TextStyle(color: buttonColor,fontSize: 20),),
+                                                    Expanded(child: Text(widget.zoneMembers[index]['account']['userName'],style: TextStyle(color: whiteColor,fontSize: 15),)),
+                                                    Text(widget.zoneMembers[index]['numOfCompletedTasks'].toString(),style: TextStyle(color: buttonColor,fontSize: 20),),
 
                                                   ],
                                                 ),
