@@ -16,8 +16,8 @@ class Task {
     priority = 100;
     DateTime now = DateTime.now();
     id = now.hashCode;
-    sectionId = -1;
-    projectId = -1;
+    sectionId = 0;
+    projectId = 0;
     remainderOn = false;
   }
   TaskMapping() {

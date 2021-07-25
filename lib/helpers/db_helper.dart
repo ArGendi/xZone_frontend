@@ -60,7 +60,7 @@ class DBHelper {
 
   Future<List<Map>> getNormalTasks () async{
     var dbClient = await db;
-    List<Map> result = await dbClient.rawQuery('SELECT * FROM $tasksTable WHERE projectId=?', [0]);
+    List<Map> result = await dbClient.rawQuery('SELECT * FROM $tasksTable WHERE projectId<=?', [0]);
     return result;
   }
 

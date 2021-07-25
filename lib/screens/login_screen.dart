@@ -82,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
           List tasks = body['tasks'];
           List projects = body['projects'];
           _fetchAndSetTasks(tasks);
+          ///-------------------------
           _fetchAndSetProjects(projects);
           HelpFunction.saveUserId(id);
           final newUser = await _auth.signInWithEmailAndPassword(

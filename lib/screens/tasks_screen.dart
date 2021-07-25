@@ -246,6 +246,7 @@ class _TasksState extends State<Tasks> {
                                 bgColor: backgroundColor,
                                 task: filteredItems[index],
                                 cong: showCongratulationDialog,
+                                fromZone: filteredItems[index].projectId < 0 ? true : false,
                               );
                             },
                           );

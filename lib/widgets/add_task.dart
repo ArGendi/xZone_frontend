@@ -5,6 +5,7 @@ import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:xzone/providers/zone_tasks_provider.dart';
 import 'package:xzone/widgets/calender_bottom_sheet.dart';
 import 'package:xzone/widgets/choose_date.dart';
 import 'package:xzone/widgets/choose_priority.dart';
@@ -21,8 +22,10 @@ class AddTask extends StatefulWidget {
   final int pIndex;
   final int sIndex;
   final bool isAutoFocus;
+  final bool fromZone;
+  final int zoneId;
 
-  const AddTask({Key key, this.inSection = false, this.pIndex, this.sIndex, this.isAutoFocus=true,}) : super(key: key);
+  const AddTask({Key key, this.inSection = false, this.pIndex, this.sIndex, this.isAutoFocus=true, this.fromZone = false, this.zoneId,}) : super(key: key);
 
   @override
   _AddTaskState createState() => _AddTaskState();
@@ -204,6 +207,7 @@ class _AddTaskState extends State<AddTask> {
             children: <Widget>[
               Row(
                 children: [
+                  if(!widget.fromZone)
                   IconButton(
                     onPressed: setPriorityBottomSheet,
                     icon: Icon(
@@ -212,6 +216,7 @@ class _AddTaskState extends State<AddTask> {
                     ),
                   ),
                   SizedBox(width: 5,),
+                  if(!widget.fromZone)
                   InkWell(
                     onTap: setDateBottomSheet,
                     child: Padding(
@@ -234,6 +239,7 @@ class _AddTaskState extends State<AddTask> {
                     ),
                   ),
                   SizedBox(width: 5,),
+                  if(!widget.fromZone)
                   IconButton(
                       icon: Icon(
                         activeTask.remainderOn? Icons.alarm : Icons.alarm_off,
@@ -255,6 +261,17 @@ class _AddTaskState extends State<AddTask> {
                       if(widget.inSection)
                         Provider.of<ProjectsProvider>(context, listen: false)
                             .addTaskToSection(widget.pIndex, widget.sIndex, activeTask, true);
+                      else if(widget.fromZone){
+                        activeTask.projectId = -1 * widget.zoneId;
+                        Provider.of<TasksProvider>(context, listen: false)
+                            .addZoneTask(activeTask, widget.zoneId);
+                        var taskInJsonFormat = {
+                          'publishDate': DateTime.now().toString(),
+                          'name': activeTask.name
+                        };
+                        Provider.of<ZoneTasksProvider>(context, listen: false)
+                            .addTask(taskInJsonFormat);
+                      }
                       else
                         Provider.of<TasksProvider>(context, listen: false)
                           .addTask(activeTask, true);

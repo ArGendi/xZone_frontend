@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
+import 'package:xzone/providers/zone_tasks_provider.dart';
 import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/add_task.dart';
 import 'package:intl/intl.dart';
-
+import 'package:provider/provider.dart';
 import 'commentScreen.dart';
 import 'infoComments.dart';
+
 class ZoneTest extends StatefulWidget {
   @override
   final List posts;
@@ -45,6 +47,7 @@ class ZoneStateTest extends State<ZoneTest>{
   }
   @override
   Widget build(BuildContext context) {
+    List tasks = Provider.of<ZoneTasksProvider>(context).items;
     // TODO: implement build
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -133,6 +136,7 @@ class ZoneStateTest extends State<ZoneTest>{
                         child: TabBar(
                           labelColor: buttonColor,
                           unselectedLabelColor: whiteColor,
+                          indicatorColor: buttonColor,
                           tabs: [
                             Tab(text: 'Posts'),
                             Tab(text: 'Tasks'),
@@ -328,15 +332,19 @@ class ZoneStateTest extends State<ZoneTest>{
                                             borderRadius:
                                             BorderRadius.circular(borderRadiusValue),),
                                           color: backgroundColor ,
-                                          child: AddTask(isAutoFocus: false,)),
+                                          child: AddTask(
+                                            isAutoFocus: false,
+                                            fromZone: true,
+                                            zoneId: widget.zoneID,
+                                          )),
                                       Container(
                                         child: ListView.builder(
                                           reverse: true,
                                           shrinkWrap: true,
                                           physics: ScrollPhysics(),
-                                          itemCount: widget.tasks.length,
+                                          itemCount: tasks.length,
                                           itemBuilder: (BuildContext context,int index){
-                                            String date = widget.tasks[index]['publishDate'];
+                                            String date = tasks[index]['publishDate'];
                                             DateTime dt = DateTime.parse("$date");
                                             return Card(
                                               elevation: 5,
@@ -357,7 +365,7 @@ class ZoneStateTest extends State<ZoneTest>{
                                                       children: [
                                                         Icon(Icons.task_sharp,color: buttonColor,),
                                                         SizedBox(width: 5,),
-                                                        Text(widget.tasks[index]['name'],style: TextStyle(color: whiteColor),),
+                                                        Text(tasks[index]['name'],style: TextStyle(color: whiteColor),),
                                                       ],
                                                     ),
                                                     Padding(

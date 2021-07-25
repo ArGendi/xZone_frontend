@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/helpers/db_helper.dart';
+import 'package:xzone/providers/zone_tasks_provider.dart';
 import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/screens/profile.dart';
-
+import 'package:provider/provider.dart';
 import 'ZoneTest.dart';
 
 class infoZone extends StatefulWidget{
@@ -37,6 +38,7 @@ class infoZoneState extends State<infoZone>{
       List zoneMembers = body['zoneMembers'];
       int privacy = body['privacy'];
       List tasks = body['tasks'];
+      Provider.of<ZoneTasksProvider>(context, listen: false).addListOfTasks(tasks);
       zoneMembers.sort((a, b) => b['numOfCompletedTasks'].compareTo(a['numOfCompletedTasks']));
       bool userInZone=false;
       for(int i=0;i<zoneMembers.length;i++){
@@ -45,7 +47,6 @@ class infoZoneState extends State<infoZone>{
             userInZone = true;
           }
       }
-
 
       Navigator.pushReplacement(
         context,
