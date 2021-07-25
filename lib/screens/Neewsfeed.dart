@@ -45,9 +45,11 @@ class _NeewsfeedState extends State<Neewsfeed> {
       try {
         var response = await webService
             .get('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/$id');
+        setState(() {
+          zonesUserjoined =
+              response.statusCode != 200 ? [] : jsonDecode(response.body);
+        });
 
-        zonesUserjoined =
-            response.statusCode != 200 ? [] : jsonDecode(response.body);
       } catch (e) {
         print(e);
       }
@@ -57,6 +59,7 @@ class _NeewsfeedState extends State<Neewsfeed> {
   checkIfAlreadyJoined(zoneId) {
     bool Found = false;
     Found = zonesUserjoined.contains(zoneId);
+    print(Found);
     return Found;
   }
 
@@ -75,8 +78,8 @@ class _NeewsfeedState extends State<Neewsfeed> {
     }
   }
 
-  myfun() {
-    getuserZones();
+  myfun()async {
+    await getuserZones();
     beginsearchZones();
   }
 
@@ -175,7 +178,15 @@ class _NeewsfeedState extends State<Neewsfeed> {
         children: [
           Expanded(
             child: zones != null
-                ? ListView.builder(
+                ? zonesUserjoined.length == zones.length?Center(
+      child: Container(
+          child: Text("No Results yet.",
+          style: TextStyle(
+            color: Colors.white,
+          )),
+    ),
+    ):
+            ListView.builder(
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: ()async{

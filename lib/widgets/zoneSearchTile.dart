@@ -106,7 +106,7 @@ class _ZoneSearchTileState extends State<ZoneSearchTile> {
         ),
         title: Row(
           children: [
-            Text(widget.name, style: TextStyle(color: Colors.white)),
+            Flexible(child: Container(child: Text(widget.name, style: TextStyle(color: Colors.white)))),
             SizedBox(
               width: 8,
             ),
