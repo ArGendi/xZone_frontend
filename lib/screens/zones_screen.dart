@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/screens/infoZone.dart';
@@ -17,6 +19,29 @@ class zones_profile extends StatefulWidget {
   }
 }
 class zonesState_profile extends State<zones_profile> {
+  List zonesUserjoined=[];
+  @override
+  void initState() {
+    getuserZones();
+
+  }
+
+  getuserZones() async {
+    HelpFunction.getUserId().then((id) async {
+      try {
+        var response = await webService
+            .get('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/$id');
+        setState(() {
+          zonesUserjoined =
+              response.statusCode != 200 ? [] : jsonDecode(response.body);
+        });
+        print(zonesUserjoined);
+
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
   @override
   leaveZone(int userId,int zoneId)async{
     var webService = WebServices();
@@ -39,7 +64,7 @@ class zonesState_profile extends State<zones_profile> {
       print(joinCode);
       if (response.statusCode != 200) {
         CreateErrorAlertDialog(
-            context, true, "Sorry,Incorrect Code,Try Again!");
+            context, true, "Sorry,You Canot Remove From here");
       } else {
         setState(() {
           pressed = true;
@@ -151,7 +176,7 @@ class zonesState_profile extends State<zones_profile> {
               ),
               trailing://widget.zones[index]['accountId']!=widget.userID?
               FlatButton(
-                child: Text(widget.checkMe? "Join":"Leave",style: TextStyle(color: whiteColor,fontSize: 15),),
+                child: Text(!zonesUserjoined.contains(widget.zones[index]['zoneId'])? "Join":"Leave",style: TextStyle(color: whiteColor,fontSize: 15),),
                 onPressed: (){if(widget.checkMe){
                   print( widget.zones[index]['zone']['privacy'].toString());
                   HelpFunction.getUserId().then((userId) {

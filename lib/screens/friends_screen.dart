@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -18,6 +20,34 @@ class friends extends StatefulWidget {
   }
 }
 class friendsState extends State<friends> {
+  List zonesUserjoined=[];
+  List listOfIds=[];
+  @override
+  void initState() {
+    getuserZones();
+  }
+  getuserZones() async {
+    HelpFunction.getUserId().then((id) async {
+      try {
+        var webService = WebServices();
+        var response = await webService
+            .get('http://xzoneapi.azurewebsites.net/api/v1/Friend/$id');
+        setState(() {
+          zonesUserjoined =
+              response.statusCode != 200 ? [] : jsonDecode(response.body);
+        });
+        zonesUserjoined.forEach((element) { 
+          listOfIds.add(element['firstId']);
+          listOfIds.add(element['secondId']);
+        });
+        listOfIds.removeWhere((item) => item == id,);
+        print(id);
+        print(listOfIds);
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
   @override
   unfriend(int firstUserId,int secondUserID)async{
     var webService = WebServices();
@@ -92,7 +122,7 @@ class friendsState extends State<friends> {
                 ),
                 trailing:widget.FriendList[index]['id']!= widget.myId?
                 FlatButton(
-                child: Text(widget.checkMe?(sendRequest.contains(index)?"Request Sent":"Add Friend"):"Unfriend",style: TextStyle(color: whiteColor,fontSize: 15),),
+                child: Text(!listOfIds.contains(widget.FriendList[index]['id'])?(sendRequest.contains(index)?"Request Sent":"Add Friend"):"Unfriend",style: TextStyle(color: whiteColor,fontSize: 15),),
                 onPressed: (){if(widget.checkMe){
                   setState(() {
                     sendRequest.add(index);
