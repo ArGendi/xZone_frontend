@@ -49,7 +49,7 @@ class infoState extends State<info>{
          List skill = body['skills'];
           String email;
          if(skill.isNotEmpty) {
-           skill = body['skills'][0]['account']['skills'];
+          // skill = body['skill'];
            email = body['skills'][0]['account']['email'];
          }
          //print(skills);

@@ -609,6 +609,22 @@ class profileState extends State<profile> {
                               imageUrl = 'assets/images/5taskfinished.png';
                               imageName = "5 Tasks";
                               break;
+                            case 3:
+                              imageUrl = "assets/images/bd3.png";
+                              imageName = "Social Contributor";
+                              break;
+                            case 4:
+                              imageUrl = "assets/images/bd2.png";
+                              imageName = "Good Friends";
+                              break;
+                            case 5:
+                              imageUrl = "assets/images/bd6.png";
+                              imageName = "Expert";
+                              break;
+                            case 8:
+                              imageUrl = "assets/images/bd4.png";
+                              imageName = "Zone Top10";
+                              break;
                           }
                           return Padding(
                             padding: EdgeInsets.only(left: 20.0, right: 20.0),
@@ -617,7 +633,7 @@ class profileState extends State<profile> {
                                 CircleAvatar(
                                   radius: (50),
                                   backgroundColor: buttonColor,
-                                  child: Image.asset(imageUrl),
+                                  child: Image.asset(imageUrl,alignment: Alignment.center,),
                                 ),
                                 SizedBox(
                                   height: 20,

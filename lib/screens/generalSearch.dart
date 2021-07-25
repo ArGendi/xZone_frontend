@@ -218,21 +218,15 @@ class _generalSearchState extends State<generalSearch> {
         ),
         title: Text(name, style: TextStyle(color: Colors.white)),
         subtitle: Text(email, style: TextStyle(color: Colors.grey)),
-        trailing: GestureDetector(
-          onTap: () {
-            createChatroom(name, email);
-          },
-          child: Container(
-              padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
-              child: Text("message",
-                  style: TextStyle(
-                    color: Colors.black,
-                  )),
-              decoration: BoxDecoration(
-                  color: buttonColor, borderRadius: BorderRadius.circular(13))),
-        ));
+        trailing: Container(
+            padding: EdgeInsets.symmetric(vertical: 7, horizontal: 11),
+            child: Text("View Profile",
+                style: TextStyle(
+                  color: Colors.black,
+                )),
+            decoration: BoxDecoration(
+                color: buttonColor, borderRadius: BorderRadius.circular(13))));
   }
-
   @override
   void initState() {
     // TODO: implement initState

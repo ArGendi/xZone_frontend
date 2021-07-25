@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
@@ -57,22 +59,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
               "password": _password,
               "location": _countryCode,
             });
+
         if (response.statusCode >= 400) {
           setState(() {
             _showErrorMsg = true;
             _errorMsg = response.body;
           });
         } else
-          Navigator.pushNamedAndRemoveUntil(
-              context, Neewsfeed.id, (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Neewsfeed(email: _email, username:  _fullName)),
+                  (route) => false);
         setState(() {
           _loading = false;
         });
+        var body = json.decode(response.body);
+        var userId = body['id'];
         final newUser = await _auth.createUserWithEmailAndPassword(
             email: _email, password: _password);
         await HelpFunction.saveuserNamesharedPrefrence(_fullName);
         await HelpFunction.saveuserEmailsharedPrefrence(_email);
         await HelpFunction.saveusersharedPrefrenceUserLoggedInKey(true);
+        await HelpFunction.saveUserId(userId);
         Map<String, String> mappedData = {"name": _fullName, "email": _email};
         firebaseDB.uploadUserInfo(mappedData);
       } catch (e) {
