@@ -410,21 +410,24 @@ class ZoneStateTest extends State<ZoneTest>{
                                                   children: [
                                                     realIndex==1?
                                                     CircleAvatar(
-                                                      radius: (30),
+                                                      radius: (32),
                                                       backgroundColor: backgroundColor,
                                                       child: Image.asset('assets/images/first.png'),
                                                     ):realIndex==2?
                                                     CircleAvatar(
-                                                      radius: (35),
+                                                      radius: (30),
                                                       backgroundColor: backgroundColor,
                                                       child: Image.asset('assets/images/second.png'),
                                                     ):realIndex==3?
                                                     CircleAvatar(
-                                                      radius: (35),
+                                                      radius: (28),
                                                       backgroundColor: backgroundColor,
                                                       child: Image.asset('assets/images/third.png'),
                                                     ):
-                                                    Text("$realIndex",style: TextStyle(color: buttonColor,fontSize: 20),),
+                                                    Padding(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                      child: Text("$realIndex",style: TextStyle(color: buttonColor,fontSize: 20),),
+                                                    ),
                                                     SizedBox(width: 10,),
                                                     Expanded(child: Text(widget.zoneMembers[index]['account']['userName'],style: TextStyle(color: whiteColor,fontSize: 15),)),
                                                     Text(widget.zoneMembers[index]['numOfCompletedTasks'].toString(),style: TextStyle(color: whiteColor,fontSize: 25),),
