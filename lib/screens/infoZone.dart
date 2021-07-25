@@ -37,6 +37,7 @@ class infoZoneState extends State<infoZone>{
       List zoneMembers = body['zoneMembers'];
       int privacy = body['privacy'];
       List tasks = body['tasks'];
+      zoneMembers.sort((a, b) => b['numOfCompletedTasks'].compareTo(a['numOfCompletedTasks']));
       bool userInZone=false;
       for(int i=0;i<zoneMembers.length;i++){
         if(idUser == zoneMembers[i]['accountId'])

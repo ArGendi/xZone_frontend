@@ -85,6 +85,9 @@ class _ZoneSearchTileState extends State<ZoneSearchTile> {
         "accountId": userid,
       });
       if (response.statusCode != 200) {
+        print(joinCode);
+        print(zoneid);
+        print(userid);
         CreateErrorAlertDialog(
             context, true, "Sorry,Incorrect Code,Try Again!");
       } else {
@@ -106,7 +109,7 @@ class _ZoneSearchTileState extends State<ZoneSearchTile> {
         ),
         title: Row(
           children: [
-            Text(widget.name, style: TextStyle(color: Colors.white)),
+            Flexible(child: Container(child: Text(widget.name, style: TextStyle(color: Colors.white)))),
             SizedBox(
               width: 8,
             ),
@@ -134,8 +137,8 @@ class _ZoneSearchTileState extends State<ZoneSearchTile> {
             : GestureDetector(
                 onTap: () {
                   HelpFunction.getUserId().then((userId) {
-                    widget.privacy == 0
-                        ? Join(context, userId, widget.zoneId, 0000)
+                    widget.privacy == 1
+                        ? Join(context, userId, widget.zoneId, "0000")
                         : CreateAlertDialog(context).then((value) {
                             Join(context, userId, widget.zoneId, value);
                           });

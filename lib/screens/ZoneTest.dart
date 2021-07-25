@@ -5,6 +5,9 @@ import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/add_task.dart';
 import 'package:intl/intl.dart';
+
+import 'commentScreen.dart';
+import 'infoComments.dart';
 class ZoneTest extends StatefulWidget {
   @override
   final List posts;
@@ -35,6 +38,10 @@ class ZoneStateTest extends State<ZoneTest>{
       "writerId": writerId,
       "zoneId": zoneId
     });
+    print(content);
+    print(writerId);
+    print(zoneId);
+    print(response.statusCode);
   }
   @override
   Widget build(BuildContext context) {
@@ -52,13 +59,7 @@ class ZoneStateTest extends State<ZoneTest>{
             icon: Icon(Icons.arrow_back_ios),
             color: buttonColor,
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.search),
-              color: buttonColor,
-              onPressed: () {},
-            ),
-          ],
+
           title:  Center(child: Text(widget.zoneName,style: TextStyle(color: whiteColor, fontSize: 25),)),
         ),
         body: Column(
@@ -198,12 +199,15 @@ class ZoneStateTest extends State<ZoneTest>{
                                                           "zoneId": widget.zoneID,
                                                           "date": DateTime.now().toString(),
                                                           "writer":{
-                                                            "userName": userName,
+                                                            "userName": userName
                                                           }
                                                         });
                                                       });
-                                                    addPostInZone(textfieldController.text,widget.userID,widget.zoneID);
-                                                    textfieldController.clear();
+                                                      HelpFunction.getUserId().then((userId)  {
+                                                      addPostInZone(textfieldController.text,userId,widget.zoneID);
+                                                          textfieldController.clear();
+                                                      });
+
                                                     //print(textfieldController.text);
                                                   },
                                                   ),
@@ -249,6 +253,52 @@ class ZoneStateTest extends State<ZoneTest>{
                                                     Padding(
                                                       padding: const EdgeInsets.all(8.0),
                                                       child: Text(widget.posts[index]['content'],style: TextStyle(color: whiteColor),),
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.end,
+                                                        children: [
+                                                          FlatButton(
+                                                              shape: RoundedRectangleBorder(
+                                                                side: BorderSide(
+                                                                    color: greyColor,
+                                                                    width: 2,
+                                                                    style: BorderStyle.solid),
+                                                                borderRadius:
+                                                                BorderRadius.circular(borderRadiusValue),),
+                                                            color: buttonColor,
+                                                            child: Text("Comment",style: TextStyle(
+                                                              color: backgroundColor,
+                                                              fontSize: 15,
+                                                            ),),
+                                                            onPressed: (){
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (context) =>infoComments(postId: widget.posts[index]['id'],),
+                                                                ),
+                                                              );
+                                                            }
+                                                             /* String userName =  await HelpFunction.getuserNamesharedPrefrence();
+                                                              setState(() {
+                                                                widget.posts.add({
+                                                                  "content": textfieldController.text,
+                                                                  "writerId": widget.userID,
+                                                                  "zoneId": widget.zoneID,
+                                                                  "date": DateTime.now().toString(),
+                                                                  "writer":{
+                                                                    "userName": userName,
+                                                                  }
+                                                                });
+                                                              });
+                                                              addPostInZone(textfieldController.text,widget.userID,widget.zoneID);
+                                                              textfieldController.clear();
+                                                              //print(textfieldController.text);
+                                                            },*/
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -335,6 +385,7 @@ class ZoneStateTest extends State<ZoneTest>{
                                 Expanded(
                                   child: Container(
                                     child: ListView.builder(
+
                                       shrinkWrap: true,
                                       physics: ScrollPhysics(),
                                       itemCount: widget.zoneMembers.length,
@@ -357,10 +408,29 @@ class ZoneStateTest extends State<ZoneTest>{
                                               children: [
                                                 Row(
                                                   children: [
-                                                    Text("$realIndex",style: TextStyle(color: buttonColor,fontSize: 20),),
-                                                    SizedBox(width: 7,),
+                                                    realIndex==1?
+                                                    CircleAvatar(
+                                                      radius: (32),
+                                                      backgroundColor: backgroundColor,
+                                                      child: Image.asset('assets/images/first.png'),
+                                                    ):realIndex==2?
+                                                    CircleAvatar(
+                                                      radius: (30),
+                                                      backgroundColor: backgroundColor,
+                                                      child: Image.asset('assets/images/second.png'),
+                                                    ):realIndex==3?
+                                                    CircleAvatar(
+                                                      radius: (28),
+                                                      backgroundColor: backgroundColor,
+                                                      child: Image.asset('assets/images/third.png'),
+                                                    ):
+                                                    Padding(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                      child: Text("$realIndex",style: TextStyle(color: buttonColor,fontSize: 20),),
+                                                    ),
+                                                    SizedBox(width: 10,),
                                                     Expanded(child: Text(widget.zoneMembers[index]['account']['userName'],style: TextStyle(color: whiteColor,fontSize: 15),)),
-                                                    Text(widget.zoneMembers[index]['numOfCompletedTasks'].toString(),style: TextStyle(color: buttonColor,fontSize: 20),),
+                                                    Text(widget.zoneMembers[index]['numOfCompletedTasks'].toString(),style: TextStyle(color: whiteColor,fontSize: 25),),
 
                                                   ],
                                                 ),

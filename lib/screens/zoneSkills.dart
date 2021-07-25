@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:xzone/screens/zoneSkillSearchTile.dart';
 import 'package:xzone/servcies/web_services.dart';
 import 'package:xzone/widgets/skillSearchTile.dart';
 
@@ -9,7 +10,7 @@ import '../constants.dart';
 
 class zoneSkill extends StatefulWidget {
   final Function(List textInput) setValue;
-
+  static List skillsID=[];
   const zoneSkill({Key key, this.setValue}) : super(key: key);
   @override
   _zoneSkillState createState() => _zoneSkillState();
@@ -20,6 +21,7 @@ class _zoneSkillState extends State<zoneSkill> {
   WebServices webService = WebServices();
   List Temp;
   List skills;
+
   beginsearch() async {
     try {
       var input = searchtextEditingController.text;
@@ -41,30 +43,16 @@ class _zoneSkillState extends State<zoneSkill> {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return searchTile(
-             skills[index]["name"],
-             skills[index]["id"],
+             name: skills[index]["name"],
+             id:skills[index]["id"],
+            check:false
             //userid: 5,
           );
         })
         : Container();
   }
-  List skillsID=[];
-  searchTile(String name,int id){
-    return ListTile(
-      title: Text(name, style: TextStyle(color: Colors.white)),
-      trailing: IconButton(
-        icon: Icon(
-          Icons.add,
-          color: buttonColor,
-        ),
-        onPressed: () {
-          print(id.toString());
-          skillsID.add(id);
-          print(skillsID);
-        },
-      ),
-    );
-  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,8 +67,8 @@ class _zoneSkillState extends State<zoneSkill> {
                     color: Colors.white,
                   ),
                   onPressed: () {
-                    print("----------"+skillsID.length.toString());
-                    widget.setValue(skillsID);
+                    print("----------"+zoneSkill.skillsID.length.toString());
+                    widget.setValue(zoneSkill.skillsID);
                     Navigator.pop(context);
                   },
                 ),
