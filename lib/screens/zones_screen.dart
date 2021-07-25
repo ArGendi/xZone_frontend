@@ -187,10 +187,14 @@ class zonesState_profile extends State<zones_profile> {
                     });
                   });
                 }else{
-                  leaveZone(widget.userID, widget.zones[index]['zoneId']);
-                  setState(() {
-                    widget.zones.removeAt(index);
+                  print(widget.zones[index]['zoneId']);
+                  HelpFunction.getUserId().then((id) {
+                    leaveZone(id, widget.zones[index]['zoneId']);
+                    setState(() {
+                      widget.zones.removeAt(index);
+                    });
                   });
+
                 }},
                 shape: RoundedRectangleBorder(side: BorderSide(
                   color:buttonColor,
