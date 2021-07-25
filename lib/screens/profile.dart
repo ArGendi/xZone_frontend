@@ -621,8 +621,8 @@ class profileState extends State<profile> {
                               imageUrl = "assets/images/bd6.png";
                               imageName = "Expert";
                               break;
-                            case 6:
-                              imageUrl = "assets/images/bd1.png";
+                            case 8:
+                              imageUrl = "assets/images/bd4.png";
                               imageName = "Zone Top10";
                               break;
                           }
