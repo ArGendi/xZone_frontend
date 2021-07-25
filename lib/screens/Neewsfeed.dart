@@ -64,10 +64,11 @@ class _NeewsfeedState extends State<Neewsfeed> {
   }
 
   beginsearchZones() async {
-    try {
+    HelpFunction.getUserId().then((id) async {
+      userid = id;
+      try {
       var response =
-          await webService.get('http://xzoneapi.azurewebsites.net/api/v1/Zone');
-
+          await webService.get('http://xzoneapi.azurewebsites.net/api/v1/Zone/GetZone/ZoneRecommender/$id');
       Temp = jsonDecode(response.body);
       print(response.statusCode);
       setState(() {
@@ -76,8 +77,8 @@ class _NeewsfeedState extends State<Neewsfeed> {
     } catch (e) {
       print(e);
     }
-  }
-
+  });
+        }
   myfun()async {
     await getuserZones();
     beginsearchZones();

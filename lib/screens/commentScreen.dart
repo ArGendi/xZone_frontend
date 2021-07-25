@@ -1,12 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:xzone/servcies/helperFunction.dart';
+import 'package:xzone/servcies/web_services.dart';
 
 import '../constants.dart';
 
 class comments extends StatefulWidget {
+final List commentList;
 final int postId;
 
-  const comments({Key key, this.postId}) : super(key: key);
+  const comments({Key key, this.commentList, this.postId}) : super(key: key);
+
+
 
   @override
   _commentsState createState() => _commentsState();
@@ -15,6 +22,25 @@ final int postId;
 class _commentsState extends State<comments> {
   var textfieldController = TextEditingController();
   List comments = ['aaaaaaaa','xxxxxxxxxx','zzzzzzzzz'];
+  addComment(String content,int userId,int postId)async {
+    var webService = WebServices();
+    var response = await webService.post(
+        'http://xzoneapi.azurewebsites.net/api/v1/comment/WriteComment', {
+      "content": content,
+      "writerId": userId,
+      "postId": postId
+    });
+
+  }
+  deleteComment(int postId)async {
+    var webService = WebServices();
+    print("id"+postId.toString());
+    var response = await webService.delete(
+        'http://xzoneapi.azurewebsites.net/api/v1/comment/Delete/$postId');
+    print(response.statusCode);
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +64,7 @@ class _commentsState extends State<comments> {
                // reverse: true,
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
-                itemCount: comments.length,
+                itemCount: widget.commentList.length,
                 itemBuilder: (BuildContext context,int index){
                   return Card(
                     elevation: 5,
@@ -62,11 +88,18 @@ class _commentsState extends State<comments> {
                                 children: [
                                   Icon(Icons.comment,color: buttonColor,),
                                   SizedBox(width: 5,),
-                                  Text("bebo",style: TextStyle(color: whiteColor),
+                                  Text(widget.commentList[index]['writer']['userName'],style: TextStyle(color: whiteColor),
                                   ),
                                 ],
                               ),
-                              IconButton(onPressed: (){},
+                              IconButton(onPressed: (){
+                               // print(widget.commentList[index]['id']);
+                                deleteComment(widget.commentList[index]['id']);
+                                setState(() {
+                                  widget.commentList.removeAt(index);
+                                });
+
+                              },
                                 icon:Icon( Icons.delete),
                                 color: Colors.red,
                               ),
@@ -74,9 +107,8 @@ class _commentsState extends State<comments> {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(comments[index],style: TextStyle(color: whiteColor),),
+                            child: Text(widget.commentList[index]['content'],style: TextStyle(color: whiteColor),),
                           ),
-
                         ],
                       ),
                     ),
@@ -107,11 +139,30 @@ class _commentsState extends State<comments> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {
-                          setState(() {
-                            comments.add(textfieldController.text);
-                            textfieldController.clear();
+                        onPressed: () async{
+                          await HelpFunction.getuserNamesharedPrefrence().then((name) => {
+                             HelpFunction.getUserId().then((value) {
+                              setState(() {
+                                // comments.add(textfieldController.text);
+                                widget.commentList.add({
+                                  "content":textfieldController.text,
+                                  "writerId":value,
+                                  "postId":widget.postId,
+                                  "writer":{
+                                    "userName": name,
+                                  }
+                                });
+                                print(textfieldController.text);
+                                print(value);
+                                print(widget.postId);
+                                addComment(textfieldController.text,value,widget.postId);
+                                textfieldController.clear();
+                              });
+
+                            })
+
                           });
+
                         },
                         icon:Icon(
                           Icons.send,

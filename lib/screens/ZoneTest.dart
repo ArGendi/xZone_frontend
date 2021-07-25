@@ -7,6 +7,7 @@ import 'package:xzone/widgets/add_task.dart';
 import 'package:intl/intl.dart';
 
 import 'commentScreen.dart';
+import 'infoComments.dart';
 class ZoneTest extends StatefulWidget {
   @override
   final List posts;
@@ -268,7 +269,7 @@ class ZoneStateTest extends State<ZoneTest>{
                                                               Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                  builder: (context) =>comments(postId: widget.posts[index]['id'],),
+                                                                  builder: (context) =>infoComments(postId: widget.posts[index]['id'],),
                                                                 ),
                                                               );
                                                             }
@@ -400,8 +401,24 @@ class ZoneStateTest extends State<ZoneTest>{
                                               children: [
                                                 Row(
                                                   children: [
+                                                    realIndex==1?
+                                                    CircleAvatar(
+                                                      radius: (30),
+                                                      backgroundColor: backgroundColor,
+                                                      child: Image.asset('assets/images/first.png'),
+                                                    ):realIndex==2?
+                                                    CircleAvatar(
+                                                      radius: (35),
+                                                      backgroundColor: backgroundColor,
+                                                      child: Image.asset('assets/images/second.png'),
+                                                    ):realIndex==3?
+                                                    CircleAvatar(
+                                                      radius: (35),
+                                                      backgroundColor: backgroundColor,
+                                                      child: Image.asset('assets/images/third.png'),
+                                                    ):
                                                     Text("$realIndex",style: TextStyle(color: buttonColor,fontSize: 20),),
-                                                    SizedBox(width: 7,),
+                                                    SizedBox(width: 10,),
                                                     Expanded(child: Text(widget.zoneMembers[index]['account']['userName'],style: TextStyle(color: whiteColor,fontSize: 15),)),
                                                     Text(widget.zoneMembers[index]['numOfCompletedTasks'].toString(),style: TextStyle(color: whiteColor,fontSize: 25),),
 
