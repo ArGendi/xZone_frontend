@@ -46,7 +46,8 @@ class TasksProvider extends ChangeNotifier {
       if(item['remainder'] != 'Empty')
         task.remainder = DateTime.parse(item['remainder']);
       task.priority = item['priority'];
-      task.projectId = task.sectionId = 0;
+      task.projectId = item['projectId'];
+      task.sectionId = item['sectionId'];
       _items.add(task);
     }
   }
@@ -77,6 +78,53 @@ class TasksProvider extends ChangeNotifier {
       'projectId': 0,
     });
     print('Task added');
+  }
+
+  addZoneTask(Task task, int zoneId) async{
+    _items.add(task);
+    notifyListeners();
+    int userId = await HelpFunction.getUserId();
+    task.userId = userId;
+    http.Response response = await webServices.post('http://xzoneapi.azurewebsites.net/api/v1/Zonetask',
+        {
+          "name": task.name,
+          "zoneId": zoneId,
+        });
+    if(response.statusCode == 200){
+      var body = json.decode(response.body);
+      task.id = body['id'];
+      print('Zone task added to backend');
+    }
+    _dbHelper.insert(tasksTable,{
+      'id': task.id,
+      'userId': task.userId,
+      'parentId': task.parentId,
+      'name': task.name,
+      'dueDate': task.dueDate != null ? task.dueDate.toString() : null,
+      'remainder': task.remainderOn ? task.remainder.toString() : 'Empty',
+      'completeDate': task.completeDate != null ? task.completeDate.toString() : null,
+      'priority': task.priority.toString(),
+      'sectionId': 0,
+      'projectId': task.projectId,
+    });
+    print('Zone Task added');
+  }
+
+  completeZoneTask(Task task) async{
+    _items.remove(task);
+    notifyListeners();
+    _dbHelper.deleteRow(tasksTable, task.id);
+    int userId = await HelpFunction.getUserId();
+    var response = await webServices.update('http://xzoneapi.azurewebsites.net/api/v1/AccountZoneTask', {
+      "accountID": userId,
+      "zoneTaskID": task.id,
+    });
+    if(response.statusCode == 200){
+      print('Zone Task Confirmed at Backend');
+      print(response.body);
+      return response;
+    }
+    return null;
   }
 
   Future<http.Response> addTaskToBackend(Task task) async{

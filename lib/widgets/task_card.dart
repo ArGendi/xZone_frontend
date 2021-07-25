@@ -15,8 +15,9 @@ class TaskCard extends StatefulWidget {
   final int pIndex;
   final int sIndex;
   final Function cong;
+  final bool fromZone;
 
-  const TaskCard({Key key, @required this.task,@required this.bgColor, this.pIndex, this.sIndex, this.cong}) : super(key: key);
+  const TaskCard({Key key, @required this.task,@required this.bgColor, this.pIndex, this.sIndex, this.cong, this.fromZone = false}) : super(key: key);
 
   @override
   _TaskCardState createState() => _TaskCardState();
@@ -25,11 +26,19 @@ class TaskCard extends StatefulWidget {
 class _TaskCardState extends State<TaskCard> {
 
   _completeTask() async{
-    var response = await Provider.of<TasksProvider>(context, listen: false).completeTask(widget.task);
-    if(response != null){
-      var body = json.decode(response.body);
-      List badges = body['badges'];
-      if(badges.isNotEmpty) widget.cong();
+    var response;
+    if(!widget.fromZone) {
+      response = await Provider.of<TasksProvider>(context, listen: false)
+          .completeTask(widget.task);
+      if (response != null) {
+        var body = json.decode(response.body);
+        List badges = body['badges'];
+        if (badges.isNotEmpty) widget.cong();
+      }
+    }
+    else{
+      response = await Provider.of<TasksProvider>(context, listen: false)
+          .completeZoneTask(widget.task);
     }
   }
   _deleteTask(){

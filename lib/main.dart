@@ -5,6 +5,7 @@ import 'package:xzone/constants.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/providers/zone_tasks_provider.dart';
 import 'package:xzone/screens/createNewZone.dart';
 import 'package:xzone/screens/days_list.dart';
 import 'package:xzone/screens/loading_screen.dart';
@@ -71,6 +72,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider<ZoneProvider>(
           create: (context) => ZoneProvider(),
+        ),
+        ChangeNotifierProvider<ZoneTasksProvider>(
+          create: (context) => ZoneTasksProvider(),
         ),
       ],
       child: MaterialApp(
