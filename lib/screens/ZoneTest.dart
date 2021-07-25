@@ -38,6 +38,10 @@ class ZoneStateTest extends State<ZoneTest>{
       "writerId": writerId,
       "zoneId": zoneId
     });
+    print(content);
+    print(writerId);
+    print(zoneId);
+    print(response.statusCode);
   }
   @override
   Widget build(BuildContext context) {
@@ -195,12 +199,15 @@ class ZoneStateTest extends State<ZoneTest>{
                                                           "zoneId": widget.zoneID,
                                                           "date": DateTime.now().toString(),
                                                           "writer":{
-                                                            "userName": userName,
+                                                            "userName": userName
                                                           }
                                                         });
                                                       });
-                                                    addPostInZone(textfieldController.text,widget.userID,widget.zoneID);
-                                                    textfieldController.clear();
+                                                      HelpFunction.getUserId().then((userId)  {
+                                                      addPostInZone(textfieldController.text,userId,widget.zoneID);
+                                                          textfieldController.clear();
+                                                      });
+
                                                     //print(textfieldController.text);
                                                   },
                                                   ),
