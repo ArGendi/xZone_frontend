@@ -71,6 +71,7 @@ class _NeewsfeedState extends State<Neewsfeed> {
           await webService.get('http://xzoneapi.azurewebsites.net/api/v1/Zone/GetZone/ZoneRecommender/$id');
       Temp = jsonDecode(response.body);
       print(response.statusCode);
+      print(id);
       setState(() {
         zones = Temp;
       });
@@ -129,35 +130,16 @@ class _NeewsfeedState extends State<Neewsfeed> {
                       MaterialPageRoute(builder: (contetx) => generalSearch()));
                 },
               ),
-              Stack(
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.notifications,
-                      color: whiteColor,
-                    ),
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (contetx) {
-                        return Notifications();
-                      }));
-                    },
-                  ),
-                  Positioned(
-                    right: 5,
-                    top: 5,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.red,
-                      radius: 8,
-                      child: Text(
-                        '1',
-                        style: TextStyle(
-                          color: whiteColor,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              IconButton(
+                icon: Icon(
+                  Icons.notifications,
+                  color: whiteColor,
+                ),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (contetx) {
+                    return Notifications();
+                  }));
+                },
               ),
               IconButton(
                 icon: Icon(

@@ -175,7 +175,15 @@ class _DaysListState extends State<DaysList> {
                         ),
                         ListTile(
                           onTap: (){
-                            Navigator.pushNamed(context, Neewsfeed.id);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Neewsfeed(
+                                  email: _email,
+                                  username: _userName,
+                                ),
+                              ),
+                            );
                           },
                           title: Text("Home", style: TextStyle(color: whiteColor)),
                           leading: Icon(
