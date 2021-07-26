@@ -26,8 +26,10 @@ class Neewsfeed extends StatefulWidget {
   final email;
   final username;
   static String id = 'newsfeed';
+   final bool register;
+   final int registerId;
 
-  const Neewsfeed({this.email, this.username});
+  const Neewsfeed({this.email, this.username, this.register, this.registerId});
   @override
   _NeewsfeedState createState() => _NeewsfeedState();
 }
@@ -43,8 +45,9 @@ class _NeewsfeedState extends State<Neewsfeed> {
     HelpFunction.getUserId().then((id) async {
       userid = id;
       try {
+        if(widget.register) userid = widget.registerId;
         var response = await webService
-            .get('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/$id');
+            .get('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/$userid');
         setState(() {
           zonesUserjoined =
               response.statusCode != 200 ? [] : jsonDecode(response.body);

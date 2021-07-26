@@ -59,19 +59,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
               "password": _password,
               "location": _countryCode,
             });
+         int regid= jsonDecode(response.body)['id'];
+        print("regid==="+regid.toString());
 
         if (response.statusCode >= 400) {
           setState(() {
             _showErrorMsg = true;
             _errorMsg = response.body;
           });
-        } else
+        } else {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      Neewsfeed(email: _email, username:  _fullName)),
+                      Neewsfeed(email: _email, username: _fullName,register: true,registerId:regid )),
                   (route) => false);
+        }
         setState(() {
           _loading = false;
         });
