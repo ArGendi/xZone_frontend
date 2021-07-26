@@ -100,29 +100,32 @@ class profileState extends State<profile> {
   }
 
   createChatroom(username, email) async {
-    HelpFunction.getuserNamesharedPrefrence().then((myName) {
-      HelpFunction.getuserEmailsharedPrefrence().then((myEmail) {
-        print("username" + username);
-        print("email" + email);
-        print(myName);
-        print(myEmail);
+    String myName = await HelpFunction.getuserNamesharedPrefrence();
+    String myEmail = await HelpFunction.getuserEmailsharedPrefrence();
+        // print("username" + username);
+        // print("email" + email);
+    print(myName);
+    print(myEmail);
 
-        String id = getChatRoomId(email, myEmail, username, myName);
-        print(id);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => conversation(
-                      chatRoomId: id,
-                      username: username,
-                      email: email,
-                      myEmail: myEmail,
-                    )));
-      });
-    });
+    String id = await getChatRoomId(email, myEmail, username, myName);
+    print('hereeeeeeeeeeeeeeeeeeeee');
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => conversation(
+              chatRoomId: id,
+              username: username,
+              email: email,
+              myEmail: myEmail,
+            )));
   }
 
   getChatRoomId(String id1, String id2, String id3, String id4) {
+    print(id1);
+    print(id2);
+    print(id3);print(id4);
+
+
     if (id1.substring(0, 1).codeUnitAt(0) > id2.substring(0, 1).codeUnitAt(0) &&
         (id3.substring(0, 1).codeUnitAt(0) >
             id4.substring(0, 1).codeUnitAt(0))) {
