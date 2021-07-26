@@ -7,6 +7,7 @@ import 'package:xzone/models/section.dart';
 import 'package:xzone/models/task.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/providers/zone_tasks_provider.dart';
 import 'package:xzone/screens/register_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
 import 'package:xzone/screens/welcome_screen.dart';
@@ -74,20 +75,26 @@ class _LoginScreenState extends State<LoginScreen> {
             _errorMsg = response.body;
           });
         } else {
+          List x = [];
           _dbHelper.deleteAllRows(tasksTable);
           _dbHelper.deleteAllRows(sectionsTable);
           _dbHelper.deleteAllRows(projectsTable);
+          Provider.of<TasksProvider>(context, listen: false).clearProviderItems();
+          Provider.of<ProjectsProvider>(context, listen: false).clearProviderItems();
+          Provider.of<ZoneTasksProvider>(context, listen: false).clearProviderItems();
           var body = json.decode(response.body);
           int id = body['id'];
           List tasks = body['tasks'];
           List projects = body['projects'];
+          List zoneTasks = body['zoneTasks'];
           _fetchAndSetTasks(tasks);
-          ///-------------------------
+          _fetchAndSetZoneTasks(zoneTasks);
           _fetchAndSetProjects(projects);
           HelpFunction.saveUserId(id);
           final newUser = await _auth.signInWithEmailAndPassword(
               email: _email, password: _password);
           HelpFunction.saveuserEmailsharedPrefrence(_email);
+          HelpFunction.saveuserNamesharedPrefrence(body['userName']);
           getusername(_email).then((value) {
             Navigator.pushAndRemoveUntil(
                 context,
@@ -110,6 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _fetchAndSetTasks(List tasks){
+    int counter = 1;
     for(var item in tasks){
       if(item['completeDate'] != null) continue;
       Task task = new Task();
@@ -124,6 +132,30 @@ class _LoginScreenState extends State<LoginScreen> {
       else task.remainder = null;
       if(item['completeDate'] != null) task.completeDate = DateTime.parse(item['completeDate']);
       else task.completeDate = null;
+      print('task name: ' + task.name);
+      Provider.of<TasksProvider>(context, listen: false).addTask(task, false);
+      print(counter);
+      counter+=1;
+    }
+  }
+
+  _fetchAndSetZoneTasks(tasks){
+    for(var item in tasks){
+      if(item['completeDate'] != null) continue;
+      Task task = new Task();
+      task.id = item['zoneTaskID'];
+      task.userId = item['accountID'];
+      task.name = item['zoneTask']['name'];
+      task.priority = item['zoneTask']['priority'] == null ? 100 : item['zoneTask']['priority'];
+      task.parentId = item['zoneTask']['parentID'];
+      if(item['zoneTask']['dueDate'] != null) task.dueDate = DateTime.parse(item['zoneTask']['dueDate']);
+      else task.dueDate = null;
+      if(item['zoneTask']['remainder'] != null) task.remainder = DateTime.parse(item['zoneTask']['remainder']);
+      else task.remainder = null;
+      if(item['completeDate'] != null) task.completeDate = DateTime.parse(item['completeDate']);
+      else task.completeDate = null;
+      task.projectId = item['zoneTask']['zoneId'] * -1;
+      print('zone task name: ' + task.name);
       Provider.of<TasksProvider>(context, listen: false).addTask(task, false);
     }
   }
@@ -134,6 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Project project = new Project(item['name']);
       project.id = item['id'];
       project.userID = 0;
+      print('project name: ' + project.name);
       Provider.of<ProjectsProvider>(context, listen: false)
           .addProject(project, false);
       List sections = item['sections'];

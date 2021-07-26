@@ -336,6 +336,7 @@ class ZoneStateTest extends State<ZoneTest>{
                                             isAutoFocus: false,
                                             fromZone: true,
                                             zoneId: widget.zoneID,
+                                            zoneMembers: widget.zoneMembers,
                                           )),
                                       Container(
                                         child: ListView.builder(

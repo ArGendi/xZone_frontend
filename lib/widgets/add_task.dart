@@ -24,8 +24,9 @@ class AddTask extends StatefulWidget {
   final bool isAutoFocus;
   final bool fromZone;
   final int zoneId;
+  final List zoneMembers;
 
-  const AddTask({Key key, this.inSection = false, this.pIndex, this.sIndex, this.isAutoFocus=true, this.fromZone = false, this.zoneId,}) : super(key: key);
+  const AddTask({Key key, this.inSection = false, this.pIndex, this.sIndex, this.isAutoFocus=true, this.fromZone = false, this.zoneId, this.zoneMembers,}) : super(key: key);
 
   @override
   _AddTaskState createState() => _AddTaskState();
@@ -207,7 +208,7 @@ class _AddTaskState extends State<AddTask> {
             children: <Widget>[
               Row(
                 children: [
-                  if(!widget.fromZone)
+
                   IconButton(
                     onPressed: setPriorityBottomSheet,
                     icon: Icon(
@@ -216,7 +217,7 @@ class _AddTaskState extends State<AddTask> {
                     ),
                   ),
                   SizedBox(width: 5,),
-                  if(!widget.fromZone)
+
                   InkWell(
                     onTap: setDateBottomSheet,
                     child: Padding(
@@ -264,7 +265,7 @@ class _AddTaskState extends State<AddTask> {
                       else if(widget.fromZone){
                         activeTask.projectId = -1 * widget.zoneId;
                         Provider.of<TasksProvider>(context, listen: false)
-                            .addZoneTask(activeTask, widget.zoneId);
+                            .addZoneTask(activeTask, widget.zoneId, widget.zoneMembers);
                         var taskInJsonFormat = {
                           'publishDate': DateTime.now().toString(),
                           'name': activeTask.name

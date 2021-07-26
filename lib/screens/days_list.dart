@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -5,6 +6,7 @@ import 'package:xzone/constants.dart';
 import 'package:xzone/models/project.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/providers/zone_tasks_provider.dart';
 import 'package:xzone/screens/profile.dart';
 import 'package:xzone/screens/project_screen.dart';
 import 'package:xzone/screens/tasks_screen.dart';
@@ -14,6 +16,7 @@ import 'package:xzone/servcies/helperFunction.dart';
 import 'package:xzone/servcies/offline_search.dart';
 import 'package:xzone/widgets/add_project.dart';
 import 'package:xzone/widgets/add_task.dart';
+import 'package:xzone/widgets/drawer.dart';
 import 'package:xzone/widgets/project_card.dart';
 import 'package:xzone/widgets/tasks_day.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +38,7 @@ class _DaysListState extends State<DaysList> {
   var globalKey = GlobalKey<FormState>();
   String _email = '';
   String _userName = '';
+  final _auth = FirebaseAuth.instance;
 
   addTaskBottomSheet() {
     showModalBottomSheet(
@@ -202,7 +206,9 @@ class _DaysListState extends State<DaysList> {
                     ),
                   ),
                   ListTile(
-                    onTap: (){
+                    onTap: () async{
+                      await HelpFunction.removeEmail(_email);
+                      await _auth.signOut();
                       Navigator.pushNamed(context, LoginScreen.id);
                     },
                     title: Text("Logout", style: TextStyle(color: Colors.red)),

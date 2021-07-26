@@ -232,4 +232,8 @@ class ProjectsProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  clearProviderItems(){
+    _items = [];
+  }
+
 }

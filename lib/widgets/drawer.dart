@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:xzone/constants.dart';
 import 'package:xzone/providers/projects_provider.dart';
 import 'package:xzone/providers/tasks_provider.dart';
+import 'package:xzone/providers/zone_tasks_provider.dart';
 import 'package:xzone/screens/days_list.dart';
 import 'package:xzone/screens/infoProfile.dart';
 import 'package:xzone/screens/loading_screen.dart';
@@ -97,12 +98,7 @@ class _drawerState extends State<drawer> {
                   ),
                   ListTile(
                     onTap: () {
-                      List tasks = Provider.of<TasksProvider>(context, listen: false).items;
-                      List projects = Provider.of<ProjectsProvider>(context, listen: false).items;
-                      if(tasks.isEmpty && projects.isEmpty)
-                        Navigator.pushNamed(context, LoadingScreen.id);
-                      else
-                        Navigator.pushNamed(context, DaysList.id);
+                      Navigator.pushNamed(context, LoadingScreen.id);
                     },
                     title: Text("Tasks", style: TextStyle(color: whiteColor)),
                     leading: Icon(

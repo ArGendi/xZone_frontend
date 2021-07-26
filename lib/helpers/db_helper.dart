@@ -90,4 +90,9 @@ class DBHelper {
     var dbClient = await db;
     await dbClient.delete(table);
   }
+
+  Future<void> deleteAllZoneTask(String table) async{
+    var dbClient = await db;
+    await dbClient.delete(table, where: 'projectId < ?', whereArgs: [0]);
+  }
 }
