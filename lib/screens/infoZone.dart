@@ -16,7 +16,6 @@ class infoZone extends StatefulWidget{
 
   const infoZone({Key key, this.idUser, this.idZone}) : super(key: key);
 
-
   @override
   infoZoneState createState() => infoZoneState();
 }
@@ -32,11 +31,12 @@ class infoZoneState extends State<infoZone>{
       var response = await webService.get(
           'http://xzoneapi.azurewebsites.net/api/v1/Zone/GetZone/$idZone');
       var body = json.decode(response.body);
-      String zoneName = body['name'];
-      String zoneDes = body['description'];
-      List posts = body['posts'];
-      List zoneMembers = body['zoneMembers'];
-      int privacy = body['privacy'];
+      String zoneName = body['name'] == null ? '' : body['name'];
+      String zoneDes = body['description'] == null ? '' : body['description'];
+      List posts = body['posts'] == null ? [] : body['posts'];
+      List zoneMembers = body['zoneMembers'] == null ? [] : body['zoneMembers'];
+      print(zoneMembers);
+      int privacy = body['privacy'] == null ? 1 : body['privacy'];
       List tasks = body['tasks'];
       Provider.of<ZoneTasksProvider>(context, listen: false).addListOfTasks(tasks);
       zoneMembers.sort((a, b) => b['numOfCompletedTasks'].compareTo(a['numOfCompletedTasks']));

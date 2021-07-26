@@ -17,4 +17,8 @@ class ZoneTasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  clearProviderItems(){
+    _items = [];
+  }
+
 }

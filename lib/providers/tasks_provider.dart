@@ -36,7 +36,7 @@ class TasksProvider extends ChangeNotifier {
   Future<void> fetchAndSetData() async{
     var tasksData = await _dbHelper.getNormalTasks();
     for(Map item in tasksData){
-      //if(item['completeDate'] != null) continue;
+      if(item['completeDate'] != null) continue;
       Task task = new Task();
       task.id = item['id'];
       task.userId = item['userId'];
@@ -53,6 +53,7 @@ class TasksProvider extends ChangeNotifier {
   }
 
   void addTask(Task task, bool sendToBackend) async{
+    print("project id: " + task.projectId.toString());
     _items.add(task);
     notifyListeners();
     if(sendToBackend){
@@ -75,12 +76,12 @@ class TasksProvider extends ChangeNotifier {
       'completeDate': task.completeDate != null ? task.completeDate.toString() : null,
       'priority': task.priority.toString(),
       'sectionId': 0,
-      'projectId': 0,
+      'projectId': task.projectId,
     });
     print('Task added');
   }
 
-  addZoneTask(Task task, int zoneId) async{
+  addZoneTask(Task task, int zoneId, List zoneMembers) async{
     _items.add(task);
     notifyListeners();
     int userId = await HelpFunction.getUserId();
@@ -237,6 +238,15 @@ class TasksProvider extends ChangeNotifier {
       return response;
     }
     return null;
+  }
+
+  removeAllZoneTasks(){
+    _items.removeWhere((element) {print(1); return element.projectId < 0;});
+    notifyListeners();
+  }
+
+  clearProviderItems(){
+    _items = [];
   }
 
 }
