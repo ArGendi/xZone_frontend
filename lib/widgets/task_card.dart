@@ -27,7 +27,7 @@ class _TaskCardState extends State<TaskCard> {
 
   _completeTask() async{
     var response;
-    if(widget.task.projectId < 0) {
+    if(widget.task.projectId >= 0) {
       response = await Provider.of<TasksProvider>(context, listen: false)
           .completeTask(widget.task);
       if (response != null) {
@@ -37,6 +37,7 @@ class _TaskCardState extends State<TaskCard> {
       }
     }
     else{
+      print('Zone task');
       response = await Provider.of<TasksProvider>(context, listen: false)
           .completeZoneTask(widget.task);
     }
