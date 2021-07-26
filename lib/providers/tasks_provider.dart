@@ -120,6 +120,7 @@ class TasksProvider extends ChangeNotifier {
       "accountID": userId,
       "zoneTaskID": task.id,
     });
+    print(response.statusCode);
     if(response.statusCode == 200){
       print('Zone Task Confirmed at Backend');
       print(response.body);
