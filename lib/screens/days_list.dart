@@ -91,6 +91,8 @@ class _DaysListState extends State<DaysList> {
   Future<void> getCurrentUserInfo() async{
     _email = await HelpFunction.getuserEmailsharedPrefrence();
     _userName = await HelpFunction.getuserNamesharedPrefrence();
+    print("email"+_email);
+    print("username"+_userName);
   }
 
   @override

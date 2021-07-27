@@ -47,11 +47,11 @@ class infoState extends State<info>{
          List friends = body['friends'];
          print("!");
          List skill = body['skills'];
-          String email;
-         if(skill.isNotEmpty) {
+         String email = body['email'];
+       /*  if(skill.isNotEmpty) {
           // skill = body['skill'];
            email = body['skills'][0]['account']['email'];
-         }
+         }*/
          //print(skills);
          bool checkFriedns=false;
          for(int i=0;i<friends.length;i++){
