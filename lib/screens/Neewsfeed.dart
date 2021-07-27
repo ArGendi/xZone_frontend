@@ -26,15 +26,17 @@ class Neewsfeed extends StatefulWidget {
   final email;
   final username;
   static String id = 'newsfeed';
+   final bool register;
+   final int registerId;
 
-  const Neewsfeed({this.email, this.username});
+  const Neewsfeed({this.email, this.username, this.register, this.registerId});
   @override
   _NeewsfeedState createState() => _NeewsfeedState();
 }
 
 class _NeewsfeedState extends State<Neewsfeed> {
-  List zones;
-  List Temp;
+  List zones=[];
+  List Temp=[];
   var webService = WebServices();
   List zonesUserjoined = [];
   var userid;
@@ -42,13 +44,18 @@ class _NeewsfeedState extends State<Neewsfeed> {
   getuserZones() async {
     HelpFunction.getUserId().then((id) async {
       userid = id;
+      print("my zones");
+      print(userid);
       try {
+        if(widget.register) userid = widget.registerId;
         var response = await webService
-            .get('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/$id');
+            .get('http://xzoneapi.azurewebsites.net/api/v1/ZoneMember/$userid');
+        print("zone recommender"+response.statusCode.toString());
         setState(() {
           zonesUserjoined =
               response.statusCode != 200 ? [] : jsonDecode(response.body);
         });
+
 
       } catch (e) {
         print(e);
@@ -67,11 +74,13 @@ class _NeewsfeedState extends State<Neewsfeed> {
     HelpFunction.getUserId().then((id) async {
       userid = id;
       try {
+
       var response =
           await webService.get('http://xzoneapi.azurewebsites.net/api/v1/Zone/GetZone/ZoneRecommender/$id');
       Temp = jsonDecode(response.body);
       print(response.statusCode);
       print(id);
+      print(Temp);
       setState(() {
         zones = Temp;
       });
@@ -81,14 +90,14 @@ class _NeewsfeedState extends State<Neewsfeed> {
   });
         }
   myfun()async {
-    await getuserZones();
+    // getuserZones();
     beginsearchZones();
   }
 
   @override
   void initState() {
     myfun();
-    super.initState();
+
   }
 
   @override
@@ -160,10 +169,10 @@ class _NeewsfeedState extends State<Neewsfeed> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Expanded(
-            child: zones != null
-                ? zonesUserjoined.length == zones.length?Center(
+            child: Temp != null
+                ? zonesUserjoined.length == Temp.length?Center(
       child: Container(
-          child: Text("No Results yet.",
+          child: Text("No Zones Found",
           style: TextStyle(
             color: Colors.white,
           )),

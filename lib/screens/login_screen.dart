@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        Neewsfeed(email: _email, username: value)),
+                        Neewsfeed(email: _email, username: value,register: false,)),
                 (route) => false);
           });
         }
